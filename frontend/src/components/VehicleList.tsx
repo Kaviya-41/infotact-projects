@@ -1,7 +1,10 @@
 /**
  * VehicleList.tsx
- * Responsive vehicle telemetry table with dummy data.
- * Week 1 – Static data only. Ready for Socket.io live updates in Week 3.
+ * Responsive vehicle telemetry table – 8-column enterprise view.
+ * Week 1 – Static dummy data only. Ready for Socket.io live updates in Week 3.
+ *
+ * Columns: Vehicle ID | Driver Name | Vehicle Type | Status |
+ *           Speed | Latitude | Longitude | Last Updated
  */
 
 import React, { useMemo, useState } from 'react';
@@ -15,8 +18,12 @@ export interface Vehicle {
   driverName: string;
   driverInitials: string;
   driverAvatarColor: string;
+  vehicleType: string;
+  vehicleTypeIcon: string;
   status: VehicleStatus;
-  speedKmh: number;
+  speedKmh: number | null;   // null when Offline
+  latitude: number;
+  longitude: number;
   lastUpdated: string;
 }
 
@@ -30,93 +37,133 @@ interface VehicleListProps {
 const DUMMY_VEHICLES: Vehicle[] = [
   {
     vehicleId:         'FLT-001',
-    driverName:        'Carlos Mendez',
-    driverInitials:    'CM',
+    driverName:        'Rahul Kumar',
+    driverInitials:    'RK',
     driverAvatarColor: '#6366f1',
+    vehicleType:       'Truck',
+    vehicleTypeIcon:   '🚛',
     status:            'Moving',
-    speedKmh:          87,
-    lastUpdated:       '2 min ago',
+    speedKmh:          65,
+    latitude:          12.9716,
+    longitude:         77.5946,
+    lastUpdated:       '2 sec ago',
   },
   {
     vehicleId:         'FLT-002',
-    driverName:        'Sara Thompson',
-    driverInitials:    'ST',
+    driverName:        'Arjun Singh',
+    driverInitials:    'AS',
     driverAvatarColor: '#ec4899',
-    status:            'Moving',
-    speedKmh:          64,
-    lastUpdated:       '1 min ago',
+    vehicleType:       'Van',
+    vehicleTypeIcon:   '🚐',
+    status:            'Stopped',
+    speedKmh:          0,
+    latitude:          13.0827,
+    longitude:         80.2707,
+    lastUpdated:       '10 sec ago',
   },
   {
     vehicleId:         'FLT-003',
-    driverName:        'Liam Okafor',
-    driverInitials:    'LO',
-    driverAvatarColor: '#f59e0b',
-    status:            'Stopped',
-    speedKmh:          0,
+    driverName:        'Kiran Patel',
+    driverInitials:    'KP',
+    driverAvatarColor: '#ef4444',
+    vehicleType:       'Truck',
+    vehicleTypeIcon:   '🚛',
+    status:            'Offline',
+    speedKmh:          null,
+    latitude:          11.0168,
+    longitude:         76.9558,
     lastUpdated:       '5 min ago',
   },
   {
     vehicleId:         'FLT-004',
-    driverName:        'Priya Nair',
-    driverInitials:    'PN',
+    driverName:        'Naveen Reddy',
+    driverInitials:    'NR',
     driverAvatarColor: '#10b981',
+    vehicleType:       'Trailer',
+    vehicleTypeIcon:   '🚜',
     status:            'Moving',
-    speedKmh:          102,
-    lastUpdated:       'Just now',
+    speedKmh:          72,
+    latitude:          17.3850,
+    longitude:         78.4867,
+    lastUpdated:       '1 sec ago',
   },
   {
     vehicleId:         'FLT-005',
-    driverName:        'Marcus Webb',
-    driverInitials:    'MW',
-    driverAvatarColor: '#3b82f6',
-    status:            'Offline',
-    speedKmh:          0,
-    lastUpdated:       '1 hr ago',
+    driverName:        'Priya Sharma',
+    driverInitials:    'PS',
+    driverAvatarColor: '#f59e0b',
+    vehicleType:       'Mini Truck',
+    vehicleTypeIcon:   '🚚',
+    status:            'Moving',
+    speedKmh:          54,
+    latitude:          15.3173,
+    longitude:         75.7139,
+    lastUpdated:       '8 sec ago',
   },
   {
     vehicleId:         'FLT-006',
-    driverName:        'Hana Kowalski',
-    driverInitials:    'HK',
+    driverName:        'Vignesh Rajan',
+    driverInitials:    'VR',
     driverAvatarColor: '#8b5cf6',
-    status:            'Idle',
+    vehicleType:       'Container',
+    vehicleTypeIcon:   '🏗️',
+    status:            'Stopped',
     speedKmh:          0,
-    lastUpdated:       '12 min ago',
+    latitude:          13.6288,
+    longitude:         79.4192,
+    lastUpdated:       '12 sec ago',
   },
   {
     vehicleId:         'FLT-007',
-    driverName:        'Diego Reyes',
-    driverInitials:    'DR',
-    driverAvatarColor: '#ef4444',
+    driverName:        'Suresh Babu',
+    driverInitials:    'SB',
+    driverAvatarColor: '#3b82f6',
+    vehicleType:       'Truck',
+    vehicleTypeIcon:   '🚛',
     status:            'Moving',
-    speedKmh:          75,
-    lastUpdated:       '3 min ago',
+    speedKmh:          68,
+    latitude:          12.2958,
+    longitude:         76.6394,
+    lastUpdated:       '3 sec ago',
   },
   {
     vehicleId:         'FLT-008',
-    driverName:        'Amara Diallo',
-    driverInitials:    'AD',
+    driverName:        'Deepak Menon',
+    driverInitials:    'DM',
     driverAvatarColor: '#06b6d4',
-    status:            'Stopped',
-    speedKmh:          0,
-    lastUpdated:       '8 min ago',
+    vehicleType:       'Van',
+    vehicleTypeIcon:   '🚐',
+    status:            'Offline',
+    speedKmh:          null,
+    latitude:          10.8505,
+    longitude:         76.2711,
+    lastUpdated:       '9 min ago',
   },
   {
     vehicleId:         'FLT-009',
-    driverName:        'Tom Brennan',
-    driverInitials:    'TB',
+    driverName:        'Akash Verma',
+    driverInitials:    'AV',
     driverAvatarColor: '#f97316',
+    vehicleType:       'Trailer',
+    vehicleTypeIcon:   '🚜',
     status:            'Moving',
-    speedKmh:          91,
-    lastUpdated:       'Just now',
+    speedKmh:          61,
+    latitude:          9.9252,
+    longitude:         78.1198,
+    lastUpdated:       '5 sec ago',
   },
   {
     vehicleId:         'FLT-010',
-    driverName:        'Yuki Tanaka',
-    driverInitials:    'YT',
+    driverName:        'Mohan Das',
+    driverInitials:    'MD',
     driverAvatarColor: '#a855f7',
-    status:            'Offline',
-    speedKmh:          0,
-    lastUpdated:       '2 hr ago',
+    vehicleType:       'Truck',
+    vehicleTypeIcon:   '🚛',
+    status:            'Moving',
+    speedKmh:          58,
+    latitude:          11.1271,
+    longitude:         78.6569,
+    lastUpdated:       '7 sec ago',
   },
 ];
 
@@ -130,6 +177,32 @@ function getStatusClass(status: VehicleStatus): string {
     Idle:    'status-badge--idle',
   };
   return map[status];
+}
+
+function getStatusEmoji(status: VehicleStatus): string {
+  const map: Record<VehicleStatus, string> = {
+    Moving:  '🟢',
+    Stopped: '🟡',
+    Offline: '🔴',
+    Idle:    '⚪',
+  };
+  return map[status];
+}
+
+function formatSpeed(speedKmh: number | null): React.ReactNode {
+  if (speedKmh === null) {
+    return <span className="speed-na" aria-label="Speed unavailable">—</span>;
+  }
+  return (
+    <div className="speed-cell">
+      <span className="speed-value">{speedKmh}</span>
+      <span className="speed-unit">km/h</span>
+    </div>
+  );
+}
+
+function formatCoord(value: number): string {
+  return value.toFixed(4);
 }
 
 // ── Component ──────────────────────────────────────────────────────────────────
@@ -152,7 +225,7 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
 
   return (
     <section aria-label="Vehicle list" className="vehicle-list-card">
-      {/* Card Header */}
+      {/* ── Card Header ──────────────────────────────────────────── */}
       <div className="vehicle-list-card__header">
         <div className="vehicle-list-card__title">
           <span aria-hidden="true">🚚</span>
@@ -179,7 +252,7 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
         </div>
       </div>
 
-      {/* Table */}
+      {/* ── Table ────────────────────────────────────────────────── */}
       <div className="vehicle-table-wrap">
         <table
           className="vehicle-table"
@@ -188,20 +261,35 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
         >
           <thead>
             <tr>
+              <th scope="col">#</th>
               <th scope="col">Vehicle ID</th>
               <th scope="col">Driver Name</th>
+              <th scope="col">Vehicle Type</th>
               <th scope="col">Status</th>
               <th scope="col">Speed</th>
+              <th scope="col">Latitude</th>
+              <th scope="col">Longitude</th>
               <th scope="col">Last Updated</th>
             </tr>
           </thead>
           <tbody>
             {filteredVehicles.map((vehicle, index) => (
-              <tr key={vehicle.vehicleId} aria-rowindex={index + 1}>
+              <tr
+                key={vehicle.vehicleId}
+                aria-rowindex={index + 1}
+                className={index % 2 === 0 ? 'row-even' : 'row-odd'}
+              >
+                {/* Row Number */}
+                <td>
+                  <span className="row-index">{index + 1}</span>
+                </td>
+
                 {/* Vehicle ID */}
                 <td>
                   <div className="vehicle-id">
-                    <div className="vehicle-id__icon" aria-hidden="true">🚛</div>
+                    <div className="vehicle-id__icon" aria-hidden="true">
+                      {vehicle.vehicleTypeIcon}
+                    </div>
                     <span className="vehicle-id__text">{vehicle.vehicleId}</span>
                   </div>
                 </td>
@@ -220,23 +308,40 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
                   </div>
                 </td>
 
+                {/* Vehicle Type */}
+                <td>
+                  <span className="vehicle-type-chip">
+                    <span aria-hidden="true">{vehicle.vehicleTypeIcon}</span>
+                    {vehicle.vehicleType}
+                  </span>
+                </td>
+
                 {/* Status Badge */}
                 <td>
                   <span
                     className={`status-badge ${getStatusClass(vehicle.status)}`}
                     aria-label={`Status: ${vehicle.status}`}
                   >
-                    <span className="status-badge__dot" aria-hidden="true" />
+                    <span aria-hidden="true">{getStatusEmoji(vehicle.status)}</span>
                     {vehicle.status}
                   </span>
                 </td>
 
                 {/* Speed */}
+                <td>{formatSpeed(vehicle.speedKmh)}</td>
+
+                {/* Latitude */}
                 <td>
-                  <div className="speed-cell">
-                    <span className="speed-value">{vehicle.speedKmh}</span>
-                    <span className="speed-unit">km/h</span>
-                  </div>
+                  <span className="coord-cell" title={`Latitude: ${vehicle.latitude}`}>
+                    {formatCoord(vehicle.latitude)}
+                  </span>
+                </td>
+
+                {/* Longitude */}
+                <td>
+                  <span className="coord-cell" title={`Longitude: ${vehicle.longitude}`}>
+                    {formatCoord(vehicle.longitude)}
+                  </span>
                 </td>
 
                 {/* Last Updated */}
@@ -248,7 +353,10 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
 
             {filteredVehicles.length === 0 && (
               <tr>
-                <td colSpan={5} style={{ textAlign: 'center', padding: '32px', color: 'var(--color-text-muted)' }}>
+                <td
+                  colSpan={9}
+                  style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}
+                >
                   No vehicles match the selected filter.
                 </td>
               </tr>
@@ -257,7 +365,7 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
         </table>
       </div>
 
-      {/* Footer */}
+      {/* ── Card Footer ──────────────────────────────────────────── */}
       <div className="vehicle-list-card__footer">
         <span className="footer-info">
           Showing {filteredVehicles.length} of {sourceVehicles.length} vehicles
