@@ -1,14 +1,15 @@
 /**
  * DashboardLayout.tsx
  * Shared layout wrapper: Sidebar + Header + scrollable page content.
- * Week 1 – Static layout. Ready for context providers / socket wrappers.
+ * Route-aware: Header title/subtitle update based on current path.
  *
  * UI Enhancement: Added bg-grid and bg-particles overlay layers
  * for the premium animated background. Particles are rendered via
- * inline CSS custom properties – no external libraries needed.
+ * canvas – no external libraries needed.
  */
 
 import React, { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import Header from '../components/Header';
 
@@ -16,9 +17,18 @@ import Header from '../components/Header';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
-  pageTitle?: string;
-  pageSubtitle?: string;
 }
+
+// ── Route → Header mapping ─────────────────────────────────────────────────────
+
+const ROUTE_META: Record<string, { title: string; subtitle: string }> = {
+  '/':         { title: 'Fleet Dashboard',          subtitle: 'Real-time fleet monitoring & analytics' },
+  '/live-map': { title: 'Live Map',                 subtitle: 'Real-time vehicle positions & route tracking' },
+  '/vehicles': { title: 'Vehicle Fleet',            subtitle: 'Manage and monitor all vehicles' },
+  '/alerts':   { title: 'Alerts & Notifications',   subtitle: 'Monitor critical events and incidents' },
+  '/reports':  { title: 'Reports',                  subtitle: 'Fleet performance analytics & exports' },
+  '/settings': { title: 'Settings',                 subtitle: 'Configure your fleet management preferences' },
+};
 
 // ── Particle configuration ─────────────────────────────────────────────────────
 
@@ -34,14 +44,14 @@ interface Particle {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-const DashboardLayout: React.FC<DashboardLayoutProps> = ({
-  children,
-  pageTitle,
-  pageSubtitle,
-}) => {
+const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationRef = useRef<number>(0);
   const particlesRef = useRef<Particle[]>([]);
+  const location = useLocation();
+
+  // Resolve header title from current route
+  const routeMeta = ROUTE_META[location.pathname] ?? ROUTE_META['/'];
 
   // Animated floating particles on background canvas
   useEffect(() => {
@@ -202,7 +212,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({
 
       {/* Right: header + page content */}
       <div className="main-content">
-        <Header title={pageTitle} subtitle={pageSubtitle} />
+        <Header title={routeMeta.title} subtitle={routeMeta.subtitle} />
 
         {/* Scrollable page body */}
         <main className="page-content" id="main-page-content">

@@ -14,7 +14,6 @@
 
 import React, { lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import DashboardLayout from '../layout/DashboardLayout';
 import DashboardCards from '../components/DashboardCards';
 import MapPlaceholder from '../components/MapPlaceholder';
 import VehicleList from '../components/VehicleList';
@@ -73,77 +72,55 @@ const Dashboard: React.FC = () => {
    */
 
   return (
-    <DashboardLayout
-      pageTitle="Fleet Dashboard"
-      pageSubtitle="Real-time fleet monitoring & analytics"
+    <motion.div
+      className="dashboard-page"
+      variants={pageVariants}
+      initial="initial"
+      animate="enter"
     >
-      <motion.div
-        className="dashboard-page"
-        variants={pageVariants}
-        initial="initial"
-        animate="enter"
-      >
-        {/* ── KPI Stats ─────────────────────────────────────────────── */}
-        <SectionLabel
-          icon="📊"
-          title="Fleet Overview"
-          subtitle="Live key performance indicators"
-        />
-        {/*
-         * Pass `stats` prop in Week 3:
-         *   <DashboardCards stats={stats} />
-         */}
-        <DashboardCards />
+      {/* ── KPI Stats ─────────────────────────────────────────────── */}
+      <SectionLabel
+        icon="📊"
+        title="Fleet Overview"
+        subtitle="Live key performance indicators"
+      />
+      <DashboardCards />
 
-        {/* ── Live Map ──────────────────────────────────────────────── */}
-        <SectionLabel
-          icon="🗺"
-          title="Live Map"
-          subtitle="Real-time vehicle positions & route tracking"
-        />
-        <MapPlaceholder height={520} />
+      {/* ── Live Map ──────────────────────────────────────────────── */}
+      <SectionLabel
+        icon="🗺"
+        title="Live Map"
+        subtitle="Real-time vehicle positions & route tracking"
+      />
+      <MapPlaceholder height={520} />
 
-        {/* ── Fleet Status + Recent Alerts Row ──────────────────────── */}
-        <SectionLabel
-          icon="🚦"
-          title="Status & Alerts"
-          subtitle="Fleet health and recent incident feed"
-        />
-        <div className="dashboard-two-col">
-          {/*
-           * Pass `stats` prop in Week 3:
-           *   <FleetStatusCard stats={stats} />
-           */}
-          <FleetStatusCard />
+      {/* ── Fleet Status + Recent Alerts Row ──────────────────────── */}
+      <SectionLabel
+        icon="🚦"
+        title="Status & Alerts"
+        subtitle="Fleet health and recent incident feed"
+      />
+      <div className="dashboard-two-col">
+        <FleetStatusCard />
+        <RecentAlerts />
+      </div>
 
-          {/*
-           * Pass `alerts` prop in Week 3:
-           *   <RecentAlerts alerts={alerts} />
-           */}
-          <RecentAlerts />
-        </div>
+      {/* ── Vehicle Table ──────────────────────────────────────────── */}
+      <SectionLabel
+        icon="🚛"
+        title="Vehicle Fleet"
+        subtitle="Detailed view of all vehicles and driver status"
+      />
+      <VehicleList />
 
-        {/* ── Vehicle Table ──────────────────────────────────────────── */}
-        <SectionLabel
-          icon="🚛"
-          title="Vehicle Fleet"
-          subtitle="Detailed view of all vehicles and driver status"
-        />
-        {/*
-         * Pass `vehicles` prop in Week 3:
-         *   <VehicleList vehicles={vehicles} />
-         */}
-        <VehicleList />
+      {/* ── Fleet Analytics ────────────────────────────────────────── */}
+      <Suspense fallback={<AnalyticsSkeleton />}>
+        <FleetAnalytics />
+      </Suspense>
 
-        {/* ── Fleet Analytics ────────────────────────────────────────── */}
-        <Suspense fallback={<AnalyticsSkeleton />}>
-          <FleetAnalytics />
-        </Suspense>
-
-        {/* ── Footer ────────────────────────────────────────────────── */}
-        <Footer />
-      </motion.div>
-    </DashboardLayout>
+      {/* ── Footer ────────────────────────────────────────────────── */}
+      <Footer />
+    </motion.div>
   );
 };
 

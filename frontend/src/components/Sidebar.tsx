@@ -1,15 +1,15 @@
 /**
  * Sidebar.tsx
  * Left navigation sidebar for FleetDash.
- * Week 1 – Static UI. Navigation items are non-functional links
- * (no React Router yet). Ready for future route wiring.
+ * Uses React Router NavLink for real navigation.
  *
  * UI Enhancement v2: Framer Motion AnimatePresence for collapse,
  * motion.button whileHover glow, system status bar at bottom.
- * All existing nav IDs, aria attributes, handleNavClick preserved.
+ * All existing nav IDs, aria attributes preserved.
  */
 
 import React, { useState } from 'react';
+import { NavLink } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -18,6 +18,7 @@ interface NavItem {
   id: string;
   label: string;
   icon: string;
+  path: string;
   badge?: number;
   color?: string;
 }
@@ -25,15 +26,15 @@ interface NavItem {
 // ── Constants ──────────────────────────────────────────────────────────────────
 
 const PRIMARY_NAV: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: '⊞', color: '#4F8CFF' },
-  { id: 'live-map',  label: 'Live Map',  icon: '🗺', color: '#00D4FF' },
-  { id: 'vehicles',  label: 'Vehicles',  icon: '🚚', color: '#31D67B' },
-  { id: 'alerts',    label: 'Alerts',    icon: '🔔', badge: 4, color: '#FF5C5C' },
+  { id: 'dashboard', label: 'Dashboard', icon: '⊞', path: '/',         color: '#4F8CFF' },
+  { id: 'live-map',  label: 'Live Map',  icon: '🗺', path: '/live-map', color: '#00D4FF' },
+  { id: 'vehicles',  label: 'Vehicles',  icon: '🚚', path: '/vehicles', color: '#31D67B' },
+  { id: 'alerts',    label: 'Alerts',    icon: '🔔', path: '/alerts',   badge: 4, color: '#FF5C5C' },
 ];
 
 const SECONDARY_NAV: NavItem[] = [
-  { id: 'reports',  label: 'Reports',  icon: '📊', color: '#A78BFA' },
-  { id: 'settings', label: 'Settings', icon: '⚙', color: '#8DA2C0' },
+  { id: 'reports',  label: 'Reports',  icon: '📊', path: '/reports',  color: '#A78BFA' },
+  { id: 'settings', label: 'Settings', icon: '⚙', path: '/settings', color: '#8DA2C0' },
 ];
 
 // ── Animation variants ─────────────────────────────────────────────────────────
@@ -59,15 +60,56 @@ const badgeVariants: Record<string, any> = {
 // ── Component ──────────────────────────────────────────────────────────────────
 
 const Sidebar: React.FC = () => {
-  const [activeId, setActiveId]   = useState<string>('dashboard');
   const [collapsed, setCollapsed] = useState<boolean>(false);
 
-  const handleNavClick = (id: string): void => {
-    setActiveId(id);
-    // TODO Week 2: wire up React Router navigation here
-  };
-
   const handleToggle = (): void => setCollapsed(prev => !prev);
+
+  // Render a single nav item using NavLink
+  const renderNavItem = (item: NavItem) => (
+    <NavLink
+      key={item.id}
+      to={item.path}
+      end={item.path === '/'}
+      id={`sidebar-nav-${item.id}`}
+      className={({ isActive }) =>
+        `sidebar__nav-item${isActive ? ' active' : ''}`
+      }
+      title={collapsed ? item.label : undefined}
+    >
+      <span className="nav-icon" aria-hidden="true">
+        {item.icon}
+      </span>
+
+      <AnimatePresence>
+        {!collapsed && (
+          <motion.span
+            variants={labelVariants}
+            initial="collapsed"
+            animate="expanded"
+            exit="collapsed"
+            style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
+          >
+            {item.label}
+          </motion.span>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {item.badge !== undefined && !collapsed && (
+          <motion.span
+            className="sidebar__badge"
+            aria-label={`${item.badge} unread alerts`}
+            variants={badgeVariants}
+            initial="collapsed"
+            animate="expanded"
+            exit="collapsed"
+          >
+            {item.badge}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </NavLink>
+  );
 
   return (
     <motion.aside
@@ -139,63 +181,7 @@ const Sidebar: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {PRIMARY_NAV.map((item) => (
-          <motion.button
-            key={item.id}
-            id={`sidebar-nav-${item.id}`}
-            className={`sidebar__nav-item${activeId === item.id ? ' active' : ''}`}
-            onClick={() => handleNavClick(item.id)}
-            aria-current={activeId === item.id ? 'page' : undefined}
-            type="button"
-            title={collapsed ? item.label : undefined}
-            whileHover={{
-              x: collapsed ? 0 : 4,
-              backgroundColor: activeId === item.id
-                ? undefined
-                : 'rgba(79,140,255,0.09)',
-            }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ duration: 0.15 }}
-          >
-            <motion.span
-              className="nav-icon"
-              aria-hidden="true"
-              whileHover={{ scale: 1.2 }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              {item.icon}
-            </motion.span>
-
-            <AnimatePresence>
-              {!collapsed && (
-                <motion.span
-                  variants={labelVariants}
-                  initial="collapsed"
-                  animate="expanded"
-                  exit="collapsed"
-                  style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
-                >
-                  {item.label}
-                </motion.span>
-              )}
-            </AnimatePresence>
-
-            <AnimatePresence>
-              {item.badge !== undefined && !collapsed && (
-                <motion.span
-                  className="sidebar__badge"
-                  aria-label={`${item.badge} unread alerts`}
-                  variants={badgeVariants}
-                  initial="collapsed"
-                  animate="expanded"
-                  exit="collapsed"
-                >
-                  {item.badge}
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
-        ))}
+        {PRIMARY_NAV.map(renderNavItem)}
 
         <AnimatePresence>
           {!collapsed && (
@@ -211,45 +197,7 @@ const Sidebar: React.FC = () => {
           )}
         </AnimatePresence>
 
-        {SECONDARY_NAV.map((item) => (
-          <motion.button
-            key={item.id}
-            id={`sidebar-nav-${item.id}`}
-            className={`sidebar__nav-item${activeId === item.id ? ' active' : ''}`}
-            onClick={() => handleNavClick(item.id)}
-            aria-current={activeId === item.id ? 'page' : undefined}
-            type="button"
-            title={collapsed ? item.label : undefined}
-            whileHover={{
-              x: collapsed ? 0 : 4,
-              backgroundColor: 'rgba(79,140,255,0.09)',
-            }}
-            whileTap={{ scale: 0.97 }}
-            transition={{ duration: 0.15 }}
-          >
-            <motion.span
-              className="nav-icon"
-              aria-hidden="true"
-              whileHover={{ scale: 1.2 }}
-              transition={{ type: 'spring', stiffness: 400 }}
-            >
-              {item.icon}
-            </motion.span>
-            <AnimatePresence>
-              {!collapsed && (
-                <motion.span
-                  variants={labelVariants}
-                  initial="collapsed"
-                  animate="expanded"
-                  exit="collapsed"
-                  style={{ overflow: 'hidden', whiteSpace: 'nowrap' }}
-                >
-                  {item.label}
-                </motion.span>
-              )}
-            </AnimatePresence>
-          </motion.button>
-        ))}
+        {SECONDARY_NAV.map(renderNavItem)}
       </nav>
 
       {/* System Status Bar */}
