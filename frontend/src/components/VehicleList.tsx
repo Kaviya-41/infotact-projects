@@ -21,153 +21,203 @@ export interface Vehicle {
   vehicleType: string;
   vehicleTypeIcon: string;
   status: VehicleStatus;
-  speedKmh: number | null;   // null when Offline
+  speedKmh: number | null;
   latitude: number;
   longitude: number;
   lastUpdated: string;
+  fuelPct?: number;
+  batteryPct?: number;
+  gpsSignal?: string;
+  engineState?: 'ON' | 'OFF' | 'IDLE';
+  locationName?: string;
 }
 
 interface VehicleListProps {
-  /** Vehicle records – defaults to dummy data when undefined (Week 1) */
   vehicles?: Vehicle[];
 }
-
-// ── Dummy Data (Week 1) ────────────────────────────────────────────────────────
 
 const DUMMY_VEHICLES: Vehicle[] = [
   {
     vehicleId:         'FLT-001',
     driverName:        'Rahul Kumar',
     driverInitials:    'RK',
-    driverAvatarColor: '#6366f1',
-    vehicleType:       'Truck',
+    driverAvatarColor: '#4F8CFF',
+    vehicleType:       'Heavy Truck',
     vehicleTypeIcon:   '🚛',
     status:            'Moving',
     speedKmh:          65,
     latitude:          12.9716,
     longitude:         77.5946,
     lastUpdated:       '2 sec ago',
+    fuelPct:           84,
+    batteryPct:        96,
+    gpsSignal:         '📶 4/4',
+    engineState:       'ON',
+    locationName:      'Bengaluru East',
   },
   {
     vehicleId:         'FLT-002',
     driverName:        'Arjun Singh',
     driverInitials:    'AS',
-    driverAvatarColor: '#ec4899',
-    vehicleType:       'Van',
+    driverAvatarColor: '#A78BFA',
+    vehicleType:       'Cargo Van',
     vehicleTypeIcon:   '🚐',
-    status:            'Stopped',
-    speedKmh:          0,
+    status:            'Moving',
+    speedKmh:          48,
     latitude:          13.0827,
     longitude:         80.2707,
-    lastUpdated:       '10 sec ago',
+    lastUpdated:       '5 sec ago',
+    fuelPct:           72,
+    batteryPct:        91,
+    gpsSignal:         '📶 4/4',
+    engineState:       'ON',
+    locationName:      'Outer Ring Road',
   },
   {
     vehicleId:         'FLT-003',
     driverName:        'Kiran Patel',
     driverInitials:    'KP',
-    driverAvatarColor: '#ef4444',
-    vehicleType:       'Truck',
+    driverAvatarColor: '#FF5C5C',
+    vehicleType:       'Heavy Truck',
     vehicleTypeIcon:   '🚛',
-    status:            'Offline',
-    speedKmh:          null,
+    status:            'Stopped',
+    speedKmh:          0,
     latitude:          11.0168,
     longitude:         76.9558,
-    lastUpdated:       '5 min ago',
+    lastUpdated:       '12 sec ago',
+    fuelPct:           18,
+    batteryPct:        88,
+    gpsSignal:         '📶 3/4',
+    engineState:       'IDLE',
+    locationName:      'Whitefield Depot',
   },
   {
     vehicleId:         'FLT-004',
     driverName:        'Naveen Reddy',
     driverInitials:    'NR',
-    driverAvatarColor: '#10b981',
-    vehicleType:       'Trailer',
+    driverAvatarColor: '#31D67B',
+    vehicleType:       'Trailer Hauler',
     vehicleTypeIcon:   '🚜',
     status:            'Moving',
     speedKmh:          72,
     latitude:          17.3850,
     longitude:         78.4867,
     lastUpdated:       '1 sec ago',
+    fuelPct:           90,
+    batteryPct:        98,
+    gpsSignal:         '📶 4/4',
+    engineState:       'ON',
+    locationName:      'Airport Expressway',
   },
   {
     vehicleId:         'FLT-005',
     driverName:        'Priya Sharma',
     driverInitials:    'PS',
-    driverAvatarColor: '#f59e0b',
+    driverAvatarColor: '#FFB547',
     vehicleType:       'Mini Truck',
     vehicleTypeIcon:   '🚚',
-    status:            'Moving',
-    speedKmh:          54,
+    status:            'Offline',
+    speedKmh:          null,
     latitude:          15.3173,
     longitude:         75.7139,
-    lastUpdated:       '8 sec ago',
+    lastUpdated:       '4 min ago',
+    fuelPct:           64,
+    batteryPct:        45,
+    gpsSignal:         '⚠️ 0/4',
+    engineState:       'OFF',
+    locationName:      'Electronic City Hub',
   },
   {
     vehicleId:         'FLT-006',
     driverName:        'Vignesh Rajan',
     driverInitials:    'VR',
     driverAvatarColor: '#8b5cf6',
-    vehicleType:       'Container',
+    vehicleType:       'Container Carrier',
     vehicleTypeIcon:   '🏗️',
-    status:            'Stopped',
+    status:            'Idle',
     speedKmh:          0,
     latitude:          13.6288,
     longitude:         79.4192,
-    lastUpdated:       '12 sec ago',
+    lastUpdated:       '10 sec ago',
+    fuelPct:           58,
+    batteryPct:        82,
+    gpsSignal:         '📶 3/4',
+    engineState:       'IDLE',
+    locationName:      'Hosur Terminal',
   },
   {
     vehicleId:         'FLT-007',
     driverName:        'Suresh Babu',
     driverInitials:    'SB',
-    driverAvatarColor: '#3b82f6',
-    vehicleType:       'Truck',
+    driverAvatarColor: '#00D4FF',
+    vehicleType:       'Heavy Truck',
     vehicleTypeIcon:   '🚛',
     status:            'Moving',
     speedKmh:          68,
     latitude:          12.2958,
     longitude:         76.6394,
     lastUpdated:       '3 sec ago',
+    fuelPct:           79,
+    batteryPct:        94,
+    gpsSignal:         '📶 4/4',
+    engineState:       'ON',
+    locationName:      'Tech Park Bypass',
   },
   {
     vehicleId:         'FLT-008',
     driverName:        'Deepak Menon',
     driverInitials:    'DM',
     driverAvatarColor: '#06b6d4',
-    vehicleType:       'Van',
+    vehicleType:       'Cargo Van',
     vehicleTypeIcon:   '🚐',
-    status:            'Offline',
-    speedKmh:          null,
+    status:            'Stopped',
+    speedKmh:          0,
     latitude:          10.8505,
     longitude:         76.2711,
-    lastUpdated:       '9 min ago',
+    lastUpdated:       '8 sec ago',
+    fuelPct:           55,
+    batteryPct:        82,
+    gpsSignal:         '📶 4/4',
+    engineState:       'IDLE',
+    locationName:      'Central Logistics Hub',
   },
   {
     vehicleId:         'FLT-009',
     driverName:        'Akash Verma',
     driverInitials:    'AV',
     driverAvatarColor: '#f97316',
-    vehicleType:       'Trailer',
+    vehicleType:       'Trailer Hauler',
     vehicleTypeIcon:   '🚜',
     status:            'Moving',
     speedKmh:          61,
     latitude:          9.9252,
     longitude:         78.1198,
-    lastUpdated:       '5 sec ago',
+    lastUpdated:       '4 sec ago',
+    fuelPct:           87,
+    batteryPct:        95,
+    gpsSignal:         '📶 4/4',
+    engineState:       'ON',
+    locationName:      'Industrial Corridor',
   },
   {
     vehicleId:         'FLT-010',
     driverName:        'Mohan Das',
     driverInitials:    'MD',
     driverAvatarColor: '#a855f7',
-    vehicleType:       'Truck',
+    vehicleType:       'Heavy Truck',
     vehicleTypeIcon:   '🚛',
-    status:            'Moving',
-    speedKmh:          58,
+    status:            'Offline',
+    speedKmh:          null,
     latitude:          11.1271,
     longitude:         78.6569,
-    lastUpdated:       '7 sec ago',
+    lastUpdated:       '18 min ago',
+    fuelPct:           32,
+    batteryPct:        30,
+    gpsSignal:         '⚠️ 0/4',
+    engineState:       'OFF',
+    locationName:      'North Cargo Terminal',
   },
 ];
-
-// ── Helpers ────────────────────────────────────────────────────────────────────
 
 function getStatusClass(status: VehicleStatus): string {
   const map: Record<VehicleStatus, string> = {
@@ -189,175 +239,238 @@ function getStatusEmoji(status: VehicleStatus): string {
   return map[status];
 }
 
-function formatSpeed(speedKmh: number | null): React.ReactNode {
-  if (speedKmh === null) {
-    return <span className="speed-na" aria-label="Speed unavailable">—</span>;
-  }
-  return (
-    <div className="speed-cell">
-      <span className="speed-value">{speedKmh}</span>
-      <span className="speed-unit">km/h</span>
-    </div>
-  );
-}
-
-function formatCoord(value: number): string {
-  return value.toFixed(4);
-}
-
-// ── Component ──────────────────────────────────────────────────────────────────
-
 const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
   const [filterStatus, setFilterStatus] = useState<VehicleStatus | 'All'>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 6;
 
-  // Week 1: fall back to static dummy data when no live feed yet
   const sourceVehicles: Vehicle[] = useMemo(
     () => vehicles ?? DUMMY_VEHICLES,
     [vehicles],
   );
 
   const filteredVehicles: Vehicle[] = useMemo(() => {
-    if (filterStatus === 'All') return sourceVehicles;
-    return sourceVehicles.filter((v) => v.status === filterStatus);
-  }, [sourceVehicles, filterStatus]);
+    return sourceVehicles.filter((v) => {
+      const matchesStatus = filterStatus === 'All' || v.status === filterStatus;
+      const matchesSearch =
+        v.vehicleId.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        v.driverName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (v.locationName && v.locationName.toLowerCase().includes(searchQuery.toLowerCase()));
+      return matchesStatus && matchesSearch;
+    });
+  }, [sourceVehicles, filterStatus, searchQuery]);
+
+  const totalPages = Math.ceil(filteredVehicles.length / itemsPerPage) || 1;
+  const paginatedVehicles = useMemo(() => {
+    const start = (currentPage - 1) * itemsPerPage;
+    return filteredVehicles.slice(start, start + itemsPerPage);
+  }, [filteredVehicles, currentPage]);
 
   const filterOptions: Array<VehicleStatus | 'All'> = ['All', 'Moving', 'Stopped', 'Offline', 'Idle'];
 
+  const handleExportCSV = () => {
+    const csvContent =
+      'data:text/csv;charset=utf-8,' +
+      ['Vehicle ID,Driver,Type,Status,Speed,Fuel,Battery,Location'].join(',') +
+      '\n' +
+      sourceVehicles.map(v => `${v.vehicleId},${v.driverName},${v.vehicleType},${v.status},${v.speedKmh ?? 0},${v.fuelPct ?? 0}%,${v.batteryPct ?? 0}%,${v.locationName ?? 'N/A'}`).join('\n');
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement('a');
+    link.setAttribute('href', encodedUri);
+    link.setAttribute('download', `fleet_vehicles_export_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
-    <section aria-label="Vehicle list" className="vehicle-list-card">
+    <section aria-label="Enterprise vehicle fleet" className="vehicle-list-card">
       {/* ── Card Header ──────────────────────────────────────────── */}
       <div className="vehicle-list-card__header">
         <div className="vehicle-list-card__title">
           <span aria-hidden="true">🚚</span>
-          Vehicle Fleet
+          Enterprise Vehicle Telemetry
           <span className="vehicle-list-card__count">
-            {filteredVehicles.length} / {sourceVehicles.length}
+            {filteredVehicles.length} of {sourceVehicles.length} Vehicles
           </span>
         </div>
 
-        {/* Status Filter Pills */}
-        <div className="map-card__controls" role="group" aria-label="Filter by vehicle status">
-          {filterOptions.map((opt) => (
-            <button
-              key={opt}
-              id={`vehicle-filter-${opt.toLowerCase()}`}
-              className={`map-btn${filterStatus === opt ? ' active' : ''}`}
-              type="button"
-              onClick={() => setFilterStatus(opt)}
-              aria-pressed={filterStatus === opt}
-            >
-              {opt}
-            </button>
-          ))}
+        {/* Toolbar: Search, Filters, Export */}
+        <div className="vehicle-table-toolbar">
+          {/* Table Search */}
+          <div className="vehicle-table-search">
+            <span aria-hidden="true">🔍</span>
+            <input
+              type="text"
+              placeholder="Filter by ID, driver, location..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+            />
+          </div>
+
+          {/* Status Filter Pills */}
+          <div className="map-card__controls" role="group" aria-label="Filter by vehicle status">
+            {filterOptions.map((opt) => (
+              <button
+                key={opt}
+                id={`vehicle-filter-${opt.toLowerCase()}`}
+                className={`map-btn${filterStatus === opt ? ' active' : ''}`}
+                type="button"
+                onClick={() => {
+                  setFilterStatus(opt);
+                  setCurrentPage(1);
+                }}
+                aria-pressed={filterStatus === opt}
+              >
+                {opt}
+              </button>
+            ))}
+          </div>
+
+          {/* Export Button */}
+          <button
+            className="vehicle-export-btn"
+            type="button"
+            onClick={handleExportCSV}
+            title="Export CSV Telemetry"
+          >
+            📥 Export CSV
+          </button>
         </div>
       </div>
 
-      {/* ── Table ────────────────────────────────────────────────── */}
+      {/* ── Enterprise Table ─────────────────────────────────────── */}
       <div className="vehicle-table-wrap">
-        <table
-          className="vehicle-table"
-          aria-label="Fleet vehicles"
-          aria-rowcount={filteredVehicles.length}
-        >
+        <table className="vehicle-table enterprise" aria-label="Fleet telemetry table">
           <thead>
             <tr>
               <th scope="col">#</th>
-              <th scope="col">Vehicle ID</th>
-              <th scope="col">Driver Name</th>
-              <th scope="col">Vehicle Type</th>
+              <th scope="col">Vehicle</th>
+              <th scope="col">Driver</th>
               <th scope="col">Status</th>
               <th scope="col">Speed</th>
-              <th scope="col">Latitude</th>
-              <th scope="col">Longitude</th>
-              <th scope="col">Last Updated</th>
+              <th scope="col">Fuel Tank</th>
+              <th scope="col">Battery</th>
+              <th scope="col">GPS Signal</th>
+              <th scope="col">Engine</th>
+              <th scope="col">Location Area</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
-            {filteredVehicles.map((vehicle, index) => (
-              <tr
-                key={vehicle.vehicleId}
-                aria-rowindex={index + 1}
-                className={index % 2 === 0 ? 'row-even' : 'row-odd'}
-              >
-                {/* Row Number */}
-                <td>
-                  <span className="row-index">{index + 1}</span>
-                </td>
+            {paginatedVehicles.map((vehicle, index) => {
+              const globalIndex = (currentPage - 1) * itemsPerPage + index + 1;
+              return (
+                <tr key={vehicle.vehicleId} className={index % 2 === 0 ? 'row-even' : 'row-odd'}>
+                  {/* # */}
+                  <td><span className="row-index">{globalIndex}</span></td>
 
-                {/* Vehicle ID */}
-                <td>
-                  <div className="vehicle-id">
-                    <div className="vehicle-id__icon" aria-hidden="true">
-                      {vehicle.vehicleTypeIcon}
+                  {/* Vehicle Icon + ID */}
+                  <td>
+                    <div className="vehicle-id">
+                      <div className="vehicle-id__icon-wrap">{vehicle.vehicleTypeIcon}</div>
+                      <div>
+                        <span className="vehicle-id__text">{vehicle.vehicleId}</span>
+                        <span className="vehicle-id__sub">{vehicle.vehicleType}</span>
+                      </div>
                     </div>
-                    <span className="vehicle-id__text">{vehicle.vehicleId}</span>
-                  </div>
-                </td>
+                  </td>
 
-                {/* Driver Name */}
-                <td>
-                  <div className="driver-info">
-                    <div
-                      className="driver-avatar"
-                      style={{ background: vehicle.driverAvatarColor }}
-                      aria-hidden="true"
+                  {/* Driver Photo/Avatar + Name */}
+                  <td>
+                    <div className="driver-info">
+                      <div
+                        className="driver-avatar-badge"
+                        style={{ background: vehicle.driverAvatarColor }}
+                      >
+                        {vehicle.driverInitials}
+                        <span className="online-dot" />
+                      </div>
+                      <span className="driver-name-text">{vehicle.driverName}</span>
+                    </div>
+                  </td>
+
+                  {/* Status Badge */}
+                  <td>
+                    <span className={`status-badge ${getStatusClass(vehicle.status)}`}>
+                      <span className="status-dot-pulse" aria-hidden="true">{getStatusEmoji(vehicle.status)}</span>
+                      {vehicle.status}
+                    </span>
+                  </td>
+
+                  {/* Speed */}
+                  <td>
+                    <div className="speed-cell">
+                      <span className="speed-val">{vehicle.speedKmh ?? 0}</span>
+                      <span className="speed-unit">km/h</span>
+                    </div>
+                  </td>
+
+                  {/* Fuel % Progress Bar */}
+                  <td>
+                    <div className="table-bar-cell">
+                      <div className="bar-val-text">{vehicle.fuelPct ?? 75}%</div>
+                      <div className="table-progress-track">
+                        <div
+                          className="table-progress-fill green"
+                          style={{ width: `${vehicle.fuelPct ?? 75}%` }}
+                        />
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* Battery % Progress Bar */}
+                  <td>
+                    <div className="table-bar-cell">
+                      <div className="bar-val-text">{vehicle.batteryPct ?? 90}%</div>
+                      <div className="table-progress-track">
+                        <div
+                          className="table-progress-fill purple"
+                          style={{ width: `${vehicle.batteryPct ?? 90}%` }}
+                        />
+                      </div>
+                    </div>
+                  </td>
+
+                  {/* GPS Signal */}
+                  <td>
+                    <span className="gps-signal-cell">{vehicle.gpsSignal ?? '📶 4/4'}</span>
+                  </td>
+
+                  {/* Engine State */}
+                  <td>
+                    <span className={`engine-badge engine-${(vehicle.engineState ?? 'ON').toLowerCase()}`}>
+                      {vehicle.engineState ?? 'ON'}
+                    </span>
+                  </td>
+
+                  {/* Location Area */}
+                  <td>
+                    <span className="location-cell">{vehicle.locationName ?? 'Bengaluru Central'}</span>
+                  </td>
+
+                  {/* Action Button */}
+                  <td>
+                    <button
+                      className="table-action-btn"
+                      type="button"
+                      onClick={() => alert(`Opening telemetry feed for ${vehicle.vehicleId}`)}
                     >
-                      {vehicle.driverInitials}
-                    </div>
-                    <span>{vehicle.driverName}</span>
-                  </div>
-                </td>
+                      📡 Track
+                    </button>
+                  </td>
+                </tr>
+              );
+            })}
 
-                {/* Vehicle Type */}
-                <td>
-                  <span className="vehicle-type-chip">
-                    <span aria-hidden="true">{vehicle.vehicleTypeIcon}</span>
-                    {vehicle.vehicleType}
-                  </span>
-                </td>
-
-                {/* Status Badge */}
-                <td>
-                  <span
-                    className={`status-badge ${getStatusClass(vehicle.status)}`}
-                    aria-label={`Status: ${vehicle.status}`}
-                  >
-                    <span aria-hidden="true">{getStatusEmoji(vehicle.status)}</span>
-                    {vehicle.status}
-                  </span>
-                </td>
-
-                {/* Speed */}
-                <td>{formatSpeed(vehicle.speedKmh)}</td>
-
-                {/* Latitude */}
-                <td>
-                  <span className="coord-cell" title={`Latitude: ${vehicle.latitude}`}>
-                    {formatCoord(vehicle.latitude)}
-                  </span>
-                </td>
-
-                {/* Longitude */}
-                <td>
-                  <span className="coord-cell" title={`Longitude: ${vehicle.longitude}`}>
-                    {formatCoord(vehicle.longitude)}
-                  </span>
-                </td>
-
-                {/* Last Updated */}
-                <td>
-                  <span className="last-updated">{vehicle.lastUpdated}</span>
-                </td>
-              </tr>
-            ))}
-
-            {filteredVehicles.length === 0 && (
+            {paginatedVehicles.length === 0 && (
               <tr>
-                <td
-                  colSpan={9}
-                  style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}
-                >
-                  No vehicles match the selected filter.
+                <td colSpan={11} style={{ textAlign: 'center', padding: '40px', color: 'var(--color-text-muted)' }}>
+                  No vehicles match the selected search/filter criteria.
                 </td>
               </tr>
             )}
@@ -365,15 +478,34 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
         </table>
       </div>
 
-      {/* ── Card Footer ──────────────────────────────────────────── */}
+      {/* ── Card Footer & Pagination ────────────────────────────── */}
       <div className="vehicle-list-card__footer">
         <span className="footer-info">
-          Showing {filteredVehicles.length} of {sourceVehicles.length} vehicles
-          {/* TODO Week 3: replace with live count from Socket.io */}
+          Showing {paginatedVehicles.length} of {filteredVehicles.length} matching vehicles
         </span>
-        <button id="vehicle-view-all-btn" className="footer-link" type="button">
-          View all vehicles →
-        </button>
+
+        {/* Pagination Controls */}
+        <div className="table-pagination">
+          <button
+            type="button"
+            className="pag-btn"
+            disabled={currentPage === 1}
+            onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
+          >
+            ‹ Prev
+          </button>
+          <span className="pag-page-text">
+            Page {currentPage} of {totalPages}
+          </span>
+          <button
+            type="button"
+            className="pag-btn"
+            disabled={currentPage === totalPages}
+            onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
+          >
+            Next ›
+          </button>
+        </div>
       </div>
     </section>
   );

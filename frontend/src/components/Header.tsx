@@ -79,26 +79,34 @@ const Header: React.FC<HeaderProps> = ({
         <p className="header__subtitle">{subtitle}</p>
       </div>
 
-      {/* Fleet Status Pill */}
-      <motion.div
-        className="header__fleet-status"
-        role="status"
-        aria-label="Fleet online status"
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2 }}
-      >
-        <span className="header__fleet-dot" aria-hidden="true" />
-        42 Online
-      </motion.div>
+      {/* Top Navigation Enterprise Status Badges */}
+      <div className="header__status-strip" role="region" aria-label="Enterprise operational status">
+        {/* Weather Widget */}
+        <div className="header__status-pill header__weather" title="Live Weather Center">
+          <span className="header__pill-icon" aria-hidden="true">☀</span>
+          <span className="header__pill-text">29°C Bengaluru</span>
+        </div>
 
-      {/* Weather placeholder */}
-      <div className="header__weather" aria-label="Weather placeholder" title="Weather data – Week 3">
-        <span className="header__weather-icon" aria-hidden="true">⛅</span>
-        <span className="header__weather-text">28°C</span>
+        {/* GPS Status */}
+        <div className="header__status-pill header__gps" title="GPS Satellite Network Active">
+          <span className="header__pill-icon" aria-hidden="true">🛰</span>
+          <span className="header__pill-text">GPS Online</span>
+        </div>
+
+        {/* Server Status */}
+        <div className="header__status-pill header__server" title="Server Operations Normal">
+          <span className="header__pill-dot green" aria-hidden="true" />
+          <span className="header__pill-text">Server Healthy</span>
+        </div>
+
+        {/* Connection Status */}
+        <div className="header__status-pill header__socket" title="Real-time Telemetry Stream Active">
+          <span className="header__pill-dot green" aria-hidden="true" />
+          <span className="header__pill-text">Socket Ready</span>
+        </div>
       </div>
 
-      {/* Search */}
+      {/* Search Bar */}
       <div className="header__search" role="search">
         <span className="header__search-icon" aria-hidden="true">🔍</span>
         <input

@@ -21,6 +21,8 @@ import RecentAlerts from '../components/RecentAlerts';
 import FleetStatusCard from '../components/FleetStatusCard';
 import Footer from '../components/Footer';
 
+import RightSidebar from '../components/RightSidebar';
+
 // ── Lazy load analytics (heavy charts) ────────────────────────────────────────
 const FleetAnalytics = lazy(() => import('../components/FleetAnalytics'));
 
@@ -65,12 +67,6 @@ const SectionLabel: React.FC<{ icon: string; title: string; subtitle?: string }>
 // ── Component ──────────────────────────────────────────────────────────────────
 
 const Dashboard: React.FC = () => {
-  /*
-   * TODO Week 3: Replace with useFleetSocket() hook to receive live:
-   *   const { stats, vehicles, alerts, isConnected } = useFleetSocket();
-   * For Week 1 we pass no props → components fall back to dummy data.
-   */
-
   return (
     <motion.div
       className="dashboard-page"
@@ -78,45 +74,83 @@ const Dashboard: React.FC = () => {
       initial="initial"
       animate="enter"
     >
-      {/* ── KPI Stats ─────────────────────────────────────────────── */}
-      <SectionLabel
-        icon="📊"
-        title="Fleet Overview"
-        subtitle="Live key performance indicators"
-      />
-      <DashboardCards />
-
-      {/* ── Live Map ──────────────────────────────────────────────── */}
-      <SectionLabel
-        icon="🗺"
-        title="Live Map"
-        subtitle="Real-time vehicle positions & route tracking"
-      />
-      <MapPlaceholder height={520} />
-
-      {/* ── Fleet Status + Recent Alerts Row ──────────────────────── */}
-      <SectionLabel
-        icon="🚦"
-        title="Status & Alerts"
-        subtitle="Fleet health and recent incident feed"
-      />
-      <div className="dashboard-two-col">
-        <FleetStatusCard />
-        <RecentAlerts />
+      {/* ── Dashboard Command Center Hero Banner ───────────────────── */}
+      <div className="dashboard-hero" id="dashboard-hero-banner">
+        <div className="hero-content">
+          <div className="hero-badge">
+            <span className="live-dot" />
+            ENTERPRISE LOGISTICS COMMAND CENTER
+          </div>
+          <h1 className="hero-title">Fleet Operations Center</h1>
+          <p className="hero-subtitle">
+            Autonomous Fleet Telemetry · Route Optimization · Global Supply Chain Monitoring
+          </p>
+        </div>
+        <div className="hero-metrics-pill">
+          <div className="h-metric">
+            <span className="h-val green">3,420 km</span>
+            <span className="h-lbl">Distance Today</span>
+          </div>
+          <div className="h-divider" />
+          <div className="h-metric">
+            <span className="h-val cyan">42 Vehicles</span>
+            <span className="h-lbl">Telemetry Active</span>
+          </div>
+          <div className="h-divider" />
+          <div className="h-metric">
+            <span className="h-val purple">99.99%</span>
+            <span className="h-lbl">Network Uptime</span>
+          </div>
+        </div>
       </div>
 
-      {/* ── Vehicle Table ──────────────────────────────────────────── */}
-      <SectionLabel
-        icon="🚛"
-        title="Vehicle Fleet"
-        subtitle="Detailed view of all vehicles and driver status"
-      />
-      <VehicleList />
+      {/* ── Main Layout: Dashboard Content + Floating Right Panel ── */}
+      <div className="dashboard-main-container">
+        <div className="dashboard-center-content">
+          {/* ── KPI Stats ─────────────────────────────────────────────── */}
+          <SectionLabel
+            icon="📊"
+            title="Fleet Overview"
+            subtitle="Live key performance indicators"
+          />
+          <DashboardCards />
 
-      {/* ── Fleet Analytics ────────────────────────────────────────── */}
-      <Suspense fallback={<AnalyticsSkeleton />}>
-        <FleetAnalytics />
-      </Suspense>
+          {/* ── Live Map ──────────────────────────────────────────────── */}
+          <SectionLabel
+            icon="🗺"
+            title="Live Command Map"
+            subtitle="Real-time vehicle positions, geofences & route tracking"
+          />
+          <MapPlaceholder height={540} />
+
+          {/* ── Fleet Status + Recent Alerts Row ──────────────────────── */}
+          <SectionLabel
+            icon="🚦"
+            title="Status & Incident Stream"
+            subtitle="Fleet health breakdown and real-time alert feed"
+          />
+          <div className="dashboard-two-col">
+            <FleetStatusCard />
+            <RecentAlerts />
+          </div>
+
+          {/* ── Vehicle Table ──────────────────────────────────────────── */}
+          <SectionLabel
+            icon="🚛"
+            title="Vehicle Fleet Telemetry"
+            subtitle="Detailed view of all connected vehicles and driver status"
+          />
+          <VehicleList />
+
+          {/* ── Fleet Analytics ────────────────────────────────────────── */}
+          <Suspense fallback={<AnalyticsSkeleton />}>
+            <FleetAnalytics />
+          </Suspense>
+        </div>
+
+        {/* ── Floating Right Panel ───────────────────────────────────── */}
+        <RightSidebar />
+      </div>
 
       {/* ── Footer ────────────────────────────────────────────────── */}
       <Footer />

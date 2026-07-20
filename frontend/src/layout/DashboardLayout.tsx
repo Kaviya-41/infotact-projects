@@ -189,6 +189,22 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   return (
     <div className="dashboard-shell">
+      {/* Soft radial blue background glow */}
+      <div className="bg-radial-glow" aria-hidden="true" />
+
+      {/* Subtle SVG World Map Watermark */}
+      <div className="bg-world-map" aria-hidden="true">
+        <svg viewBox="0 0 1000 500" preserveAspectRatio="xMidYMid slice" width="100%" height="100%">
+          <path
+            d="M150,150 Q180,120 220,140 T300,160 Q340,200 320,240 T250,280 Q180,260 150,220 Z M450,120 Q500,90 550,130 T650,150 Q680,220 620,260 T500,280 Q440,240 450,180 Z M750,180 Q800,160 850,200 T900,260 Q860,320 800,300 T720,240 Z M200,340 Q250,320 280,360 T260,420 Q220,440 180,400 Z M600,340 Q660,320 720,360 T760,420 Q700,460 620,440 Z"
+            fill="none"
+            stroke="rgba(79, 140, 255, 0.04)"
+            strokeWidth="2"
+            strokeDasharray="4 4"
+          />
+        </svg>
+      </div>
+
       {/* Animated background grid overlay */}
       <div className="bg-grid" aria-hidden="true" />
 
@@ -202,7 +218,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
           height: '100%',
           pointerEvents: 'none',
           zIndex: 0,
-          opacity: 0.6,
+          opacity: 0.65,
         }}
         aria-hidden="true"
       />

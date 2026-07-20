@@ -103,41 +103,41 @@ function buildCards(stats: FleetStats): StatCardData[] {
       id: 'stat-total',
       label: 'Total Vehicles',
       value: stats.total,
-      icon: '🚛',
+      icon: '🚚',
       variant: 'total',
-      trend: '+3 this month',
+      trend: '▲ +12%',
       trendDirection: 'up',
-      trendIcon: '↑',
+      trendIcon: '▲',
     },
     {
       id: 'stat-moving',
-      label: 'Moving',
+      label: 'Moving Fleet',
       value: stats.moving,
       icon: '▶',
       variant: 'moving',
-      trend: '66.7% of fleet',
+      trend: '▲ +8%',
       trendDirection: 'up',
-      trendIcon: '↑',
+      trendIcon: '▲',
     },
     {
       id: 'stat-stopped',
-      label: 'Stopped',
+      label: 'Stopped Fleet',
       value: stats.stopped,
       icon: '⏸',
       variant: 'stopped',
-      trend: '21.4% of fleet',
+      trend: '→ 0%',
       trendDirection: 'neutral',
       trendIcon: '→',
     },
     {
       id: 'stat-offline',
-      label: 'Offline',
+      label: 'Offline Vehicles',
       value: stats.offline,
       icon: '📡',
       variant: 'offline',
-      trend: '-2 since yesterday',
+      trend: '▼ -4%',
       trendDirection: 'down',
-      trendIcon: '↓',
+      trendIcon: '▼',
     },
   ];
 }
@@ -155,10 +155,21 @@ const SPARKLINE_HEIGHTS: Record<string, number[]> = {
   ontime:  [90, 93, 91, 95, 92, 96, 94, 96],
 };
 
+const COMPARISON_TEXTS: Record<string, string> = {
+  total:   'vs yesterday (+3 active)',
+  moving:  '66.7% of total fleet',
+  stopped: 'Scheduled rest / loading',
+  offline: 'Depot maintenance',
+  trips:   'vs 18 yesterday',
+  speed:   'Avg across active routes',
+  fuel:    'Optimal consumption rate',
+  ontime:  'Target >95% achieved',
+};
+
 // ── SVG Sparkline path ────────────────────────────────────────────────────────
 
 const SparklinePath: React.FC<{ heights: number[]; color: string }> = memo(({ heights, color }) => {
-  const W = 72, H = 32;
+  const W = 76, H = 34;
   const step = W / (heights.length - 1);
   const pts = heights.map((h, i) => ({ x: i * step, y: H - (h / 100) * H }));
   const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
@@ -168,13 +179,13 @@ const SparklinePath: React.FC<{ heights: number[]; color: string }> = memo(({ he
     <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} aria-hidden="true" style={{ overflow: 'visible' }}>
       <defs>
         <linearGradient id={`sg-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor={color} stopOpacity="0.3" />
+          <stop offset="0%"   stopColor={color} stopOpacity="0.4" />
           <stop offset="100%" stopColor={color} stopOpacity="0.02" />
         </linearGradient>
       </defs>
       <path d={area} fill={`url(#sg-${color.replace('#', '')})`} />
       <motion.path
-        d={d} fill="none" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"
+        d={d} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
         initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
         transition={{ duration: 1.0, ease: 'easeOut' }}
       />
@@ -196,7 +207,6 @@ function useAnimatedCounter(target: number, duration = 900): number {
       if (start === null) start = timestamp;
       const elapsed = timestamp - start;
       const progress = Math.min(elapsed / duration, 1);
-      // Ease-out cubic
       const eased = 1 - Math.pow(1 - progress, 3);
       setCount(Math.round(eased * target));
       if (progress < 1) raf = requestAnimationFrame(step);
@@ -237,6 +247,7 @@ const StatCard: React.FC<{ data: StatCardData; index: number }> = memo(({ data, 
       : 'trend-neutral';
 
   const sparkHeights = SPARKLINE_HEIGHTS[data.variant] ?? [40, 50, 45, 60, 55, 65, 58, 70];
+  const comparisonText = COMPARISON_TEXTS[data.variant] ?? "Today's comparison";
 
   // Mouse tilt (3D perspective) effect
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
@@ -268,12 +279,14 @@ const StatCard: React.FC<{ data: StatCardData; index: number }> = memo(({ data, 
       animate={{ opacity: 1, y: 0,  scale: 1 }}
       transition={{ delay: index * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* Shimmer overlay */}
+      {/* Glass shimmer overlay */}
       <div className="card-shimmer" aria-hidden="true" />
 
-      {/* Top row: icon + sparkline */}
+      {/* Top row: Large gradient icon + SVG sparkline */}
       <div className="stat-card__top-row">
-        <div className="stat-card__icon-wrap" aria-hidden="true">{data.icon}</div>
+        <div className="stat-card__icon-badge" style={{ color }} aria-hidden="true">
+          {data.icon}
+        </div>
         <div className="stat-card__sparkline-svg" aria-hidden="true">
           <SparklinePath heights={sparkHeights} color={color} />
         </div>
@@ -281,19 +294,23 @@ const StatCard: React.FC<{ data: StatCardData; index: number }> = memo(({ data, 
 
       <div className="stat-card__body">
         <p className="stat-card__label">{data.label}</p>
-        <p className="stat-card__value" style={{ color }}>
-          {animatedValue.toLocaleString()}{data.unit ?? ''}
-        </p>
-        <p className={`stat-card__trend ${trendClass}`}>
-          <span aria-hidden="true">{data.trendIcon}</span>
-          <span>{data.trend}</span>
+        <div className="stat-card__value-row">
+          <span className="stat-card__value" style={{ color }}>
+            {animatedValue.toLocaleString()}{data.unit ?? ''}
+          </span>
+          <span className={`stat-card__trend-badge ${trendClass}`}>
+            {data.trend}
+          </span>
+        </div>
+        <p className="stat-card__comparison">
+          {comparisonText}
         </p>
       </div>
 
-      {/* Decorative bar sparkline – retained for CSS theming */}
+      {/* Decorative sparkline bars fallback */}
       <div className="stat-card__sparkline" aria-hidden="true">
         {sparkHeights.map((h, i) => (
-          <div key={i} className="sparkline-bar" style={{ height: `${h}%` }} />
+          <div key={i} className="sparkline-bar" style={{ height: `${h}%`, background: color }} />
         ))}
       </div>
     </motion.article>

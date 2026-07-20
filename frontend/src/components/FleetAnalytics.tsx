@@ -363,11 +363,68 @@ const FleetAnalytics: React.FC = memo(() => {
       <div className="analytics-section-header">
         <div>
           <h2 className="analytics-section-title">
-            <span aria-hidden="true">📈</span> Fleet Analytics
+            <span aria-hidden="true">📈</span> Enterprise Fleet Analytics & Intelligence
           </h2>
-          <p className="analytics-section-subtitle">Performance metrics & operational insights</p>
+          <p className="analytics-section-subtitle">Real-time performance metrics & operational insights</p>
         </div>
-        <div className="analytics-period-badge">Last 7 Days</div>
+        <div className="analytics-period-badge">Live Telemetry · Last 24 Hours</div>
+      </div>
+
+      {/* ── Enterprise Analytics Key Metric Strip ── */}
+      <div className="analytics-kpi-strip" aria-label="Key performance metrics">
+        <div className="analytics-kpi-card" id="kpi-distance-today">
+          <span className="kpi-icon" style={{ background: 'rgba(79,140,255,0.15)', color: '#4F8CFF' }}>📏</span>
+          <div className="kpi-body">
+            <span className="kpi-label">Distance Today</span>
+            <span className="kpi-val blue">3,420 <small>km</small></span>
+            <span className="kpi-trend green">▲ +14% vs avg</span>
+          </div>
+        </div>
+
+        <div className="analytics-kpi-card" id="kpi-fuel-usage">
+          <span className="kpi-icon" style={{ background: 'rgba(52,211,153,0.15)', color: '#34D399' }}>⛽</span>
+          <div className="kpi-body">
+            <span className="kpi-label">Fuel Usage</span>
+            <span className="kpi-val green">485 <small>L</small></span>
+            <span className="kpi-trend green">▼ -5% eco-rate</span>
+          </div>
+        </div>
+
+        <div className="analytics-kpi-card" id="kpi-avg-speed">
+          <span className="kpi-icon" style={{ background: 'rgba(167,139,250,0.15)', color: '#A78BFA' }}>⚡</span>
+          <div className="kpi-body">
+            <span className="kpi-label">Average Speed</span>
+            <span className="kpi-val purple">64 <small>km/h</small></span>
+            <span className="kpi-trend muted">Optimal Speed Zone</span>
+          </div>
+        </div>
+
+        <div className="analytics-kpi-card" id="kpi-trips-completed">
+          <span className="kpi-icon" style={{ background: 'rgba(0,212,255,0.15)', color: '#00D4FF' }}>🗺</span>
+          <div className="kpi-body">
+            <span className="kpi-label">Trips Completed</span>
+            <span className="kpi-val cyan">42 <small>Trips</small></span>
+            <span className="kpi-trend green">100% on schedule</span>
+          </div>
+        </div>
+
+        <div className="analytics-kpi-card" id="kpi-idle-time">
+          <span className="kpi-icon" style={{ background: 'rgba(255,181,71,0.15)', color: '#FFB547' }}>⏱</span>
+          <div className="kpi-body">
+            <span className="kpi-label">Idle Time</span>
+            <span className="kpi-val amber">1.8 <small>hrs</small></span>
+            <span className="kpi-trend green">▼ -0.4 hr improvement</span>
+          </div>
+        </div>
+
+        <div className="analytics-kpi-card" id="kpi-utilization">
+          <span className="kpi-icon" style={{ background: 'rgba(49,214,123,0.15)', color: '#31D67B' }}>🎯</span>
+          <div className="kpi-body">
+            <span className="kpi-label">Vehicle Utilization</span>
+            <span className="kpi-val green">84%</span>
+            <span className="kpi-trend cyan">35 of 42 active</span>
+          </div>
+        </div>
       </div>
 
       {/* Charts Grid */}

@@ -97,6 +97,16 @@ const FILTER_OPTIONS: FilterType[] = ['All', 'Critical', 'Warning', 'Information
 
 // ── Sub-component: Single alert row ───────────────────────────────────────────
 
+const CATEGORY_ICONS: Record<string, string> = {
+  'alert-001': '⚠️',
+  'alert-002': '🛰️',
+  'alert-003': '⛽',
+  'alert-004': '⚡',
+  'alert-005': '🛡️',
+};
+
+// ── Sub-component: Single alert row ───────────────────────────────────────────
+
 const AlertItem: React.FC<{ alert: FleetAlert; index: number }> = memo(({ alert, index }) => (
   <motion.li
     id={alert.id}
@@ -106,24 +116,26 @@ const AlertItem: React.FC<{ alert: FleetAlert; index: number }> = memo(({ alert,
     animate={{ opacity: 1, x: 0 }}
     exit={{ opacity: 0, x: -14 }}
     transition={{ delay: index * 0.07, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-    whileHover={{ x: 4, backgroundColor: 'rgba(255,255,255,0.028)' }}
+    whileHover={{ x: 4, backgroundColor: 'rgba(255,255,255,0.038)' }}
     layout
   >
-    <span className="alert-item__icon" aria-hidden="true">
-      {getSeverityIcon(alert.severity)}
-    </span>
+    {/* Animated pulsing severity dot */}
+    <div className="alert-severity-indicator" aria-hidden="true">
+      <span className={`alert-dot-pulse severity-${alert.severity.toLowerCase()}`} />
+      <span className="alert-category-icon">{CATEGORY_ICONS[alert.id] ?? '🚨'}</span>
+    </div>
 
     <div className="alert-item__body">
       <div className="alert-item__top">
         <span className="alert-item__title">{alert.title}</span>
-        <span className={`alert-item__badge alert-badge--${alert.severity.toLowerCase()}`}>
-          {alert.severity}
+        <span className={`alert-priority-badge priority-${alert.severity.toLowerCase()}`}>
+          {getSeverityIcon(alert.severity)} {alert.severity}
         </span>
       </div>
       <p className="alert-item__desc">{alert.description}</p>
       <div className="alert-item__meta">
-        <span className="alert-item__vehicle">{alert.vehicleId}</span>
-        <span className="alert-item__time">{alert.timestamp}</span>
+        <span className="alert-item__vehicle-tag">Vehicle {alert.vehicleId}</span>
+        <span className="alert-item__time">⏱ {alert.timestamp}</span>
       </div>
     </div>
   </motion.li>
