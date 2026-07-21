@@ -121,7 +121,7 @@ const Dashboard: React.FC = () => {
             title="Live Command Map"
             subtitle="Real-time vehicle positions, geofences & route tracking"
           />
-          <MapPlaceholder height={540} />
+          <MapPlaceholder height={580} />
 
           {/* ── Fleet Status + Recent Alerts Row ──────────────────────── */}
           <SectionLabel
