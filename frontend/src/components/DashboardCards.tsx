@@ -1,12 +1,10 @@
 /**
  * DashboardCards.tsx
- * KPI stat cards: Total, Moving, Stopped, Offline + 4 extended metrics.
- * Week 1 – Static dummy data only.
- * Ready for real-time data injection via props / Socket.io in Week 3.
+ * Redesigned Enterprise KPI Statistics Section for FleetDash.
+ * Premium logistics command center UI/UX with glassmorphism, 3D mouse tilt,
+ * animated counters, live status badges, SVG sparkline graphs, and custom gradient glow accents.
  *
- * UI Enhancement v2: Framer Motion entrance + whileHover, animated counters,
- * SVG sparkline paths, mouse tilt, 8-card grid. All existing interfaces
- * and props preserved exactly.
+ * Preserves all existing FleetStats interfaces and props for 100% backward compatibility.
  */
 
 import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
@@ -19,184 +17,208 @@ export interface FleetStats {
   moving: number;
   stopped: number;
   offline: number;
+  activeTrips?: number;
+  todaysAlerts?: number;
+  avgSpeed?: number;
 }
 
-interface StatCardData {
+export type KPIVariant = 'total' | 'online' | 'offline' | 'trips' | 'alerts' | 'speed';
+
+export interface StatCardData {
   id: string;
   label: string;
   value: number;
   unit?: string;
-  icon: string;
-  variant: 'total' | 'moving' | 'stopped' | 'offline' | 'trips' | 'speed' | 'fuel' | 'ontime';
+  variant: KPIVariant;
+  subtitle: string;
   trend: string;
   trendDirection: 'up' | 'down' | 'neutral';
-  trendIcon: string;
+  statusText: string;
+  lastUpdated: string;
+  colorHex: string;
+  sparklineData: number[];
 }
 
 interface DashboardCardsProps {
-  /** Stats object – defaults to dummy data when undefined (Week 1) */
+  /** Stats object – defaults to FleetDash dummy data */
   stats?: FleetStats;
 }
 
-// ── Dummy Data (Week 1) ────────────────────────────────────────────────────────
+// ── Default Dummy Data ──────────────────────────────────────────────────
 
 const DUMMY_STATS: FleetStats = {
-  total:   42,
-  moving:  28,
-  stopped:  9,
-  offline:  5,
+  total: 42,
+  moving: 28,
+  stopped: 9,
+  offline: 5,
+  activeTrips: 23,
+  todaysAlerts: 14,
+  avgSpeed: 72,
 };
 
-// ── Extended static KPI dummy data (not driven by FleetStats) ─────────────────
+// ── Sparkline Data per variant ────────────────────────────────────────
 
-const EXTENDED_CARDS: StatCardData[] = [
-  {
-    id: 'stat-trips',
-    label: 'Active Trips',
-    value: 23,
-    icon: '🗺',
-    variant: 'trips',
-    trend: '+5 from yesterday',
-    trendDirection: 'up',
-    trendIcon: '↑',
-  },
-  {
-    id: 'stat-speed',
-    label: 'Avg Speed',
-    value: 72,
-    unit: ' km/h',
-    icon: '⚡',
-    variant: 'speed',
-    trend: '+4 km/h vs last hour',
-    trendDirection: 'up',
-    trendIcon: '↑',
-  },
-  {
-    id: 'stat-fuel',
-    label: 'Fuel Efficiency',
-    value: 91,
-    unit: '%',
-    icon: '⛽',
-    variant: 'fuel',
-    trend: '−2% vs last week',
-    trendDirection: 'down',
-    trendIcon: '↓',
-  },
-  {
-    id: 'stat-ontime',
-    label: 'On-Time Rate',
-    value: 96,
-    unit: '%',
-    icon: '✅',
-    variant: 'ontime',
-    trend: '+1% this month',
-    trendDirection: 'up',
-    trendIcon: '↑',
-  },
-];
+const SPARKLINE_DATA: Record<KPIVariant, number[]> = {
+  total:   [35, 42, 48, 52, 60, 68, 75, 88],
+  online:  [60, 72, 68, 80, 75, 88, 82, 94],
+  offline: [30, 25, 35, 20, 18, 22, 15, 12],
+  trips:   [40, 50, 45, 62, 58, 70, 78, 85],
+  alerts:  [15, 45, 25, 60, 30, 70, 40, 35],
+  speed:   [55, 62, 60, 68, 66, 72, 70, 76],
+};
 
-// ── Helpers ────────────────────────────────────────────────────────────────────
+// ── Helper to build the 6 required KPI cards ──────────────────────────
 
-function buildCards(stats: FleetStats): StatCardData[] {
+function buildKPICards(stats: FleetStats): StatCardData[] {
+  const onlineCount = stats.moving; // Moving fleet represents active online vehicles
+  const totalCount = stats.total;
+  const offlineCount = stats.offline;
+  const activeTripsCount = stats.activeTrips ?? 23;
+  const todaysAlertsCount = stats.todaysAlerts ?? 14;
+  const avgSpeedVal = stats.avgSpeed ?? 72;
+
+  const onlinePct = ((onlineCount / (totalCount || 1)) * 100).toFixed(1);
+
   return [
     {
-      id: 'stat-total',
-      label: 'Total Vehicles',
-      value: stats.total,
-      icon: '🚚',
+      id: 'kpi-total',
+      label: 'TOTAL VEHICLES',
+      value: totalCount,
       variant: 'total',
-      trend: '▲ +12%',
+      colorHex: '#3B82F6', // Blue
+      subtitle: 'Total registered fleet',
+      trend: '+12% vs last mo',
       trendDirection: 'up',
-      trendIcon: '▲',
+      statusText: 'Active System Sync',
+      lastUpdated: 'Updated just now',
+      sparklineData: SPARKLINE_DATA.total,
     },
     {
-      id: 'stat-moving',
-      label: 'Moving Fleet',
-      value: stats.moving,
-      icon: '▶',
-      variant: 'moving',
-      trend: '▲ +8%',
+      id: 'kpi-online',
+      label: 'ONLINE VEHICLES',
+      value: onlineCount,
+      variant: 'online',
+      colorHex: '#10B981', // Green
+      subtitle: `${onlinePct}% operational rate`,
+      trend: '+8% vs yesterday',
       trendDirection: 'up',
-      trendIcon: '▲',
+      statusText: 'Live Telemetry Active',
+      lastUpdated: 'Real-time sync',
+      sparklineData: SPARKLINE_DATA.online,
     },
     {
-      id: 'stat-stopped',
-      label: 'Stopped Fleet',
-      value: stats.stopped,
-      icon: '⏸',
-      variant: 'stopped',
-      trend: '→ 0%',
-      trendDirection: 'neutral',
-      trendIcon: '→',
-    },
-    {
-      id: 'stat-offline',
-      label: 'Offline Vehicles',
-      value: stats.offline,
-      icon: '📡',
+      id: 'kpi-offline',
+      label: 'OFFLINE VEHICLES',
+      value: offlineCount,
       variant: 'offline',
-      trend: '▼ -4%',
+      colorHex: '#9CA3AF', // Gray
+      subtitle: 'Depot & maintenance',
+      trend: '-4% this week',
       trendDirection: 'down',
-      trendIcon: '▼',
+      statusText: 'Depot Standby',
+      lastUpdated: 'Synced 5m ago',
+      sparklineData: SPARKLINE_DATA.offline,
+    },
+    {
+      id: 'kpi-trips',
+      label: 'ACTIVE TRIPS',
+      value: activeTripsCount,
+      variant: 'trips',
+      colorHex: '#8B5CF6', // Purple
+      subtitle: 'En route logistics',
+      trend: '+18% vs yesterday',
+      trendDirection: 'up',
+      statusText: 'In-Transit Active',
+      lastUpdated: 'Live route stream',
+      sparklineData: SPARKLINE_DATA.trips,
+    },
+    {
+      id: 'kpi-alerts',
+      label: "TODAY'S ALERTS",
+      value: todaysAlertsCount,
+      variant: 'alerts',
+      colorHex: '#EF4444', // Orange/Red
+      subtitle: '3 critical events',
+      trend: '-15% safety events',
+      trendDirection: 'down',
+      statusText: 'Attention Needed',
+      lastUpdated: 'Alert feed active',
+      sparklineData: SPARKLINE_DATA.alerts,
+    },
+    {
+      id: 'kpi-speed',
+      label: 'AVERAGE SPEED',
+      value: avgSpeedVal,
+      unit: ' km/h',
+      variant: 'speed',
+      colorHex: '#06B6D4', // Cyan
+      subtitle: 'Optimal eco-velocity',
+      trend: '+4.2 km/h avg',
+      trendDirection: 'up',
+      statusText: 'Cruise Optimal',
+      lastUpdated: 'Calculated 1m ago',
+      sparklineData: SPARKLINE_DATA.speed,
     },
   ];
 }
 
-// ── Sparkline bar heights per card variant (purely decorative) ────────────────
+// ── SVG Sparkline Path Component ───────────────────────────────────────
 
-const SPARKLINE_HEIGHTS: Record<string, number[]> = {
-  total:   [30, 45, 35, 55, 40, 60, 50, 70],
-  moving:  [50, 60, 45, 70, 55, 75, 65, 80],
-  stopped: [40, 30, 50, 35, 45, 30, 40, 35],
-  offline: [20, 30, 15, 25, 20, 15, 10, 12],
-  trips:   [35, 50, 42, 60, 55, 65, 58, 72],
-  speed:   [55, 65, 60, 72, 68, 78, 74, 82],
-  fuel:    [85, 88, 84, 90, 87, 92, 89, 91],
-  ontime:  [90, 93, 91, 95, 92, 96, 94, 96],
-};
-
-const COMPARISON_TEXTS: Record<string, string> = {
-  total:   'vs yesterday (+3 active)',
-  moving:  '66.7% of total fleet',
-  stopped: 'Scheduled rest / loading',
-  offline: 'Depot maintenance',
-  trips:   'vs 18 yesterday',
-  speed:   'Avg across active routes',
-  fuel:    'Optimal consumption rate',
-  ontime:  'Target >95% achieved',
-};
-
-// ── SVG Sparkline path ────────────────────────────────────────────────────────
-
-const SparklinePath: React.FC<{ heights: number[]; color: string }> = memo(({ heights, color }) => {
-  const W = 76, H = 34;
+const SparklinePath: React.FC<{ heights: number[]; color: string; cardId: string }> = memo(({ heights, color, cardId }) => {
+  const W = 120, H = 38;
   const step = W / (heights.length - 1);
-  const pts = heights.map((h, i) => ({ x: i * step, y: H - (h / 100) * H }));
-  const d = pts.map((p, i) => `${i === 0 ? 'M' : 'L'}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(' ');
-  const area = `${d} L${(heights.length - 1) * step},${H} L0,${H} Z`;
+  const pts = heights.map((h, i) => ({ x: i * step, y: H - (h / 100) * (H - 10) - 5 }));
+
+  let d = `M ${pts[0].x.toFixed(1)},${pts[0].y.toFixed(1)}`;
+  for (let i = 0; i < pts.length - 1; i++) {
+    const p0 = pts[i];
+    const p1 = pts[i + 1];
+    const cx1 = p0.x + (p1.x - p0.x) / 2;
+    const cy1 = p0.y;
+    const cx2 = p0.x + (p1.x - p0.x) / 2;
+    const cy2 = p1.y;
+    d += ` C ${cx1.toFixed(1)},${cy1.toFixed(1)} ${cx2.toFixed(1)},${cy2.toFixed(1)} ${p1.x.toFixed(1)},${p1.y.toFixed(1)}`;
+  }
+  const areaPath = `${d} L ${W},${H} L 0,${H} Z`;
+  const gradId = `kpi-spark-grad-${cardId}`;
 
   return (
-    <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} aria-hidden="true" style={{ overflow: 'visible' }}>
+    <svg viewBox={`0 0 ${W} ${H}`} width="100%" height={H} aria-hidden="true" style={{ overflow: 'visible' }}>
       <defs>
-        <linearGradient id={`sg-${color.replace('#', '')}`} x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%"   stopColor={color} stopOpacity="0.4" />
-          <stop offset="100%" stopColor={color} stopOpacity="0.02" />
+        <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stopColor={color} stopOpacity="0.4" />
+          <stop offset="100%" stopColor={color} stopOpacity="0.0" />
         </linearGradient>
       </defs>
-      <path d={area} fill={`url(#sg-${color.replace('#', '')})`} />
+      <path d={areaPath} fill={`url(#${gradId})`} />
       <motion.path
-        d={d} fill="none" stroke={color} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
-        initial={{ pathLength: 0 }} animate={{ pathLength: 1 }}
-        transition={{ duration: 1.0, ease: 'easeOut' }}
+        d={d}
+        fill="none"
+        stroke={color}
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        initial={{ pathLength: 0, opacity: 0 }}
+        animate={{ pathLength: 1, opacity: 1 }}
+        transition={{ duration: 1.1, ease: [0.22, 1, 0.36, 1] }}
+      />
+      <motion.circle
+        cx={pts[pts.length - 1].x}
+        cy={pts[pts.length - 1].y}
+        r="3.5"
+        fill={color}
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ delay: 0.9, duration: 0.3 }}
       />
     </svg>
   );
 });
 SparklinePath.displayName = 'SparklinePath';
 
-// ── Animated Counter ──────────────────────────────────────────────────────────
+// ── Animated Counter Hook ──────────────────────────────────────────────
 
-function useAnimatedCounter(target: number, duration = 900): number {
+function useAnimatedCounter(target: number, duration = 1000): number {
   const [count, setCount] = useState(0);
 
   useEffect(() => {
@@ -219,114 +241,170 @@ function useAnimatedCounter(target: number, duration = 900): number {
   return count;
 }
 
-// ── Card color map ────────────────────────────────────────────────────────────
+// ── KPI Icon Component ──────────────────────────────────────────────────
 
-const VARIANT_COLORS: Record<string, string> = {
-  total:   '#4F8CFF',
-  moving:  '#31D67B',
-  stopped: '#FFB547',
-  offline: '#FF5C5C',
-  trips:   '#00D4FF',
-  speed:   '#A78BFA',
-  fuel:    '#34D399',
-  ontime:  '#F9A8D4',
-};
+const KPIIcon: React.FC<{ variant: KPIVariant; color: string }> = memo(({ variant }) => {
+  switch (variant) {
+    case 'total':
+      return (
+        <svg className="kpi-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <rect x="1" y="3" width="15" height="13" rx="2" />
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8" />
+          <circle cx="5.5" cy="18.5" r="2.5" />
+          <circle cx="18.5" cy="18.5" r="2.5" />
+        </svg>
+      );
+    case 'online':
+      return (
+        <svg className="kpi-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 20a8 8 0 1 0 0-16 8 8 0 0 0 0 16z" />
+          <path d="M12 14a2 2 0 1 0 0-4 2 2 0 0 0 0 4z" />
+          <path d="M4.93 4.93a10 10 0 0 1 14.14 0" />
+          <path d="M7.76 7.76a6 6 0 0 1 8.48 0" />
+        </svg>
+      );
+    case 'offline':
+      return (
+        <svg className="kpi-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M1 1l22 22" />
+          <path d="M16.72 11.06A10.94 10.94 0 0 1 19 12.55" />
+          <path d="M5 12.55a10.94 10.94 0 0 1 5.17-2.39" />
+          <path d="M10.71 5.05A16 16 0 0 1 22.58 9" />
+          <path d="M1.42 9a15.91 15.91 0 0 1 4.7-3.16" />
+          <path d="M8.53 16.11a6 6 0 0 1 6.95 0" />
+        </svg>
+      );
+    case 'trips':
+      return (
+        <svg className="kpi-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <polygon points="3 11 22 2 13 21 11 13 3 11" />
+        </svg>
+      );
+    case 'alerts':
+      return (
+        <svg className="kpi-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+          <line x1="12" y1="9" x2="12" y2="13" />
+          <line x1="12" y1="17" x2="12.01" y2="17" />
+        </svg>
+      );
+    case 'speed':
+      return (
+        <svg className="kpi-svg-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2z" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+});
+KPIIcon.displayName = 'KPIIcon';
 
-// ── Sub-component: Single stat card ───────────────────────────────────────────
+// ── Single KPI Card Component ──────────────────────────────────────────
 
 const StatCard: React.FC<{ data: StatCardData; index: number }> = memo(({ data, index }) => {
   const cardRef = useRef<HTMLElement>(null);
-  const animatedValue = useAnimatedCounter(data.value, 900 + index * 80);
-  const color = VARIANT_COLORS[data.variant] ?? '#4F8CFF';
+  const animatedValue = useAnimatedCounter(data.value, 1000 + index * 90);
 
-  const trendClass =
-    data.trendDirection === 'up'
-      ? 'trend-up'
-      : data.trendDirection === 'down'
-      ? 'trend-down'
-      : 'trend-neutral';
-
-  const sparkHeights = SPARKLINE_HEIGHTS[data.variant] ?? [40, 50, 45, 60, 55, 65, 58, 70];
-  const comparisonText = COMPARISON_TEXTS[data.variant] ?? "Today's comparison";
-
-  // Mouse tilt (3D perspective) effect
+  // Mouse tilt 3D perspective effect
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLElement>) => {
     const card = cardRef.current;
     if (!card) return;
     const rect = card.getBoundingClientRect();
     const cx = rect.left + rect.width / 2;
-    const cy = rect.top  + rect.height / 2;
-    const dx = (e.clientX - cx) / (rect.width  / 2);
+    const cy = rect.top + rect.height / 2;
+    const dx = (e.clientX - cx) / (rect.width / 2);
     const dy = (e.clientY - cy) / (rect.height / 2);
-    card.style.transform = `translateY(-8px) scale(1.02) perspective(700px) rotateX(${-dy * 6}deg) rotateY(${dx * 6}deg)`;
+
+    card.style.transform = `perspective(1000px) translateY(-8px) scale(1.02) rotateX(${-dy * 7}deg) rotateY(${dx * 7}deg)`;
+    card.style.setProperty('--mouse-x', `${(e.clientX - rect.left).toFixed(1)}px`);
+    card.style.setProperty('--mouse-y', `${(e.clientY - rect.top).toFixed(1)}px`);
   }, []);
 
   const handleMouseLeave = useCallback(() => {
     const card = cardRef.current;
     if (!card) return;
-    card.style.transform = '';
+    card.style.transform = 'perspective(1000px) translateY(0px) rotateX(0deg) rotateY(0deg) scale(1)';
   }, []);
+
+  const isUp = data.trendDirection === 'up';
 
   return (
     <motion.article
       ref={cardRef}
       id={data.id}
-      className={`stat-card stat-card--${data.variant}`}
-      aria-label={`${data.label}: ${data.value}${data.unit ?? ' vehicles'}`}
+      className={`kpi-card kpi-card--${data.variant}`}
+      aria-label={`${data.label}: ${data.value}${data.unit ?? ''}`}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      initial={{ opacity: 0, y: 28, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0,  scale: 1 }}
-      transition={{ delay: index * 0.08, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+      initial={{ opacity: 0, y: 26, scale: 0.96 }}
+      animate={{ opacity: 1, y: 0, scale: 1 }}
+      transition={{ delay: index * 0.07, duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
     >
-      {/* Glass shimmer overlay */}
-      <div className="card-shimmer" aria-hidden="true" />
+      {/* Dynamic Cursor Spotlight & Glass Shimmer Overlay */}
+      <div className="kpi-card__spotlight" aria-hidden="true" />
+      <div className="kpi-card__shimmer" aria-hidden="true" />
 
-      {/* Top row: Large gradient icon + SVG sparkline */}
-      <div className="stat-card__top-row">
-        <div className="stat-card__icon-badge" style={{ color }} aria-hidden="true">
-          {data.icon}
+      {/* Top Ambient Glow Orb */}
+      <div className="kpi-card__glow-orb" aria-hidden="true" />
+
+      {/* Card Header: Animated Icon & Status Badge */}
+      <div className="kpi-card__header">
+        <div className="kpi-card__icon-badge" style={{ color: data.colorHex }}>
+          <KPIIcon variant={data.variant} color={data.colorHex} />
         </div>
-        <div className="stat-card__sparkline-svg" aria-hidden="true">
-          <SparklinePath heights={sparkHeights} color={color} />
+        <div className="kpi-card__status-badge">
+          <span className="kpi-status-dot" style={{ backgroundColor: data.colorHex }} />
+          <span className="kpi-status-text">{data.statusText}</span>
         </div>
       </div>
 
-      <div className="stat-card__body">
-        <p className="stat-card__label">{data.label}</p>
-        <div className="stat-card__value-row">
-          <span className="stat-card__value" style={{ color }}>
+      {/* Card Body: Title, Value, Trend Badge, Subtitle */}
+      <div className="kpi-card__body">
+        <h3 className="kpi-card__title">{data.label}</h3>
+
+        <div className="kpi-card__value-row">
+          <span className="kpi-card__value">
             {animatedValue.toLocaleString()}{data.unit ?? ''}
           </span>
-          <span className={`stat-card__trend-badge ${trendClass}`}>
+          <span className={`kpi-card__trend-badge ${isUp ? 'trend--up' : 'trend--down'}`}>
+            <span className="trend-arrow">{isUp ? '↑' : '↓'}</span>
             {data.trend}
           </span>
         </div>
-        <p className="stat-card__comparison">
-          {comparisonText}
-        </p>
+
+        <p className="kpi-card__subtitle">{data.subtitle}</p>
       </div>
 
-      {/* Decorative sparkline bars fallback */}
-      <div className="stat-card__sparkline" aria-hidden="true">
-        {sparkHeights.map((h, i) => (
-          <div key={i} className="sparkline-bar" style={{ height: `${h}%`, background: color }} />
-        ))}
+      {/* Sparkline Chart & Footer Timestamp */}
+      <div className="kpi-card__footer-area">
+        <div className="kpi-card__sparkline-container">
+          <SparklinePath heights={data.sparklineData} color={data.colorHex} cardId={data.id} />
+        </div>
+        <div className="kpi-card__meta-row">
+          <span className="kpi-card__timestamp">
+            <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2">
+              <circle cx="12" cy="12" r="10" />
+              <polyline points="12 6 12 12 16 14" />
+            </svg>
+            {data.lastUpdated}
+          </span>
+        </div>
       </div>
     </motion.article>
   );
 });
 StatCard.displayName = 'StatCard';
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+// ── Main DashboardCards Component ──────────────────────────────────────
 
 const DashboardCards: React.FC<DashboardCardsProps> = ({ stats }) => {
-  // Week 1: fall back to static dummy data
   const resolvedStats: FleetStats = stats ?? DUMMY_STATS;
-  const cards = [...buildCards(resolvedStats), ...EXTENDED_CARDS];
+  const cards = buildKPICards(resolvedStats);
 
   return (
-    <section aria-label="Fleet statistics overview">
+    <section className="kpi-section" aria-label="Fleet KPI Statistics Command Center">
       <div className="stats-grid">
         {cards.map((card, i) => (
           <StatCard key={card.id} data={card} index={i} />
