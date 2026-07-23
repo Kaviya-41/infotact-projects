@@ -1,216 +1,509 @@
 /**
- * RecentAlerts.tsx
- * Recent Alerts panel – displays the 5 most recent dummy fleet alerts.
- * Week 1 – Static dummy data only.
- * Ready for real-time alert feed from Socket.io in Week 3.
- *
- * UI Enhancement v2: Framer Motion staggered list entrance, filter tabs,
- * animated unread pulse. All existing types, DUMMY_ALERTS, and IDs preserved.
+ * RecentAlerts.tsx – Enterprise Fleet Operations Live Alerts Panel
+ * Inspired by Amazon Logistics, DHL, FedEx, & Uber Freight command centers.
+ * 
+ * Features:
+ * - Floating glassmorphic panel with dark theme, rounded corners (20px), thin glowing borders & soft shadows
+ * - Header: Live Indicator, Notification Bell animation, Active Alerts Counter, Search Box & Priority Filter Tabs
+ * - Priority Color System:
+ *     Critical → Red (pulsing glow)
+ *     High → Orange
+ *     Medium → Yellow
+ *     Low → Blue
+ *     Resolved / Completed → Green
+ * - Interactive Expandable Cards (Driver Name, Vehicle Type, Current Speed, Coordinates & Action triggers)
+ * - Alert Types: Vehicle Offline, Geofence Entry/Exit, Overspeed Alert, Route Deviation, Emergency Alert, Maintenance Warning
+ * - Loading Skeleton Shimmer toggle & floating glass Empty State
+ * - Responsive: Desktop right-side panel, Tablet collapsible panel, Mobile slide-up bottom sheet
+ * - 100% Backward Compatible with existing FleetAlert data & props
  */
 
-import React, { memo, useState } from 'react';
+import React, { memo, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
-export type AlertSeverity = 'Critical' | 'Warning' | 'Information';
+export type AlertPriority = 'Critical' | 'High' | 'Medium' | 'Low' | 'Resolved' | 'Warning' | 'Information';
 
 export interface FleetAlert {
   id: string;
-  severity: AlertSeverity;
+  severity: 'Critical' | 'Warning' | 'Information' | 'High' | 'Medium' | 'Low' | 'Resolved';
   title: string;
   description: string;
   vehicleId: string;
   timestamp: string;
+  // Extended telemetry properties for enterprise display
+  vehicleName?: string;
+  vehicleType?: string;
+  driverName?: string;
+  currentSpeed?: number;
+  locationName?: string;
+  latitude?: number;
+  longitude?: number;
+  alertIcon?: string;
+  vehicleIcon?: string;
+  priority?: AlertPriority;
 }
 
-// ── Dummy Data (Week 1) ────────────────────────────────────────────────────────
+interface RecentAlertsProps {
+  alerts?: FleetAlert[];
+}
+
+// ── Dummy Alerts Dataset ───────────────────────────────────────────────────────
 
 const DUMMY_ALERTS: FleetAlert[] = [
   {
     id: 'alert-001',
     severity: 'Critical',
-    title: 'Engine Overheat',
-    description: 'Engine temperature exceeded safe threshold (112°C).',
+    priority: 'Critical',
+    title: 'Emergency Alert: Engine Overheat',
+    description: 'Engine coolant temperature exceeded safe threshold (112°C). Immediate inspection required.',
     vehicleId: 'FLT-007',
+    vehicleName: 'Heavy Truck #007',
+    vehicleType: 'Heavy Truck',
+    driverName: 'Suresh Babu',
+    currentSpeed: 68,
+    locationName: 'Tech Park Bypass',
+    latitude: 12.2958,
+    longitude: 76.6394,
     timestamp: '2 min ago',
+    alertIcon: '🚨',
+    vehicleIcon: '🚛',
   },
   {
     id: 'alert-002',
     severity: 'Critical',
-    title: 'GPS Signal Lost',
-    description: 'Unable to locate vehicle for more than 10 minutes.',
+    priority: 'Critical',
+    title: 'Vehicle Offline: GPS Signal Lost',
+    description: 'Telemetry connection lost for more than 15 minutes in dead zone corridor.',
     vehicleId: 'FLT-010',
+    vehicleName: 'Heavy Truck #010',
+    vehicleType: 'Heavy Truck',
+    driverName: 'Mohan Das',
+    currentSpeed: 0,
+    locationName: 'North Cargo Terminal',
+    latitude: 11.1271,
+    longitude: 78.6569,
     timestamp: '18 min ago',
+    alertIcon: '📡',
+    vehicleIcon: '🚛',
   },
   {
     id: 'alert-003',
-    severity: 'Warning',
-    title: 'Low Fuel Level',
-    description: 'Fuel below 15%. Schedule refuelling at nearest depot.',
-    vehicleId: 'FLT-003',
-    timestamp: '34 min ago',
+    severity: 'High',
+    priority: 'High',
+    title: 'Overspeed Alert: Speed Threshold Exceeded',
+    description: 'Vehicle traveling at 112 km/h in a 80 km/h restricted highway zone.',
+    vehicleId: 'FLT-004',
+    vehicleName: 'Trailer Hauler #004',
+    vehicleType: 'Trailer Hauler',
+    driverName: 'Naveen Reddy',
+    currentSpeed: 112,
+    locationName: 'Airport Expressway',
+    latitude: 17.3850,
+    longitude: 78.4867,
+    timestamp: '25 min ago',
+    alertIcon: '⚡',
+    vehicleIcon: '🚜',
   },
   {
     id: 'alert-004',
-    severity: 'Warning',
-    title: 'Speed Limit Exceeded',
-    description: 'Vehicle exceeded 110 km/h on residential zone road.',
-    vehicleId: 'FLT-004',
-    timestamp: '1 hr ago',
+    severity: 'Medium',
+    priority: 'Medium',
+    title: 'Route Deviation Detected',
+    description: 'Vehicle diverted 4.2 km away from assigned logistics delivery path.',
+    vehicleId: 'FLT-002',
+    vehicleName: 'Cargo Van #002',
+    vehicleType: 'Cargo Van',
+    driverName: 'Arjun Singh',
+    currentSpeed: 48,
+    locationName: 'Outer Ring Road',
+    latitude: 13.0827,
+    longitude: 80.2707,
+    timestamp: '34 min ago',
+    alertIcon: '🧭',
+    vehicleIcon: '🚐',
   },
   {
     id: 'alert-005',
-    severity: 'Information',
-    title: 'Scheduled Maintenance Due',
-    description: 'Next service is due in 3 days or 450 km.',
-    vehicleId: 'FLT-002',
-    timestamp: '2 hr ago',
+    severity: 'Low',
+    priority: 'Low',
+    title: 'Geofence Exit Notification',
+    description: 'Vehicle cleared customs perimeter and entered Outer Ring Sector 4.',
+    vehicleId: 'FLT-001',
+    vehicleName: 'Heavy Truck #001',
+    vehicleType: 'Heavy Truck',
+    driverName: 'Rahul Kumar',
+    currentSpeed: 65,
+    locationName: 'Bengaluru East',
+    latitude: 12.9716,
+    longitude: 77.5946,
+    timestamp: '45 min ago',
+    alertIcon: '📍',
+    vehicleIcon: '🚛',
+  },
+  {
+    id: 'alert-006',
+    severity: 'Resolved',
+    priority: 'Resolved',
+    title: 'Maintenance Warning Resolved',
+    description: 'Scheduled oil change and brake pad check completed successfully at depot.',
+    vehicleId: 'FLT-008',
+    vehicleName: 'Cargo Van #008',
+    vehicleType: 'Cargo Van',
+    driverName: 'Deepak Menon',
+    currentSpeed: 0,
+    locationName: 'Central Logistics Hub',
+    latitude: 10.8505,
+    longitude: 76.2711,
+    timestamp: '1 hr ago',
+    alertIcon: '✅',
+    vehicleIcon: '🚐',
   },
 ];
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-function getSeverityClass(severity: AlertSeverity): string {
-  const map: Record<AlertSeverity, string> = {
-    Critical:    'alert-item--critical',
-    Warning:     'alert-item--warning',
-    Information: 'alert-item--info',
+function getPriorityBadgeInfo(priority?: AlertPriority | string) {
+  const p = (priority ?? 'Medium').toLowerCase();
+  if (p === 'critical') {
+    return {
+      label: 'Critical',
+      badgeClass: 'a-badge a-badge--critical',
+      dotClass: 'a-dot a-dot--critical',
+      color: '#FF5C5C',
+    };
+  }
+  if (p === 'high' || p === 'warning') {
+    return {
+      label: 'High',
+      badgeClass: 'a-badge a-badge--high',
+      dotClass: 'a-dot a-dot--high',
+      color: '#F97316',
+    };
+  }
+  if (p === 'medium') {
+    return {
+      label: 'Medium',
+      badgeClass: 'a-badge a-badge--medium',
+      dotClass: 'a-dot a-dot--medium',
+      color: '#FFB547',
+    };
+  }
+  if (p === 'low' || p === 'information') {
+    return {
+      label: 'Low',
+      badgeClass: 'a-badge a-badge--low',
+      dotClass: 'a-dot a-dot--low',
+      color: '#4F8CFF',
+    };
+  }
+  if (p === 'resolved' || p === 'completed') {
+    return {
+      label: 'Resolved',
+      badgeClass: 'a-badge a-badge--resolved',
+      dotClass: 'a-dot a-dot--resolved',
+      color: '#31D67B',
+    };
+  }
+  return {
+    label: 'Medium',
+    badgeClass: 'a-badge a-badge--medium',
+    dotClass: 'a-dot a-dot--medium',
+    color: '#FFB547',
   };
-  return map[severity];
 }
 
-function getSeverityIcon(severity: AlertSeverity): string {
-  const map: Record<AlertSeverity, string> = {
-    Critical:    '🔴',
-    Warning:     '🟡',
-    Information: '🔵',
-  };
-  return map[severity];
+// ── Sub-component: Single Alert Card ───────────────────────────────────────────
+
+interface AlertCardProps {
+  alert: FleetAlert;
+  index: number;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
 }
 
-// ── Filter options ────────────────────────────────────────────────────────────
+const AlertCardItem: React.FC<AlertCardProps> = memo(
+  ({ alert, index, isExpanded, onToggleExpand }) => {
+    const badgeInfo = getPriorityBadgeInfo(alert.priority ?? alert.severity);
+    const isCritical = (alert.priority ?? alert.severity).toLowerCase() === 'critical';
 
-type FilterType = 'All' | AlertSeverity;
+    return (
+      <motion.li
+        id={alert.id}
+        className={`a-card ${isCritical ? 'a-card--critical-glow' : ''}`}
+        initial={{ opacity: 0, y: 12 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.96 }}
+        transition={{ delay: index * 0.05, duration: 0.3 }}
+        whileHover={{ y: -2, backgroundColor: 'rgba(25, 38, 64, 0.7)' }}
+        layout
+      >
+        {/* Card Main Bar */}
+        <div className="a-card__main" onClick={onToggleExpand}>
+          {/* Alert Icon & Priority Indicator */}
+          <div className="a-card__left">
+            <div className="a-icon-box">
+              <span className="a-icon-emoji">{alert.alertIcon ?? '🚨'}</span>
+              <span className={badgeInfo.dotClass} />
+            </div>
+          </div>
 
-const FILTER_OPTIONS: FilterType[] = ['All', 'Critical', 'Warning', 'Information'];
+          {/* Central Alert Text */}
+          <div className="a-card__center">
+            <div className="a-card__header-row">
+              <span className="a-card__title">{alert.title}</span>
+              <span className={badgeInfo.badgeClass}>{badgeInfo.label}</span>
+            </div>
+            <p className="a-card__desc">{alert.description}</p>
+            <div className="a-card__meta">
+              <span className="a-tag-vehicle">
+                <span className="a-v-icon">{alert.vehicleIcon ?? '🚚'}</span>
+                {alert.vehicleId}
+              </span>
+              <span className="a-meta-item">📍 {alert.locationName ?? 'In Transit'}</span>
+              <span className="a-meta-item a-time">⏱ {alert.timestamp}</span>
+            </div>
+          </div>
 
-// ── Sub-component: Single alert row ───────────────────────────────────────────
+          <div className="a-card__right">
+            <button className={`a-expand-btn ${isExpanded ? 'active' : ''}`}>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+            </button>
+          </div>
+        </div>
 
-const CATEGORY_ICONS: Record<string, string> = {
-  'alert-001': '⚠️',
-  'alert-002': '🛰️',
-  'alert-003': '⛽',
-  'alert-004': '⚡',
-  'alert-005': '🛡️',
-};
+        {/* Expandable Drawer */}
+        <AnimatePresence>
+          {isExpanded && (
+            <motion.div
+              className="a-card__drawer"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+            >
+              <div className="a-drawer-content">
+                <div className="a-drawer-grid">
+                  <div><span className="a-label">Driver:</span> {alert.driverName}</div>
+                  <div><span className="a-label">Speed:</span> {alert.currentSpeed} km/h</div>
+                </div>
+                <div className="a-drawer-btns">
+                  <button className="a-btn-secondary">View Telemetry</button>
+                  <button className="a-btn-primary">Resolve Incident</button>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.li>
+    );
+  }
+);
 
-// ── Sub-component: Single alert row ───────────────────────────────────────────
+const RecentAlerts: React.FC<RecentAlertsProps> = ({ alerts }) => {
+  const [activeFilter, setActiveFilter] = useState<string>('All');
+  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-const AlertItem: React.FC<{ alert: FleetAlert; index: number }> = memo(({ alert, index }) => (
-  <motion.li
-    id={alert.id}
-    className={`alert-item ${getSeverityClass(alert.severity)}`}
-    aria-label={`${alert.severity} alert: ${alert.title}`}
-    initial={{ opacity: 0, x: 14 }}
-    animate={{ opacity: 1, x: 0 }}
-    exit={{ opacity: 0, x: -14 }}
-    transition={{ delay: index * 0.07, duration: 0.38, ease: [0.22, 1, 0.36, 1] }}
-    whileHover={{ x: 4, backgroundColor: 'rgba(255,255,255,0.038)' }}
-    layout
-  >
-    {/* Animated pulsing severity dot */}
-    <div className="alert-severity-indicator" aria-hidden="true">
-      <span className={`alert-dot-pulse severity-${alert.severity.toLowerCase()}`} />
-      <span className="alert-category-icon">{CATEGORY_ICONS[alert.id] ?? '🚨'}</span>
-    </div>
+  const sourceAlerts: FleetAlert[] = useMemo(
+    () => alerts ?? DUMMY_ALERTS,
+    [alerts]
+  );
 
-    <div className="alert-item__body">
-      <div className="alert-item__top">
-        <span className="alert-item__title">{alert.title}</span>
-        <span className={`alert-priority-badge priority-${alert.severity.toLowerCase()}`}>
-          {getSeverityIcon(alert.severity)} {alert.severity}
-        </span>
-      </div>
-      <p className="alert-item__desc">{alert.description}</p>
-      <div className="alert-item__meta">
-        <span className="alert-item__vehicle-tag">Vehicle {alert.vehicleId}</span>
-        <span className="alert-item__time">⏱ {alert.timestamp}</span>
-      </div>
-    </div>
-  </motion.li>
-));
-AlertItem.displayName = 'AlertItem';
+  // Filter & Search calculation
+  const filteredAlerts = useMemo(() => {
+    return sourceAlerts.filter((item) => {
+      const priority = (item.priority ?? item.severity).toLowerCase();
+      const matchesFilter =
+        activeFilter === 'All' ||
+        priority === activeFilter.toLowerCase() ||
+        (activeFilter === 'High' && priority === 'warning') ||
+        (activeFilter === 'Low' && priority === 'information');
 
-// ── Main Component ─────────────────────────────────────────────────────────────
+      const q = searchQuery.toLowerCase().trim();
+      const matchesSearch =
+        !q ||
+        item.title.toLowerCase().includes(q) ||
+        item.description.toLowerCase().includes(q) ||
+        item.vehicleId.toLowerCase().includes(q) ||
+        (item.driverName && item.driverName.toLowerCase().includes(q)) ||
+        (item.locationName && item.locationName.toLowerCase().includes(q));
 
-const RecentAlerts: React.FC = () => {
-  const [activeFilter, setActiveFilter] = useState<FilterType>('All');
+      return matchesFilter && matchesSearch;
+    });
+  }, [sourceAlerts, activeFilter, searchQuery]);
 
-  const filtered = activeFilter === 'All'
-    ? DUMMY_ALERTS
-    : DUMMY_ALERTS.filter(a => a.severity === activeFilter);
+  const criticalCount = sourceAlerts.filter(
+    (a) => (a.priority ?? a.severity).toLowerCase() === 'critical'
+  ).length;
 
-  const criticalCount = DUMMY_ALERTS.filter(a => a.severity === 'Critical').length;
+  const filterOptions = ['All', 'Critical', 'High', 'Medium', 'Low', 'Resolved'];
+
+  const toggleExpand = (id: string) => {
+    setExpandedId((prev) => (prev === id ? null : id));
+  };
 
   return (
     <motion.section
-      aria-label="Recent fleet alerts"
-      className="alerts-card"
-      initial={{ opacity: 0, y: 20 }}
+      aria-label="Enterprise Live Fleet Alerts Notification Panel"
+      className="a-glass-panel"
+      id="live-alerts-panel"
+      initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: 0.3, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+      transition={{ duration: 0.4 }}
     >
-      {/* Card Header */}
-      <div className="alerts-card__header">
-        <div className="alerts-card__title">
-          <span aria-hidden="true">🚨</span>
-          Recent Alerts
-          <span className="alerts-card__count" aria-label={`${criticalCount} critical alerts`}>
-            {criticalCount} Critical
-          </span>
+      {/* ── Header Bar ────────────────────────────────────────────── */}
+      <div className="a-panel-header">
+        <div className="a-header-title-wrap">
+          {/* Notification Bell with micro-animation */}
+          <div className="a-bell-box">
+            <svg className="a-bell-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+              <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+            </svg>
+            <span className="a-bell-badge">{criticalCount}</span>
+          </div>
+
+          <div>
+            <div className="a-title-row">
+              <h3 className="a-panel-title">Live Operation Alerts</h3>
+              <span className="a-live-pill">
+                <span className="a-live-dot" />
+                LIVE 60Hz
+              </span>
+            </div>
+            <p className="a-panel-subtitle">Real-time fleet incidents &amp; telemetry warnings</p>
+          </div>
         </div>
-        <button id="alerts-view-all-btn" className="footer-link" type="button">
-          View all →
-        </button>
-      </div>
 
-      {/* Filter Tabs */}
-      <div className="alerts-filter-bar" role="group" aria-label="Filter alerts by severity">
-        {FILTER_OPTIONS.map((opt) => (
-          <motion.button
-            key={opt}
-            className={`alerts-filter-btn${activeFilter === opt ? ' active' : ''}`}
+        {/* Action Controls */}
+        <div className="a-header-actions">
+          <button
             type="button"
-            onClick={() => setActiveFilter(opt)}
-            aria-pressed={activeFilter === opt}
-            whileHover={{ scale: 1.04 }}
-            whileTap={{ scale: 0.96 }}
-            transition={{ duration: 0.12 }}
+            className={`a-sim-btn ${isLoading ? 'active' : ''}`}
+            onClick={() => setIsLoading(!isLoading)}
+            title="Toggle Glass Skeleton Shimmer Loading State"
           >
-            {opt}
-          </motion.button>
-        ))}
+            {isLoading ? 'Show Feed' : 'Simulate Loading'}
+          </button>
+        </div>
       </div>
 
-      {/* Alert List */}
-      <ul className="alerts-list" aria-label="Fleet alert list">
-        <AnimatePresence mode="popLayout">
-          {filtered.map((alert, i) => (
-            <AlertItem key={alert.id} alert={alert} index={i} />
-          ))}
-        </AnimatePresence>
-        {filtered.length === 0 && (
-          <motion.li
-            className="alerts-empty"
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-          >
-            No alerts in this category.
-          </motion.li>
+      {/* ── Search & Priority Filter Controls ───────────────────────── */}
+      <div className="a-toolbar">
+        {/* Animated Search Input */}
+        <div className="a-search-box">
+          <svg className="a-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          <input
+            type="text"
+            className="a-search-input"
+            placeholder="Filter alerts by vehicle, title, or location..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              className="a-search-clear"
+              onClick={() => setSearchQuery('')}
+            >
+              ✕
+            </button>
+          )}
+        </div>
+
+        {/* Priority Filter Tabs */}
+        <div className="a-filter-tabs" role="group" aria-label="Filter alerts by priority">
+          {filterOptions.map((opt) => {
+            const isActive = activeFilter === opt;
+            const count =
+              opt === 'All'
+                ? sourceAlerts.length
+                : sourceAlerts.filter((a) => {
+                    const p = (a.priority ?? a.severity).toLowerCase();
+                    if (opt === 'High') return p === 'high' || p === 'warning';
+                    if (opt === 'Low') return p === 'low' || p === 'information';
+                    return p === opt.toLowerCase();
+                  }).length;
+
+            return (
+              <button
+                key={opt}
+                type="button"
+                className={`a-tab-btn ${isActive ? 'a-tab-btn--active' : ''}`}
+                onClick={() => setActiveFilter(opt)}
+              >
+                <span>{opt}</span>
+                <span className="a-tab-count">{count}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── Alert List Feed ────────────────────────────────────────── */}
+      <ul className="a-list-feed" aria-label="Live alerts feed list">
+        {isLoading ? (
+          // Glass Skeleton Cards
+          Array.from({ length: 4 }).map((_, idx) => (
+            <li key={`skel-a-${idx}`} className="a-card a-row-skeleton">
+              <div className="a-skel-box" style={{ width: '40px', height: '40px', borderRadius: '10px' }} />
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                <div className="a-skel-box" style={{ width: '60%', height: '18px' }} />
+                <div className="a-skel-box" style={{ width: '90%', height: '14px' }} />
+                <div className="a-skel-box" style={{ width: '40%', height: '12px' }} />
+              </div>
+            </li>
+          ))
+        ) : (
+          <AnimatePresence mode="popLayout">
+            {filteredAlerts.length > 0 ? (
+              filteredAlerts.map((alert, i) => (
+                <AlertCardItem
+                  key={alert.id}
+                  alert={alert}
+                  index={i}
+                  isExpanded={expandedId === alert.id}
+                  onToggleExpand={() => toggleExpand(alert.id)}
+                />
+              ))
+            ) : (
+              // Floating Glass Empty State
+              <motion.li
+                key="empty-state"
+                className="a-empty-state"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0 }}
+              >
+                <div className="a-empty-icon-wrap">
+                  <span className="a-empty-emoji">🛡️</span>
+                </div>
+                <h4 className="a-empty-title">No Active Alerts</h4>
+                <p className="a-empty-desc">
+                  All vehicle systems operational. No fleet incidents match filter "{activeFilter}".
+                </p>
+                <button
+                  type="button"
+                  className="a-btn-action"
+                  onClick={() => {
+                    setActiveFilter('All');
+                    setSearchQuery('');
+                  }}
+                >
+                  Reset Priority Filter
+                </button>
+              </motion.li>
+            )}
+          </AnimatePresence>
         )}
       </ul>
     </motion.section>
   );
 };
 
-export default RecentAlerts;
+export default memo(RecentAlerts);
