@@ -5,69 +5,70 @@
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Space+Grotesk:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+@import './design-system.css';
 
 /* ╔══════════════════════════════════════════════════════════╗
-   ║  CSS DESIGN TOKENS                                       ║
+   ║  CSS DESIGN TOKENS (Mapped to Enterprise Design System)  ║
    ╚══════════════════════════════════════════════════════════╝ */
 :root {
   /* ── Spec Color Palette ───────────────────────────────── */
-  --color-bg-base:        #081120;
-  --color-bg-sidebar:     #060e1a;
-  --color-bg-surface:     #0d1829;
-  --color-bg-card:        rgba(20, 28, 45, 0.72);
-  --color-bg-card-hover:  rgba(26, 36, 58, 0.85);
-  --color-bg-input:       rgba(15, 25, 45, 0.8);
-  --color-bg-glass:       rgba(20, 28, 45, 0.72);
+  --color-bg-base:        #040B16;
+  --color-bg-sidebar:     rgba(4, 11, 22, 0.95);
+  --color-bg-surface:     rgba(10, 15, 30, 0.5);
+  --color-bg-card:        var(--ds-glass-bg);
+  --color-bg-card-hover:  rgba(15, 23, 42, 0.85);
+  --color-bg-input:       rgba(10, 15, 30, 0.5);
+  --color-bg-glass:       var(--ds-glass-bg);
   --color-bg-glass-light: rgba(25, 36, 60, 0.6);
   --color-bg-glass-dark:  rgba(8, 17, 32, 0.88);
 
   /* ── Borders ──────────────────────────────────────────── */
-  --color-border:         rgba(255, 255, 255, 0.07);
+  --color-border:         var(--ds-glass-border);
   --color-border-subtle:  rgba(255, 255, 255, 0.04);
-  --color-border-glass:   rgba(255, 255, 255, 0.10);
+  --color-border-glass:   var(--ds-glass-border);
   --color-border-accent:  rgba(79, 140, 255, 0.40);
-  --color-border-cyan:    rgba(0, 212, 255, 0.30);
+  --color-border-cyan:    rgba(0, 217, 255, 0.30);
 
   /* ── Text ─────────────────────────────────────────────── */
-  --color-text-primary:   #FFFFFF;
-  --color-text-secondary: #8DA2C0;
+  --color-text-primary:   var(--ds-color-text-main);
+  --color-text-secondary: var(--ds-color-text-muted);
   --color-text-muted:     #4d6080;
 
   /* ── Accent / Brand ───────────────────────────────────── */
-  --color-accent:         #4F8CFF;
-  --color-accent-hover:   #3A7AFF;
+  --color-accent:         var(--ds-color-primary);
+  --color-accent-hover:   #5c94ff;
   --color-accent-light:   #7AAAFF;
-  --color-accent-glow:    rgba(79, 140, 255, 0.22);
+  --color-accent-glow:    var(--ds-glow-primary);
   --color-accent-glow-lg: rgba(79, 140, 255, 0.12);
-  --color-secondary:      #00D4FF;
-  --color-secondary-glow: rgba(0, 212, 255, 0.18);
-  --color-purple:         #7C3AED;
-  --color-purple-glow:    rgba(124, 58, 237, 0.18);
+  --color-secondary:      var(--ds-color-accent);
+  --color-secondary-glow: var(--ds-glow-accent);
+  --color-purple:         var(--ds-color-secondary);
+  --color-purple-glow:    rgba(124, 92, 255, 0.18);
 
   /* ── Status ───────────────────────────────────────────── */
-  --color-success:        #31D67B;
+  --color-success:        var(--ds-color-success);
   --color-success-bg:     rgba(49, 214, 123, 0.12);
   --color-success-glow:   rgba(49, 214, 123, 0.30);
-  --color-warning:        #FFB547;
+  --color-warning:        var(--ds-color-warning);
   --color-warning-bg:     rgba(255, 181, 71, 0.12);
   --color-warning-glow:   rgba(255, 181, 71, 0.30);
-  --color-danger:         #FF5C5C;
+  --color-danger:         var(--ds-color-danger);
   --color-danger-bg:      rgba(255, 92, 92, 0.12);
   --color-danger-glow:    rgba(255, 92, 92, 0.28);
   --color-neutral:        #64748B;
   --color-neutral-bg:     rgba(100, 116, 139, 0.12);
 
   /* ── Stat Card Accents ────────────────────────────────── */
-  --card-total-color:     #4F8CFF;
+  --card-total-color:     var(--ds-color-primary);
   --card-total-bg:        rgba(79, 140, 255, 0.15);
   --card-total-glow:      rgba(79, 140, 255, 0.35);
-  --card-moving-color:    #31D67B;
+  --card-moving-color:    var(--ds-color-success);
   --card-moving-bg:       rgba(49, 214, 123, 0.15);
   --card-moving-glow:     rgba(49, 214, 123, 0.35);
-  --card-stopped-color:   #FFB547;
+  --card-stopped-color:   var(--ds-color-warning);
   --card-stopped-bg:      rgba(255, 181, 71, 0.15);
   --card-stopped-glow:    rgba(255, 181, 71, 0.35);
-  --card-offline-color:   #FF5C5C;
+  --card-offline-color:   var(--ds-color-danger);
   --card-offline-bg:      rgba(255, 92, 92, 0.15);
   --card-offline-glow:    rgba(255, 92, 92, 0.35);
 
@@ -84,18 +85,18 @@
   /* ── Radii ────────────────────────────────────────────── */
   --radius-sm: 8px;
   --radius-md: 12px;
-  --radius-lg: 18px;
-  --radius-xl: 20px;
+  --radius-lg: 16px;
+  --radius-xl: var(--ds-radius-card);
   --radius-2xl: 28px;
 
   /* ── Premium Shadows ──────────────────────────────────── */
-  --shadow-card:      0 4px 24px rgba(0,0,0,0.5), 0 1px 0 rgba(255,255,255,0.05) inset, 0 0 0 1px rgba(79,140,255,0.06);
-  --shadow-card-hover:0 20px 60px rgba(0,0,0,0.65), 0 0 0 1px rgba(79,140,255,0.30), 0 1px 0 rgba(255,255,255,0.08) inset;
+  --shadow-card:      var(--ds-shadow-glass);
+  --shadow-card-hover:var(--ds-shadow-lifted);
   --shadow-sidebar:   4px 0 40px rgba(0,0,0,0.7);
-  --shadow-input:     0 0 0 2px var(--color-accent), 0 0 20px rgba(79,140,255,0.18);
-  --shadow-glow-blue: 0 0 40px rgba(79,140,255,0.15), 0 0 80px rgba(79,140,255,0.07);
+  --shadow-input:     0 0 0 2px var(--color-accent), var(--ds-glow-primary);
+  --shadow-glow-blue: var(--ds-glow-primary);
   --shadow-glow-sm:   0 0 16px rgba(79,140,255,0.25);
-  --shadow-glow-cyan: 0 0 24px rgba(0,212,255,0.20);
+  --shadow-glow-cyan: var(--ds-glow-accent);
 
   /* ── Sidebar ──────────────────────────────────────────── */
   --sidebar-width:           248px;
@@ -257,7 +258,7 @@ body {
   display: flex;
   height: 100vh;
   overflow: hidden;
-  background: var(--color-bg-base);
+  background: var(--ds-bg-gradient);
   position: relative;
 }
 

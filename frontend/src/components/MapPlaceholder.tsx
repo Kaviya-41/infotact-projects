@@ -16,6 +16,7 @@
 
 import React, { memo, useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PremiumSkeleton, PremiumEmptyState, PremiumErrorState } from './StateFeedback';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -24,6 +25,8 @@ type MapLayer = 'satellite' | 'traffic' | 'terrain';
 interface MapPlaceholderProps {
   /** Height of the map area in pixels. Defaults to 580. */
   height?: number;
+  isLoading?: boolean;
+  isError?: boolean;
 }
 
 export interface ExtendedVehicleMarker {
@@ -407,7 +410,7 @@ VehicleDetailModal.displayName = 'VehicleDetailModal';
 
 // ── Main Map Component ─────────────────────────────────────────────────────────
 
-const MapPlaceholder: React.FC<MapPlaceholderProps> = ({ height = 580 }) => {
+const MapPlaceholder: React.FC<MapPlaceholderProps> = ({ height = 580, isLoading = false, isError = false }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
@@ -688,11 +691,34 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({ height = 580 }) => {
         {/* Map Canvas Area */}
         <div
           className={`map-card__canvas-area map-layer--${activeLayer}`}
-          style={{ minHeight: height }}
+          style={{ minHeight: height, position: 'relative' }}
           aria-label="Interactive 60 FPS fleet command canvas map"
         >
           {/* 60 FPS Canvas Element */}
-          <canvas id="fleet-map-canvas" ref={canvasRef} aria-hidden="true" />
+          <canvas id="fleet-map-canvas" ref={canvasRef} aria-hidden="true" style={{ opacity: isLoading || isError || vehicles.length === 0 ? 0.3 : 1, transition: 'opacity 0.4s' }} />
+
+          {/* ── State Feedback Overlays ── */}
+          <div style={{ position: 'absolute', inset: 0, zIndex: 50, pointerEvents: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            {isError ? (
+              <div style={{ pointerEvents: 'auto', background: 'rgba(10,15,30,0.8)', padding: '24px', borderRadius: '24px', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <PremiumErrorState 
+                  title="Map Loading Failed" 
+                  description="Unable to establish a secure connection to the live telemetry stream." 
+                  onRetry={() => window.location.reload()} 
+                />
+              </div>
+            ) : isLoading ? (
+              <PremiumSkeleton width="100%" height="100%" borderRadius="0" />
+            ) : vehicles.length === 0 ? (
+              <div style={{ pointerEvents: 'auto', background: 'rgba(10,15,30,0.8)', padding: '24px', borderRadius: '24px', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.1)' }}>
+                <PremiumEmptyState 
+                  title="Waiting for Live Vehicle Data" 
+                  description="Connecting to satellites and waiting for the first telemetry packets..." 
+                  icon="📡"
+                />
+              </div>
+            ) : null}
+          </div>
 
           {/* ── Top Telemetry Overlay Bar ── */}
           <div className="map-top-overlay-bar" aria-label="Live Telemetry Overlay">

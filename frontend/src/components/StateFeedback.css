@@ -1,0 +1,132 @@
+/* ============================================================
+   Enterprise State Feedback Styles
+   ============================================================ */
+
+/* ── Skeletons ── */
+.premium-skeleton {
+  background: rgba(255, 255, 255, 0.03);
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px; /* Override via inline styles or utility classes if needed */
+}
+
+.premium-skeleton::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: linear-gradient(90deg, 
+    transparent 0%, 
+    rgba(255,255,255,0.06) 50%, 
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.8s infinite linear;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* ── Empty State ── */
+.premium-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  min-height: 250px;
+}
+
+.premium-empty-icon {
+  font-size: 56px;
+  margin-bottom: 24px;
+  opacity: 0.8;
+  animation: float 4s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(79, 140, 255, 0.15) 0%, transparent 60%);
+  border-radius: 50%;
+  padding: 16px;
+  width: 100px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-12px); }
+}
+
+.premium-empty-title {
+  font-family: var(--ds-font-family-display, 'Space Grotesk', sans-serif);
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--ds-color-text-main, #FFFFFF);
+  margin-bottom: 8px;
+  letter-spacing: -0.3px;
+}
+
+.premium-empty-desc {
+  font-family: var(--ds-font-family, 'Inter', sans-serif);
+  font-size: 14px;
+  color: var(--ds-color-text-muted, #8DA2C0);
+  max-width: 300px;
+  line-height: 1.5;
+}
+
+/* ── Error State ── */
+.premium-error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 24px;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+  min-height: 250px;
+  border-radius: inherit;
+  background: rgba(255, 92, 92, 0.02);
+}
+
+.premium-error-icon {
+  font-size: 48px;
+  margin-bottom: 20px;
+  color: var(--ds-color-danger, #FF5C5C);
+  animation: pulse-danger 2s infinite;
+  background: rgba(255, 92, 92, 0.1);
+  border: 1px solid rgba(255, 92, 92, 0.3);
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px rgba(255, 92, 92, 0.2);
+}
+
+@keyframes pulse-danger {
+  0% { box-shadow: 0 0 0 0 rgba(255, 92, 92, 0.4); }
+  70% { box-shadow: 0 0 0 16px rgba(255, 92, 92, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(255, 92, 92, 0); }
+}
+
+.premium-error-title {
+  font-family: var(--ds-font-family-display, 'Space Grotesk', sans-serif);
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ds-color-danger, #FF5C5C);
+  margin-bottom: 8px;
+}
+
+.premium-error-desc {
+  font-family: var(--ds-font-family, 'Inter', sans-serif);
+  font-size: 13px;
+  color: var(--ds-color-text-muted, #8DA2C0);
+  margin-bottom: 24px;
+  max-width: 280px;
+}

@@ -20,6 +20,7 @@
 
 import React, { memo, useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PremiumSkeleton, PremiumEmptyState, PremiumErrorState } from './StateFeedback';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -47,6 +48,7 @@ export interface FleetAlert {
 
 interface RecentAlertsProps {
   alerts?: FleetAlert[];
+  isError?: boolean;
 }
 
 // ── Dummy Alerts Dataset ───────────────────────────────────────────────────────
@@ -300,7 +302,7 @@ const AlertCardItem: React.FC<AlertCardProps> = memo(
   }
 );
 
-const RecentAlerts: React.FC<RecentAlertsProps> = ({ alerts }) => {
+const RecentAlerts: React.FC<RecentAlertsProps> = ({ alerts, isError = false }) => {
   const [activeFilter, setActiveFilter] = useState<string>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [expandedId, setExpandedId] = useState<string | null>(null);
@@ -447,15 +449,23 @@ const RecentAlerts: React.FC<RecentAlertsProps> = ({ alerts }) => {
 
       {/* ── Alert List Feed ────────────────────────────────────────── */}
       <ul className="a-list-feed" aria-label="Live alerts feed list">
-        {isLoading ? (
+        {isError ? (
+          <li className="a-card">
+            <PremiumErrorState 
+              title="Connection Lost" 
+              description="Failed to load live alerts from the server." 
+              onRetry={() => window.location.reload()} 
+            />
+          </li>
+        ) : isLoading ? (
           // Glass Skeleton Cards
           Array.from({ length: 4 }).map((_, idx) => (
             <li key={`skel-a-${idx}`} className="a-card a-row-skeleton">
-              <div className="a-skel-box" style={{ width: '40px', height: '40px', borderRadius: '10px' }} />
+              <PremiumSkeleton width="40px" height="40px" borderRadius="10px" className="a-skel-box" />
               <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                <div className="a-skel-box" style={{ width: '60%', height: '18px' }} />
-                <div className="a-skel-box" style={{ width: '90%', height: '14px' }} />
-                <div className="a-skel-box" style={{ width: '40%', height: '12px' }} />
+                <PremiumSkeleton width="60%" height="18px" className="a-skel-box" />
+                <PremiumSkeleton width="90%" height="14px" className="a-skel-box" />
+                <PremiumSkeleton width="40%" height="12px" className="a-skel-box" />
               </div>
             </li>
           ))
@@ -479,24 +489,13 @@ const RecentAlerts: React.FC<RecentAlertsProps> = ({ alerts }) => {
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 exit={{ opacity: 0 }}
+                style={{ background: 'transparent', boxShadow: 'none', border: 'none' }}
               >
-                <div className="a-empty-icon-wrap">
-                  <span className="a-empty-emoji">🛡️</span>
-                </div>
-                <h4 className="a-empty-title">No Active Alerts</h4>
-                <p className="a-empty-desc">
-                  All vehicle systems operational. No fleet incidents match filter "{activeFilter}".
-                </p>
-                <button
-                  type="button"
-                  className="a-btn-action"
-                  onClick={() => {
-                    setActiveFilter('All');
-                    setSearchQuery('');
-                  }}
-                >
-                  Reset Priority Filter
-                </button>
+                <PremiumEmptyState 
+                  title="No Active Alerts" 
+                  description={`All vehicle systems operational. No fleet incidents match filter "${activeFilter}".`}
+                  icon="🛡️"
+                />
               </motion.li>
             )}
           </AnimatePresence>

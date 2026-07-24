@@ -1,0 +1,241 @@
+/* ============================================================
+   FleetDash Enterprise Design System
+   Core Tokens & Utility Classes
+   ============================================================ */
+
+:root {
+  /* ── Core Color Tokens (Strict Enterprise Palette) ── */
+  --ds-color-primary: #4F8CFF;
+  --ds-color-secondary: #7C5CFF;
+  --ds-color-accent: #00D9FF;
+  --ds-color-success: #31D67B;
+  --ds-color-warning: #FFB547;
+  --ds-color-danger: #FF5C5C;
+  --ds-color-text-main: #FFFFFF;
+  --ds-color-text-muted: #8DA2C0;
+
+  /* ── Theme Backgrounds ── */
+  --ds-bg-gradient: linear-gradient(135deg, #040B16 0%, #081120 100%);
+  
+  /* ── Glassmorphism Core ── */
+  --ds-glass-bg: rgba(10, 15, 30, 0.65);
+  --ds-glass-border: rgba(255, 255, 255, 0.08);
+  --ds-glass-border-hover: rgba(255, 255, 255, 0.18);
+  --ds-glass-blur: blur(24px);
+  
+  /* ── Shadows & Glows ── */
+  --ds-shadow-glass: 0 10px 40px rgba(0, 0, 0, 0.4);
+  --ds-shadow-lifted: 0 16px 50px rgba(0, 0, 0, 0.5), 0 0 20px rgba(79, 140, 255, 0.15);
+  --ds-glow-primary: 0 0 16px rgba(79, 140, 255, 0.25);
+  --ds-glow-accent: 0 0 16px rgba(0, 217, 255, 0.25);
+
+  /* ── Typography Scale ── */
+  --ds-font-family: 'Inter', system-ui, sans-serif;
+  --ds-font-family-display: 'Space Grotesk', 'Inter', sans-serif;
+  --ds-font-size-page-title: 28px;
+  --ds-font-size-section-title: 20px;
+  --ds-font-size-body: 14px;
+  --ds-font-size-micro: 11px;
+
+  /* ── Radii & Spacing ── */
+  --ds-radius-card: 24px;
+  --ds-radius-btn: 12px;
+  --ds-radius-input: 16px;
+  --ds-radius-badge: 99px;
+  --ds-spacing-card-pad: 24px;
+
+  /* ── Animations & Transitions ── */
+  --ds-trans-smooth: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --ds-trans-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ╔══════════════════════════════════════════════════════════╗
+   ║  DESIGN SYSTEM COMPONENT CLASSES                         ║
+   ╚══════════════════════════════════════════════════════════╝ */
+
+/* ── Typography ── */
+.ds-page-title {
+  font-family: var(--ds-font-family-display);
+  font-size: var(--ds-font-size-page-title);
+  font-weight: 800;
+  color: var(--ds-color-text-main);
+  letter-spacing: -0.5px;
+}
+
+.ds-section-title {
+  font-family: var(--ds-font-family-display);
+  font-size: var(--ds-font-size-section-title);
+  font-weight: 700;
+  color: var(--ds-color-text-main);
+}
+
+.ds-body-text {
+  font-family: var(--ds-font-family);
+  font-size: var(--ds-font-size-body);
+  color: var(--ds-color-text-muted);
+}
+
+/* ── Glassmorphism Cards ── */
+.ds-card {
+  background: var(--ds-glass-bg);
+  backdrop-filter: var(--ds-glass-blur);
+  -webkit-backdrop-filter: var(--ds-glass-blur);
+  border: 1px solid var(--ds-glass-border);
+  border-radius: var(--ds-radius-card);
+  padding: var(--ds-spacing-card-pad);
+  box-shadow: var(--ds-shadow-glass);
+  transition: var(--ds-trans-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+.ds-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.02);
+  pointer-events: none;
+}
+
+.ds-card:hover {
+  transform: translateY(-4px);
+  border-color: var(--ds-glass-border-hover);
+  box-shadow: var(--ds-shadow-lifted);
+}
+
+/* ── Buttons ── */
+.ds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: var(--ds-radius-btn);
+  font-family: var(--ds-font-family);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--ds-trans-smooth);
+  border: none;
+  outline: none;
+}
+
+.ds-btn-primary {
+  background: linear-gradient(135deg, var(--ds-color-primary) 0%, #2A5BCC 100%);
+  color: #FFFFFF;
+  box-shadow: var(--ds-glow-primary);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
+.ds-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 24px rgba(79, 140, 255, 0.4);
+  background: linear-gradient(135deg, #5c94ff 0%, #366bf0 100%);
+}
+
+.ds-btn-secondary {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  color: var(--ds-color-text-main);
+  border: 1px solid var(--ds-glass-border);
+}
+
+.ds-btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: var(--ds-glass-border-hover);
+  box-shadow: var(--ds-shadow-glass);
+  transform: translateY(-2px);
+}
+
+/* ── Inputs ── */
+.ds-input {
+  background: rgba(10, 15, 30, 0.5);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--ds-glass-border);
+  border-radius: var(--ds-radius-input);
+  padding: 12px 16px;
+  color: var(--ds-color-text-main);
+  font-family: var(--ds-font-family);
+  font-size: 14px;
+  transition: var(--ds-trans-smooth);
+  width: 100%;
+}
+
+.ds-input:focus {
+  outline: none;
+  border-color: var(--ds-color-accent);
+  box-shadow: var(--ds-glow-accent);
+  background: rgba(10, 15, 30, 0.8);
+}
+
+.ds-input::placeholder {
+  color: rgba(141, 162, 192, 0.5);
+}
+
+/* ── Badges ── */
+.ds-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 12px;
+  border-radius: var(--ds-radius-badge);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.2);
+}
+
+.ds-badge-success { background: rgba(49, 214, 123, 0.15); color: var(--ds-color-success); border-color: rgba(49, 214, 123, 0.3); box-shadow: 0 0 12px rgba(49, 214, 123, 0.2); }
+.ds-badge-warning { background: rgba(255, 181, 71, 0.15); color: var(--ds-color-warning); border-color: rgba(255, 181, 71, 0.3); box-shadow: 0 0 12px rgba(255, 181, 71, 0.2); }
+.ds-badge-danger  { background: rgba(255, 92, 92, 0.15);  color: var(--ds-color-danger);  border-color: rgba(255, 92, 92, 0.3);  box-shadow: 0 0 12px rgba(255, 92, 92, 0.2); }
+.ds-badge-primary { background: rgba(79, 140, 255, 0.15); color: var(--ds-color-primary); border-color: rgba(79, 140, 255, 0.3); box-shadow: var(--ds-glow-primary); }
+
+/* ── Dropdowns / Modals ── */
+.ds-dropdown, .ds-modal {
+  background: rgba(15, 23, 42, 0.85);
+  backdrop-filter: blur(32px) saturate(180%);
+  -webkit-backdrop-filter: blur(32px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: var(--ds-radius-card);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(79, 140, 255, 0.1);
+}
+
+/* ── Tables ── */
+.ds-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.ds-table th {
+  text-align: left;
+  padding: 16px;
+  font-size: 12px;
+  text-transform: uppercase;
+  color: var(--ds-color-text-muted);
+  border-bottom: 1px solid var(--ds-glass-border);
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.ds-table td {
+  padding: 16px;
+  font-size: 14px;
+  color: var(--ds-color-text-main);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: var(--ds-trans-smooth);
+}
+
+.ds-table tr:hover td {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+/* ── Generic Animations ── */
+@keyframes ds-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes ds-slide-up { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+@keyframes ds-shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+
+.ds-animate-fade { animation: ds-fade-in 0.4s ease-out forwards; }
+.ds-animate-slide { animation: ds-slide-up 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) forwards; }

@@ -15,8 +15,9 @@
  * - Preserves all existing FleetDash data structures, props, and logic 100%
  */
 
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { PremiumSkeleton, PremiumEmptyState, PremiumErrorState } from './StateFeedback';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -43,6 +44,7 @@ export interface Vehicle {
 
 interface VehicleListProps {
   vehicles?: Vehicle[];
+  isError?: boolean;
 }
 
 type SortField = 'speedKmh' | 'lastUpdated' | null;
@@ -286,7 +288,7 @@ function parseRelativeSeconds(str: string): number {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
+const VehicleList: React.FC<VehicleListProps> = ({ vehicles, isError = false }) => {
   const [filterStatus, setFilterStatus] = useState<VehicleStatus | 'All'>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortField, setSortField] = useState<SortField>(null);
@@ -549,18 +551,28 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
           </thead>
 
           <tbody>
-            {isLoading ? (
+            {isError ? (
+              <tr>
+                <td colSpan={8}>
+                  <PremiumErrorState 
+                    title="Network Error" 
+                    description="Failed to load telemetry data. The server might be offline." 
+                    onRetry={() => window.location.reload()} 
+                  />
+                </td>
+              </tr>
+            ) : isLoading ? (
               // ── Loading Skeleton Shimmer ─────────────────────────────
               Array.from({ length: itemsPerPage }).map((_, idx) => (
                 <tr key={`skel-${idx}`} className="v-row-skeleton">
-                  <td><div className="v-skel-box v-skel-id" /></td>
-                  <td><div className="v-skel-box v-skel-type" /></td>
-                  <td><div className="v-skel-box v-skel-driver" /></td>
-                  <td><div className="v-skel-box v-skel-speed" /></td>
-                  <td><div className="v-skel-box v-skel-status" /></td>
-                  <td><div className="v-skel-box v-skel-location" /></td>
-                  <td><div className="v-skel-box v-skel-updated" /></td>
-                  <td><div className="v-skel-box v-skel-btn" /></td>
+                  <td><PremiumSkeleton className="v-skel-box v-skel-id" /></td>
+                  <td><PremiumSkeleton className="v-skel-box v-skel-type" /></td>
+                  <td><PremiumSkeleton className="v-skel-box v-skel-driver" /></td>
+                  <td><PremiumSkeleton className="v-skel-box v-skel-speed" /></td>
+                  <td><PremiumSkeleton className="v-skel-box v-skel-status" /></td>
+                  <td><PremiumSkeleton className="v-skel-box v-skel-location" /></td>
+                  <td><PremiumSkeleton className="v-skel-box v-skel-updated" /></td>
+                  <td><PremiumSkeleton className="v-skel-box v-skel-btn" /></td>
                 </tr>
               ))
             ) : paginatedVehicles.length > 0 ? (
@@ -686,25 +698,11 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
               // ── Beautiful Glass Empty State ──────────────────────────
               <tr>
                 <td colSpan={8}>
-                  <div className="v-empty-state">
-                    <div className="v-empty-icon-wrap">
-                      <span className="v-empty-emoji">🔍</span>
-                    </div>
-                    <h4 className="v-empty-title">No Vehicles Found</h4>
-                    <p className="v-empty-desc">
-                      No fleet vehicles match your current search "{searchQuery}" or selected filter "{filterStatus}".
-                    </p>
-                    <button
-                      type="button"
-                      className="v-btn-secondary"
-                      onClick={() => {
-                        setSearchQuery('');
-                        setFilterStatus('All');
-                      }}
-                    >
-                      Reset All Filters
-                    </button>
-                  </div>
+                  <PremiumEmptyState 
+                    title="No Vehicles Available" 
+                    description={`No fleet vehicles match your current search "${searchQuery}" or selected filter "${filterStatus}".`}
+                    icon="🚛"
+                  />
                 </td>
               </tr>
             )}
@@ -714,12 +712,20 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
 
       {/* ── Mobile Responsive Card View (< 768px) ──────────────────────── */}
       <div className="v-mobile-cards">
-        {isLoading ? (
+        {isError ? (
+          <div className="v-mobile-card">
+            <PremiumErrorState 
+              title="Network Error" 
+              description="Failed to load telemetry data." 
+              onRetry={() => window.location.reload()} 
+            />
+          </div>
+        ) : isLoading ? (
           Array.from({ length: 3 }).map((_, idx) => (
             <div key={`mob-skel-${idx}`} className="v-mobile-card v-row-skeleton">
-              <div className="v-skel-box" style={{ height: '24px', width: '60%' }} />
-              <div className="v-skel-box" style={{ height: '16px', width: '80%', margin: '10px 0' }} />
-              <div className="v-skel-box" style={{ height: '36px', width: '100%' }} />
+              <PremiumSkeleton height="24px" width="60%" />
+              <PremiumSkeleton height="16px" width="80%" className="v-skel-box" />
+              <PremiumSkeleton height="36px" width="100%" />
             </div>
           ))
         ) : paginatedVehicles.length > 0 ? (
@@ -787,7 +793,15 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles }) => {
               </motion.div>
             );
           })
-        ) : null}
+        ) : (
+          <div className="v-mobile-card">
+            <PremiumEmptyState 
+              title="No Vehicles" 
+              description="No match found for current filters." 
+              icon="🚛"
+            />
+          </div>
+        )}
       </div>
 
       {/* ── Footer & Pagination Controls ────────────────────────────── */}
