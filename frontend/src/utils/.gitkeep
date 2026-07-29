@@ -1,0 +1,8 @@
+/**
+ * utils/ — Utility Functions (Placeholder)
+ *
+ * Future purpose:
+ * - Contain reusable utility/helper functions used across the application.
+ * - Examples: date formatters, coordinate converters, data validators, string helpers.
+ * - Keep functions pure and well-typed for easy testing.
+ */

@@ -1,0 +1,8 @@
+/**
+ * config/ — Application Configuration (Placeholder)
+ *
+ * Future purpose:
+ * - Centralize environment-based configuration (dev, staging, production).
+ * - Export typed config objects reading from import.meta.env (Vite).
+ * - Examples: API base URL, WebSocket URL, feature flags, map tile server URLs.
+ */

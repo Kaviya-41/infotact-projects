@@ -1,0 +1,8 @@
+/**
+ * services/ — Business Logic Services (Placeholder)
+ *
+ * Future purpose:
+ * - Contain business logic that sits between API calls and UI components.
+ * - Transform, aggregate, or cache data from multiple API sources.
+ * - Examples: VehicleService, LocationService, NotificationService.
+ */

@@ -1,0 +1,8 @@
+/**
+ * constants/ — Application Constants (Placeholder)
+ *
+ * Future purpose:
+ * - Define application-wide constants and enums.
+ * - Examples: API route paths, status enums, default config values, map settings.
+ * - Centralizes magic strings and values for maintainability.
+ */

@@ -1,0 +1,8 @@
+/**
+ * types/ — TypeScript Type Definitions (Placeholder)
+ *
+ * Future purpose:
+ * - Define shared TypeScript interfaces and types for the application.
+ * - Examples: Vehicle, Coordinate, HealthStatus, ApiResponse.
+ * - Types will be used across API services, hooks, and components.
+ */

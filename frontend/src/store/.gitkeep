@@ -1,0 +1,8 @@
+/**
+ * store/ — State Management (Placeholder)
+ *
+ * Future purpose:
+ * - Contain global state management logic (e.g., React Context, Zustand, or Redux).
+ * - Examples: VehicleStore, AuthStore, UIStore.
+ * - Manages shared application state that multiple components depend on.
+ */
