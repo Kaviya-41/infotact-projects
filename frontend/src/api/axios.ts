@@ -1,14 +1,24 @@
 /**
- * axios.ts — Axios Instance Configuration (Placeholder)
+ * axios.ts — Pre-configured Axios Instance
  *
- * Future purpose:
- * - Create and export a pre-configured Axios instance.
- * - Set the baseURL from the VITE_API_BASE_URL environment variable.
- * - Attach default headers (e.g., Content-Type: application/json).
- * - Configure request interceptors (e.g., attach auth tokens).
- * - Configure response interceptors (e.g., global error handling, token refresh).
- * - Set default timeout values.
+ * Creates and exports a reusable Axios instance for all API communication.
+ * - Reads the backend URL from the VITE_API_BASE_URL environment variable.
+ * - Sets a 10-second timeout for all requests.
+ * - Defaults Content-Type to application/json.
  *
- * NOTE: Do not implement any API logic here yet.
- * This file is a placeholder for future backend integration.
+ * Usage:
+ *   import api from '@/api/axios';
+ *   // then use api.get(), api.post(), etc. in service files.
  */
+
+import axios from 'axios';
+
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_BASE_URL,
+  timeout: 10_000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+export default api;
