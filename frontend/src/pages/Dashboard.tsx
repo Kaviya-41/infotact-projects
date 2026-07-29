@@ -17,6 +17,7 @@ import { motion } from 'framer-motion';
 import DashboardCards from '../components/DashboardCards';
 import MapPlaceholder from '../components/MapPlaceholder';
 import VehicleList from '../components/VehicleList';
+import { useVehicles } from '../hooks/useVehicles';
 import RecentAlerts from '../components/RecentAlerts';
 import FleetStatusCard from '../components/FleetStatusCard';
 import Footer from '../components/Footer';
@@ -67,6 +68,8 @@ const SectionLabel: React.FC<{ icon: string; title: string; subtitle?: string }>
 // ── Component ──────────────────────────────────────────────────────────────────
 
 const Dashboard: React.FC = () => {
+  const { vehicles, loading, error } = useVehicles();
+
   return (
     <motion.div
       className="dashboard-page"
@@ -140,7 +143,12 @@ const Dashboard: React.FC = () => {
             title="Vehicle Fleet Telemetry"
             subtitle="Detailed view of all connected vehicles and driver status"
           />
-          <VehicleList />
+          <VehicleList
+            vehicles={vehicles.length > 0 ? vehicles : undefined}
+            isLoading={loading}
+            isError={!!error}
+            errorMessage={error ?? undefined}
+          />
 
           {/* ── Fleet Analytics ────────────────────────────────────────── */}
           <Suspense fallback={<AnalyticsSkeleton />}>

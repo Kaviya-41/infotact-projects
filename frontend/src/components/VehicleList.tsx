@@ -44,7 +44,9 @@ export interface Vehicle {
 
 interface VehicleListProps {
   vehicles?: Vehicle[];
+  isLoading?: boolean;
   isError?: boolean;
+  errorMessage?: string;
 }
 
 type SortField = 'speedKmh' | 'lastUpdated' | null;
@@ -288,14 +290,22 @@ function parseRelativeSeconds(str: string): number {
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
-const VehicleList: React.FC<VehicleListProps> = ({ vehicles, isError = false }) => {
+const VehicleList: React.FC<VehicleListProps> = ({
+  vehicles,
+  isLoading: externalLoading,
+  isError = false,
+  errorMessage,
+}) => {
   const [filterStatus, setFilterStatus] = useState<VehicleStatus | 'All'>('All');
   const [searchQuery, setSearchQuery] = useState<string>('');
   const [sortField, setSortField] = useState<SortField>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>('desc');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [internalLoading, setInternalLoading] = useState<boolean>(false);
+
+  // Use external loading state if provided, otherwise use internal toggle
+  const isLoading = externalLoading ?? internalLoading;
 
   const itemsPerPage = 6;
 
@@ -421,14 +431,14 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles, isError = false }) 
           {/* Skeleton Shimmer Toggle Button */}
           <button
             type="button"
-            className={`v-btn-secondary ${isLoading ? 'active' : ''}`}
-            onClick={() => setIsLoading(!isLoading)}
+            className={`v-btn-secondary ${internalLoading ? 'active' : ''}`}
+            onClick={() => setInternalLoading(!internalLoading)}
             title="Toggle Skeleton Shimmer Loading Effect"
           >
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
             </svg>
-            {isLoading ? 'Live View' : 'Simulate Loading'}
+            {internalLoading ? 'Live View' : 'Simulate Loading'}
           </button>
 
           {/* Export CSV Button */}
@@ -556,7 +566,7 @@ const VehicleList: React.FC<VehicleListProps> = ({ vehicles, isError = false }) 
                 <td colSpan={8}>
                   <PremiumErrorState 
                     title="Network Error" 
-                    description="Failed to load telemetry data. The server might be offline." 
+                    description={errorMessage ?? 'Failed to load telemetry data. The server might be offline.'} 
                     onRetry={() => window.location.reload()} 
                   />
                 </td>

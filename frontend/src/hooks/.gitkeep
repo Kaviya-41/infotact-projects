@@ -1,8 +1,0 @@
-/**
- * hooks/ — Custom React Hooks (Placeholder)
- *
- * Future purpose:
- * - Contain reusable custom React hooks for data fetching and state management.
- * - Examples: useVehicles, useHealthCheck, useCoordinates, useWebSocket.
- * - Hooks will abstract API calls and provide clean interfaces for components.
- */
