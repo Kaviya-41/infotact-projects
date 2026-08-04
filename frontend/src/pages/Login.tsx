@@ -1,10 +1,10 @@
 /**
- * Login.tsx – FleetDash Enterprise Light Theme Login Page
+ * Login.tsx – Split-screen Automotive Telematics Light Login Page
  */
 
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Truck, ArrowRight, CheckCircle2 } from 'lucide-react';
+import { Truck, ArrowRight, Navigation } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/dashboard.css';
 
@@ -13,6 +13,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(true);
   const [error, setError] = useState('');
+
   const { login } = useAuth();
   const navigate = useNavigate();
 
@@ -20,12 +21,8 @@ const Login: React.FC = () => {
     e.preventDefault();
     setError('');
 
-    if (!email) {
-      setError('Email address is required.');
-      return;
-    }
-    if (!password) {
-      setError('Password is required.');
+    if (!email || !password) {
+      setError('Please enter your email and password.');
       return;
     }
 
@@ -33,121 +30,127 @@ const Login: React.FC = () => {
     if (res.success) {
       navigate('/dashboard', { replace: true });
     } else {
-      setError(res.error || 'Invalid credentials');
+      setError(res.error || 'Authentication failed');
     }
   };
 
   return (
-    <div className="auth-page">
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: '1fr 440px',
-        maxWidth: '1040px',
-        width: '100%',
-        backgroundColor: '#FFFFFF',
-        borderRadius: '16px',
-        border: '1px solid #E2E8F0',
-        boxShadow: '0 10px 25px -3px rgba(15, 23, 42, 0.08)',
-        overflow: 'hidden'
-      }}>
-        {/* Left Hero Visualization Panel */}
-        <div style={{
-          padding: '48px',
-          backgroundColor: '#F8FAFC',
-          borderRight: '1px solid #E2E8F0',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          position: 'relative'
-        }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '32px' }}>
-              <div className="sidebar__logo-icon">
-                <Truck size={20} />
-              </div>
-              <span className="sidebar__logo-text">Fleet<span>Dash</span></span>
+    <div className="auth-split-layout">
+      {/* Left Branding & Map Visualization Panel */}
+      <div className="auth-hero-panel">
+        <div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '48px' }}>
+            <div className="sidebar-dock__logo">
+              <Truck size={24} />
             </div>
-
-            <h2 style={{ fontSize: '30px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.5px', marginBottom: '12px', lineHeight: 1.2 }}>
-              High-Throughput Real-Time Fleet Intelligence
-            </h2>
-            <p style={{ color: '#64748B', fontSize: '15px', lineHeight: 1.6 }}>
-              Monitor vehicle telemetry, track driver performance, optimize delivery routes, and manage alerts across your entire fleet in real-time.
-            </p>
-
-            <div style={{ marginTop: '36px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <CheckCircle2 size={18} color="#16A34A" />
-                <span style={{ fontSize: '14px', fontWeight: 500, color: '#334155' }}>Sub-millisecond event telemetry processing</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <CheckCircle2 size={18} color="#16A34A" />
-                <span style={{ fontSize: '14px', fontWeight: 500, color: '#334155' }}>Live vehicle location & geofence monitoring</span>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                <CheckCircle2 size={18} color="#16A34A" />
-                <span style={{ fontSize: '14px', fontWeight: 500, color: '#334155' }}>Automated engine health & alert diagnostics</span>
-              </div>
-            </div>
+            <span style={{ fontSize: '24px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.5px' }}>
+              Fleet<span style={{ color: '#2563EB' }}>Dash</span>
+            </span>
           </div>
 
-          <div style={{ paddingTop: '32px', borderTop: '1px solid #E2E8F0', fontSize: '12px', color: '#94A3B8' }}>
-            © 2026 FleetDash Telemetry Inc. Enterprise Operations v2.4
+          <h1 style={{ fontSize: '36px', fontWeight: 800, color: '#0F172A', letterSpacing: '-1px', lineHeight: 1.2, marginBottom: '16px' }}>
+            Real-Time Fleet Intelligence Platform
+          </h1>
+          <p style={{ fontSize: '16px', color: '#64748B', lineHeight: 1.6, maxWidth: '480px' }}>
+            Monitor vehicle telemetry, delivery routes, and engine diagnostics from an enterprise automotive telematics dashboard.
+          </p>
+
+          {/* Graphic Mock Map Visualization */}
+          <div style={{
+            marginTop: '40px',
+            height: '240px',
+            backgroundColor: '#FFFFFF',
+            borderRadius: '20px',
+            border: '1px solid rgba(15, 23, 42, 0.08)',
+            boxShadow: '0 8px 32px rgba(15, 23, 42, 0.06)',
+            position: 'relative',
+            overflow: 'hidden',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center'
+          }}>
+            <svg width="100%" height="100%" viewBox="0 0 400 200" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}>
+              <path d="M -20 100 Q 150 140 420 80" stroke="#CBD5E1" strokeWidth="6" fill="none" />
+              <path d="M 120 -20 Q 160 120 280 220" stroke="#CBD5E1" strokeWidth="6" fill="none" />
+              <path d="M 60 180 Q 200 80 360 40" stroke="#2563EB" strokeWidth="3" strokeDasharray="6 4" fill="none" />
+            </svg>
+            <div style={{
+              zIndex: 10,
+              backgroundColor: '#FFFFFF',
+              padding: '10px 16px',
+              borderRadius: '20px',
+              border: '1px solid #E2E8F0',
+              boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px',
+              fontWeight: 700,
+              fontSize: '12px'
+            }}>
+              <Navigation size={16} color="#2563EB" />
+              <span>FLT-024 En Route (68 km/h)</span>
+            </div>
           </div>
         </div>
 
-        {/* Right Login Form */}
-        <div style={{ padding: '48px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <div className="auth-header" style={{ textAlign: 'left', marginBottom: '28px' }}>
-            <h1 className="auth-title">Welcome Back</h1>
-            <p className="auth-subtitle">Sign in to your Fleet Operations dashboard</p>
+        <div style={{ fontSize: '12px', color: '#94A3B8' }}>
+          © 2026 FleetDash Telemetry Systems. Enterprise Operations Mode.
+        </div>
+      </div>
+
+      {/* Right Form Panel */}
+      <div className="auth-form-side">
+        <div style={{ maxWidth: '360px', width: '100%', margin: '0 auto' }}>
+          <div style={{ marginBottom: '32px' }}>
+            <h2 style={{ fontSize: '28px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.5px', marginBottom: '6px' }}>
+              Welcome Back
+            </h2>
+            <p style={{ fontSize: '14px', color: '#64748B' }}>
+              Sign in to access your telemetry dashboard
+            </p>
           </div>
 
-          <form className="auth-form" onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {error && (
-              <div style={{
-                padding: '10px 14px',
-                borderRadius: '8px',
-                backgroundColor: '#FEF2F2',
-                border: '1px solid #FCA5A5',
-                color: '#DC2626',
-                fontSize: '13px',
-                fontWeight: 500
-              }}>
+              <div style={{ padding: '10px 14px', borderRadius: '10px', backgroundColor: '#FEF2F2', border: '1px solid #FCA5A5', color: '#DC2626', fontSize: '13px', fontWeight: 600 }}>
                 {error}
               </div>
             )}
 
-            <div className="form-group">
-              <label className="form-label" htmlFor="login-email">Email Address</label>
+            <div>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }} htmlFor="login-email">
+                Work Email
+              </label>
               <input
                 id="login-email"
                 type="email"
-                className="form-input"
+                style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none' }}
                 placeholder="dispatcher@fleetdash.io"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
 
-            <div className="form-group">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <label className="form-label" htmlFor="login-password">Password</label>
+            <div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A' }} htmlFor="login-password">
+                  Password
+                </label>
                 <a href="#forgot" onClick={(e) => e.preventDefault()} style={{ fontSize: '12px', color: '#2563EB', textDecoration: 'none', fontWeight: 600 }}>
-                  Forgot password?
+                  Forgot Password?
                 </a>
               </div>
               <input
                 id="login-password"
                 type="password"
-                className="form-input"
+                style={{ width: '100%', padding: '11px 14px', borderRadius: '10px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none' }}
                 placeholder="••••••••"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
 
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', margin: '4px 0 12px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <input
                 type="checkbox"
                 id="remember"
@@ -155,19 +158,37 @@ const Login: React.FC = () => {
                 onChange={(e) => setRememberMe(e.target.checked)}
                 style={{ cursor: 'pointer', accentColor: '#2563EB' }}
               />
-              <label htmlFor="remember" style={{ fontSize: '13px', color: '#475569', cursor: 'pointer' }}>
-                Remember me on this browser
+              <label htmlFor="remember" style={{ fontSize: '13px', color: '#64748B', cursor: 'pointer' }}>
+                Remember me
               </label>
             </div>
 
-            <button type="submit" className="btn-primary" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
-              Sign In to FleetDash <ArrowRight size={16} />
+            <button
+              type="submit"
+              style={{
+                width: '100%',
+                padding: '12px 20px',
+                borderRadius: '10px',
+                backgroundColor: '#2563EB',
+                color: '#FFFFFF',
+                fontSize: '14px',
+                fontWeight: 700,
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px',
+                boxShadow: '0 4px 14px rgba(37, 99, 235, 0.25)'
+              }}
+            >
+              Sign In <ArrowRight size={16} />
             </button>
           </form>
 
-          <p className="auth-footer-text">
+          <p style={{ marginTop: '28px', textAlign: 'center', fontSize: '13px', color: '#64748B' }}>
             Don't have an account?{' '}
-            <Link to="/signup" className="auth-link">
+            <Link to="/signup" style={{ color: '#2563EB', fontWeight: 700, textDecoration: 'none' }}>
               Create Account
             </Link>
           </p>

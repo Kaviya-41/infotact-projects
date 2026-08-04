@@ -1,27 +1,20 @@
 /**
- * AlertsPage.tsx – Dedicated Fleet Telemetry Alerts Stream Page
+ * AlertsPage.tsx – Dedicated Vehicle Alerts Page
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import SidebarNav from '../components/layout/SidebarNav';
 import RecentAlerts from '../components/RecentAlerts';
-import FleetHealth from '../components/dashboard/FleetHealth';
-import Footer from '../components/Footer';
+import '../styles/dashboard.css';
 
 const AlertsPage: React.FC = () => {
   return (
-    <motion.div
-      className="page-container"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="dashboard-two-col">
+    <div style={{ display: 'grid', gridTemplateColumns: '76px 1fr', gap: '24px', padding: '24px', minHeight: '100vh', backgroundColor: '#F6F8FB' }}>
+      <SidebarNav />
+      <div>
         <RecentAlerts />
-        <FleetHealth />
       </div>
-      <Footer />
-    </motion.div>
+    </div>
   );
 };
 

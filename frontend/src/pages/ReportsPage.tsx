@@ -3,21 +3,18 @@
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
+import SidebarNav from '../components/layout/SidebarNav';
 import FleetAnalytics from '../components/FleetAnalytics';
-import Footer from '../components/Footer';
+import '../styles/dashboard.css';
 
 const ReportsPage: React.FC = () => {
   return (
-    <motion.div
-      className="page-container"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <FleetAnalytics />
-      <Footer />
-    </motion.div>
+    <div style={{ display: 'grid', gridTemplateColumns: '76px 1fr', gap: '24px', padding: '24px', minHeight: '100vh', backgroundColor: '#F6F8FB' }}>
+      <SidebarNav />
+      <div>
+        <FleetAnalytics />
+      </div>
+    </div>
   );
 };
 

@@ -1,27 +1,22 @@
 /**
- * LiveMapPage.tsx – Dedicated Full Live Fleet Map Page
+ * LiveMapPage.tsx – Dedicated Live Fleet Map Page
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import MapPlaceholder from '../components/MapPlaceholder';
-import VehicleTelemetry from '../components/dashboard/VehicleTelemetry';
-import Footer from '../components/Footer';
+import SidebarNav from '../components/layout/SidebarNav';
+import FleetMapCanvas from '../components/canvas/FleetMapCanvas';
+import VehicleGauge from '../components/canvas/VehicleGauge';
+import '../styles/dashboard.css';
 
 const LiveMapPage: React.FC = () => {
   return (
-    <motion.div
-      className="page-container"
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.3 }}
-    >
-      <div className="map-telemetry-row">
-        <MapPlaceholder height={680} />
-        <VehicleTelemetry />
+    <div className="telemetry-dashboard-grid">
+      <SidebarNav />
+      <FleetMapCanvas />
+      <div className="right-telemetry-stack">
+        <VehicleGauge />
       </div>
-      <Footer />
-    </motion.div>
+    </div>
   );
 };
 

@@ -1,14 +1,11 @@
 /* ============================================================
-   FleetDash – Enterprise Fleet Operations Center Stylesheet
-   Theme: Light Theme (Tesla, Uber Fleet, Stripe, Linear, Apple inspired)
+   FleetDash – Automotive Telematics Infotainment Dashboard CSS
+   Light Glassmorphism + Tesla / Infotainment Cockpit Layout
    ============================================================ */
 
 @import './design-system.css';
 
-/* ── Reset & Root Shell ─────────────────────────────────────── */
-*,
-*::before,
-*::after {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -20,593 +17,266 @@ body {
   background-color: var(--ds-bg-main);
   color: var(--ds-text-primary);
   -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
-#root {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-}
-
-/* ── Layout Shell ───────────────────────────────────────────── */
-.dashboard-shell {
+/* ── 12-Column Automotive Grid Layout ──────────────────────── */
+.telemetry-dashboard-grid {
   display: grid;
-  grid-template-columns: 240px 1fr;
+  grid-template-columns: 76px 1fr 360px;
+  gap: var(--ds-space-24);
+  padding: var(--ds-space-24);
   min-height: 100vh;
   background-color: var(--ds-bg-main);
 }
 
-.dashboard-shell--collapsed {
-  grid-template-columns: 76px 1fr;
+/* ── Light Glassmorphism Card ───────────────────────────────── */
+.glass-card {
+  background: var(--ds-bg-card-glass);
+  backdrop-filter: var(--ds-glass-backdrop);
+  -webkit-backdrop-filter: var(--ds-glass-backdrop);
+  border: var(--ds-border-glass);
+  border-radius: var(--ds-radius-card);
+  box-shadow: var(--ds-glass-shadow);
+  padding: var(--ds-space-24);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-/* ── Sidebar ────────────────────────────────────────────────── */
-.sidebar {
-  position: sticky;
-  top: 0;
-  height: 100vh;
-  background-color: var(--ds-bg-card);
-  border-right: 1px solid var(--ds-border);
-  display: flex;
-  flex-direction: column;
-  padding: var(--ds-space-3) var(--ds-space-2);
-  z-index: 50;
-  transition: width var(--ds-trans-smooth);
+.glass-card:hover {
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
+  transform: translateY(-2px);
 }
 
-.sidebar__header {
+.glass-card--compact {
+  padding: var(--ds-space-16);
+}
+
+.glass-card__header {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 8px 12px;
-  margin-bottom: var(--ds-space-4);
+  justify-content: space-between;
+  margin-bottom: var(--ds-space-16);
 }
 
-.sidebar__logo-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--ds-radius-md);
+.glass-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--ds-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Vertical Capsule Dock Sidebar ──────────────────────────── */
+.sidebar-dock {
+  position: sticky;
+  top: 24px;
+  height: calc(100vh - 48px);
+  background: var(--ds-bg-card-glass);
+  backdrop-filter: var(--ds-glass-backdrop);
+  -webkit-backdrop-filter: var(--ds-glass-backdrop);
+  border: var(--ds-border-glass);
+  border-radius: var(--ds-radius-dock);
+  box-shadow: var(--ds-glass-shadow);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ds-space-24) 12px;
+  z-index: 50;
+}
+
+.sidebar-dock__logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
   background-color: var(--ds-color-primary);
-  color: var(--ds-text-white);
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
-  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
 }
 
-.sidebar__logo-text {
-  font-family: var(--ds-font-family);
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--ds-text-primary);
-  letter-spacing: -0.4px;
-}
-
-.sidebar__logo-text span {
-  color: var(--ds-color-primary);
-}
-
-.sidebar__nav {
+.sidebar-dock__nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
-  flex: 1;
+  gap: 12px;
 }
 
-.sidebar__section-title {
-  font-size: 11px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.6px;
-  color: var(--ds-text-muted);
-  padding: 16px 12px 6px;
-}
-
-.sidebar__nav-item {
+.sidebar-dock__item {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  border-radius: var(--ds-radius-md);
+  justify-content: center;
   color: var(--ds-text-secondary);
-  font-size: 14px;
-  font-weight: 500;
   text-decoration: none;
-  transition: var(--ds-trans-fast);
+  transition: all 0.2s ease;
   position: relative;
-  cursor: pointer;
 }
 
-.sidebar__nav-item:hover {
-  background-color: var(--ds-bg-secondary);
+.sidebar-dock__item:hover {
+  background-color: rgba(15, 23, 42, 0.05);
   color: var(--ds-text-primary);
 }
 
-.sidebar__nav-item.active {
+.sidebar-dock__item.active {
   background-color: var(--ds-color-primary-light);
   color: var(--ds-color-primary);
   font-weight: 600;
 }
 
-.sidebar__nav-item.active::before {
+.sidebar-dock__item.active::before {
   content: '';
   position: absolute;
-  left: 0;
+  left: -12px;
   top: 50%;
   transform: translateY(-50%);
-  width: 3px;
-  height: 20px;
+  width: 4px;
+  height: 18px;
   border-radius: 0 4px 4px 0;
   background-color: var(--ds-color-primary);
 }
 
-.sidebar__badge {
-  margin-left: auto;
-  padding: 2px 8px;
-  border-radius: var(--ds-radius-full);
-  background-color: var(--ds-color-danger-bg);
-  color: var(--ds-color-danger);
-  border: 1px solid var(--ds-color-danger-border);
-  font-size: 11px;
-  font-weight: 600;
-}
-
-.sidebar__footer {
-  padding-top: var(--ds-space-2);
-  border-top: 1px solid var(--ds-border-subtle);
-}
-
-.sidebar__user {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 10px 12px;
-  border-radius: var(--ds-radius-md);
-  cursor: pointer;
-  transition: var(--ds-trans-fast);
-}
-
-.sidebar__user:hover {
-  background-color: var(--ds-bg-secondary);
-}
-
-.sidebar__avatar {
-  width: 34px;
-  height: 34px;
-  border-radius: var(--ds-radius-full);
-  background-color: var(--ds-color-primary-light);
-  color: var(--ds-color-primary);
-  font-weight: 600;
-  font-size: 13px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--ds-color-primary-border);
-}
-
-.sidebar__user-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ds-text-primary);
-  line-height: 1.2;
-}
-
-.sidebar__user-role {
-  font-size: 11px;
-  color: var(--ds-text-muted);
-}
-
-/* ── Main Content Area ──────────────────────────────────────── */
-.main-content {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: var(--ds-bg-main);
-}
-
-/* ── Header ─────────────────────────────────────────────────── */
-.header {
-  height: 72px;
-  background-color: var(--ds-bg-card);
-  border-bottom: 1px solid var(--ds-border);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 var(--ds-space-4);
-  position: sticky;
-  top: 0;
-  z-index: 40;
-}
-
-.header__left {
-  display: flex;
-  flex-direction: column;
-}
-
-.header__greeting {
-  font-size: 20px;
-  font-weight: 700;
-  color: var(--ds-text-primary);
-  letter-spacing: -0.3px;
-}
-
-.header__subtitle {
-  font-size: 13px;
-  color: var(--ds-text-secondary);
-}
-
-.header__right {
-  display: flex;
-  align-items: center;
-  gap: var(--ds-space-2);
-}
-
-.header__search {
-  position: relative;
-  width: 280px;
-}
-
-.header__search-input {
-  width: 100%;
-  padding: 8px 12px 8px 36px;
-  border-radius: var(--ds-radius-md);
-  border: 1px solid var(--ds-border);
-  background-color: var(--ds-bg-main);
-  font-size: 13px;
-  color: var(--ds-text-primary);
-  outline: none;
-  transition: var(--ds-trans-fast);
-}
-
-.header__search-input:focus {
-  border-color: var(--ds-color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-  background-color: var(--ds-bg-card);
-}
-
-.header__search-icon {
+.sidebar-dock__badge {
   position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--ds-text-muted);
-}
-
-.header__gps-badge {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  border-radius: var(--ds-radius-full);
-  background-color: var(--ds-color-success-bg);
-  border: 1px solid var(--ds-color-success-border);
-  color: var(--ds-color-success);
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.header__gps-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: var(--ds-radius-full);
-  background-color: var(--ds-color-success);
-  animation: pulse-dot 2s infinite;
-}
-
-@keyframes pulse-dot {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.4; }
-}
-
-.header__icon-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: var(--ds-radius-md);
-  border: 1px solid var(--ds-border);
-  background-color: var(--ds-bg-card);
-  color: var(--ds-text-secondary);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: var(--ds-trans-fast);
-  position: relative;
-}
-
-.header__icon-btn:hover {
-  background-color: var(--ds-bg-secondary);
-  color: var(--ds-text-primary);
-}
-
-.header__notification-dot {
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 7px;
-  height: 7px;
-  border-radius: var(--ds-radius-full);
+  top: 4px;
+  right: 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
   background-color: var(--ds-color-danger);
 }
 
-/* ── Page Container ─────────────────────────────────────────── */
-.page-container {
-  padding: var(--ds-space-4);
-  display: flex;
-  flex-direction: column;
-  gap: var(--ds-space-4);
-  flex: 1;
-}
-
-/* ── Card Component Base ────────────────────────────────────── */
-.fleet-card {
-  background-color: var(--ds-bg-card);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-lg);
-  padding: var(--ds-space-3);
-  box-shadow: var(--ds-shadow-sm);
-  transition: var(--ds-trans-smooth);
-}
-
-.fleet-card:hover {
-  box-shadow: var(--ds-shadow-card);
-  border-color: var(--ds-border-hover);
-}
-
-.fleet-card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--ds-space-2);
-}
-
-.fleet-card__title {
-  font-size: var(--ds-font-card-heading);
-  font-weight: 600;
-  color: var(--ds-text-primary);
-}
-
-/* ── Statistics Grid ────────────────────────────────────────── */
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: var(--ds-space-3);
-}
-
-.stat-card {
-  background-color: var(--ds-bg-card);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-lg);
-  padding: var(--ds-space-3);
-  box-shadow: var(--ds-shadow-sm);
-  transition: var(--ds-trans-smooth);
-}
-
-.stat-card:hover {
-  transform: translateY(-2px);
-  box-shadow: var(--ds-shadow-card);
-}
-
-.stat-card__top {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 12px;
-}
-
-.stat-card__icon-box {
-  width: 36px;
-  height: 36px;
-  border-radius: var(--ds-radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.stat-card__icon-box--blue { background: var(--ds-color-primary-light); color: var(--ds-color-primary); }
-.stat-card__icon-box--green { background: var(--ds-color-success-bg); color: var(--ds-color-success); }
-.stat-card__icon-box--amber { background: var(--ds-color-warning-bg); color: var(--ds-color-warning); }
-.stat-card__icon-box--red { background: var(--ds-color-danger-bg); color: var(--ds-color-danger); }
-
-.stat-card__value {
-  font-size: var(--ds-font-telemetry-hero);
-  font-weight: 700;
-  color: var(--ds-text-primary);
-  line-height: 1;
-  font-variant-numeric: tabular-nums;
-  margin-bottom: 8px;
-}
-
-.stat-card__bottom {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.stat-card__label {
-  font-size: 12px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  color: var(--ds-text-secondary);
-}
-
-.stat-card__trend {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.stat-card__trend--up { color: var(--ds-color-success); }
-.stat-card__trend--down { color: var(--ds-color-danger); }
-
-/* ── Live Map & Telemetry Main Section ─────────────────────── */
-.map-telemetry-row {
-  display: grid;
-  grid-template-columns: 1fr 340px;
-  gap: var(--ds-space-3);
-}
-
-.map-container-card {
+/* ── Center Stage & Floating Cards ──────────────────────────── */
+.center-stage {
   position: relative;
-  background-color: var(--ds-bg-card);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-xl);
+  border-radius: var(--ds-radius-dock);
   overflow: hidden;
-  min-height: 480px;
-  box-shadow: var(--ds-shadow-sm);
+  box-shadow: var(--ds-glass-shadow);
+  border: var(--ds-border-glass);
+  min-height: 600px;
   display: flex;
   flex-direction: column;
-}
-
-.map-header {
-  position: absolute;
-  top: 16px;
-  left: 16px;
-  right: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  z-index: 10;
-  pointer-events: none;
-}
-
-.map-header > * {
-  pointer-events: auto;
-}
-
-.map-title-badge {
-  background-color: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(8px);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-md);
-  padding: 8px 16px;
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ds-text-primary);
-  box-shadow: var(--ds-shadow-sm);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.map-controls-group {
-  display: flex;
-  gap: 8px;
-}
-
-.map-btn {
-  background-color: rgba(255, 255, 255, 0.95);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-md);
-  padding: 8px 12px;
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--ds-text-primary);
-  cursor: pointer;
-  box-shadow: var(--ds-shadow-sm);
-  transition: var(--ds-trans-fast);
-}
-
-.map-btn:hover {
-  background-color: var(--ds-bg-main);
-  border-color: var(--ds-border-hover);
-}
-
-.map-visualizer {
-  flex: 1;
-  width: 100%;
-  height: 100%;
   background-color: #F8FAFC;
 }
 
-/* Vehicle Telemetry Panel */
-.telemetry-panel {
-  background-color: var(--ds-bg-card);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-xl);
-  padding: var(--ds-space-3);
-  box-shadow: var(--ds-shadow-sm);
+.canvas-container {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.canvas-overlay-top-left {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  z-index: 20;
+  max-width: 320px;
+  width: 100%;
+}
+
+.canvas-overlay-top-center {
+  position: absolute;
+  top: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  max-width: 380px;
+  width: 100%;
+}
+
+/* ── Active Route Card (Top Left Floating) ──────────────────── */
+.active-route-card {
+  background: rgba(255, 255, 255, 0.88);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: var(--ds-border-glass);
+  border-radius: var(--ds-radius-card);
+  padding: 20px;
+  box-shadow: var(--ds-glass-shadow);
+}
+
+.route-step-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.route-step-dot--active {
+  background-color: var(--ds-color-primary);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+}
+
+.route-step-dot--done {
+  background-color: var(--ds-color-success);
+}
+
+/* ── Vehicle Alert Banners (Top Center Floating) ────────────── */
+.alert-banner-stack {
   display: flex;
   flex-direction: column;
-  gap: var(--ds-space-2);
+  gap: 8px;
 }
 
-.telemetry-panel__header {
+.vehicle-alert-banner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding-bottom: 12px;
-  border-bottom: 1px solid var(--ds-border-subtle);
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(15, 23, 42, 0.08);
+  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  font-size: 13px;
 }
 
-.telemetry-panel__id {
-  font-size: 18px;
-  font-weight: 700;
-  color: var(--ds-text-primary);
+.vehicle-alert-banner--critical {
+  border-left: 4px solid var(--ds-color-danger);
+  background: rgba(254, 242, 242, 0.95);
 }
 
-.telemetry-hero-speed {
-  background-color: var(--ds-bg-main);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-md);
-  padding: 16px;
+.vehicle-alert-banner--warning {
+  border-left: 4px solid var(--ds-color-warning);
+  background: rgba(255, 251, 235, 0.95);
+}
+
+.vehicle-alert-banner--info {
+  border-left: 4px solid var(--ds-color-primary);
+  background: rgba(239, 246, 255, 0.95);
+}
+
+/* ── Right Telemetry Stack ──────────────────────────────────── */
+.right-telemetry-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ds-space-24);
+}
+
+/* ── Radial Speed Gauge ─────────────────────────────────────── */
+.speed-gauge-card {
   text-align: center;
-  margin: 4px 0;
 }
 
-.telemetry-hero-speed__value {
-  font-size: 38px;
+.speed-gauge__val {
+  font-size: 48px;
   font-weight: 800;
+  letter-spacing: -1px;
   color: var(--ds-color-primary);
+  font-family: var(--ds-font-mono);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
 
-.telemetry-hero-speed__unit {
+.speed-gauge__unit {
   font-size: 12px;
   font-weight: 600;
   color: var(--ds-text-secondary);
   text-transform: uppercase;
   margin-top: 4px;
-}
-
-.telemetry-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-}
-
-.telemetry-item {
-  background-color: var(--ds-bg-main);
-  border: 1px solid var(--ds-border-subtle);
-  border-radius: var(--ds-radius-md);
-  padding: 10px 12px;
-}
-
-.telemetry-item__label {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ds-text-muted);
-  text-transform: uppercase;
-  margin-bottom: 4px;
-}
-
-.telemetry-item__val {
-  font-size: 14px;
-  font-weight: 600;
-  color: var(--ds-text-primary);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ── Dashboard Two Column Row (Health + Alerts) ─────────────── */
-.dashboard-two-col {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--ds-space-3);
 }
 
 /* ── Status Badges ──────────────────────────────────────────── */
@@ -618,271 +288,85 @@ body {
   border-radius: var(--ds-radius-full);
   font-size: 12px;
   font-weight: 600;
-  width: fit-content;
 }
 
 .status-badge--moving {
   background-color: var(--ds-color-success-bg);
   color: var(--ds-color-success);
-  border: 1px solid var(--ds-color-success-border);
+  border: 1px solid rgba(22, 163, 74, 0.2);
 }
 
 .status-badge--stopped {
   background-color: var(--ds-color-warning-bg);
   color: var(--ds-color-warning);
-  border: 1px solid var(--ds-color-warning-border);
+  border: 1px solid rgba(217, 119, 6, 0.2);
 }
 
 .status-badge--offline {
   background-color: var(--ds-color-danger-bg);
   color: var(--ds-color-danger);
-  border: 1px solid var(--ds-color-danger-border);
+  border: 1px solid rgba(220, 38, 38, 0.2);
 }
 
 .status-badge__dot {
   width: 6px;
   height: 6px;
-  border-radius: var(--ds-radius-full);
+  border-radius: 50%;
 }
 
 .status-badge--moving .status-badge__dot { background-color: var(--ds-color-success); }
 .status-badge--stopped .status-badge__dot { background-color: var(--ds-color-warning); }
 .status-badge--offline .status-badge__dot { background-color: var(--ds-color-danger); }
 
-/* ── Vehicle Table ──────────────────────────────────────────── */
-.table-card {
-  background-color: var(--ds-bg-card);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-xl);
-  box-shadow: var(--ds-shadow-sm);
-  overflow: hidden;
-}
-
-.table-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--ds-space-3);
-  border-bottom: 1px solid var(--ds-border);
-}
-
-.table-toolbar__search {
-  position: relative;
-  width: 260px;
-}
-
-.table-toolbar__search-input {
-  width: 100%;
-  padding: 8px 12px 8px 34px;
-  border-radius: var(--ds-radius-md);
-  border: 1px solid var(--ds-border);
-  font-size: 13px;
-  outline: none;
-}
-
-.table-toolbar__search-input:focus {
-  border-color: var(--ds-color-primary);
-}
-
-.fleet-table-wrapper {
-  width: 100%;
-  overflow-x: auto;
-}
-
-.fleet-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-  font-size: 13px;
-}
-
-.fleet-table th {
-  background-color: var(--ds-bg-main);
-  color: var(--ds-text-secondary);
-  font-weight: 600;
-  font-size: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  padding: 12px 16px;
-  border-bottom: 1px solid var(--ds-border);
-  position: sticky;
-  top: 0;
-}
-
-.fleet-table td {
-  padding: 14px 16px;
-  border-bottom: 1px solid var(--ds-border-subtle);
-  color: var(--ds-text-primary);
-}
-
-.fleet-table tr:hover td {
-  background-color: var(--ds-bg-main);
-}
-
-/* ── Auth / Login / Signup Pages ────────────────────────────── */
-.auth-page {
+/* ── Auth Split Screen Pages ────────────────────────────────── */
+.auth-split-layout {
   min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: 1fr 480px;
   background-color: var(--ds-bg-main);
-  padding: var(--ds-space-3);
 }
 
-.auth-card {
-  width: 100%;
-  max-width: 440px;
-  background-color: var(--ds-bg-card);
-  border: 1px solid var(--ds-border);
-  border-radius: var(--ds-radius-xl);
-  padding: 40px;
-  box-shadow: var(--ds-shadow-lifted);
-}
-
-.auth-header {
-  text-align: center;
-  margin-bottom: 32px;
-}
-
-.auth-logo-icon {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--ds-radius-lg);
-  background-color: var(--ds-color-primary);
-  color: var(--ds-text-white);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 16px;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
-}
-
-.auth-title {
-  font-size: 24px;
-  font-weight: 700;
-  color: var(--ds-text-primary);
-  letter-spacing: -0.4px;
-  margin-bottom: 6px;
-}
-
-.auth-subtitle {
-  font-size: 14px;
-  color: var(--ds-text-secondary);
-}
-
-.auth-form {
+.auth-hero-panel {
+  background: linear-gradient(135deg, #EFF6FF 0%, #F6F8FB 100%);
+  padding: var(--ds-space-64);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-}
-
-.form-group {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.form-label {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--ds-text-primary);
-}
-
-.form-input {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: var(--ds-radius-md);
-  border: 1px solid var(--ds-border);
-  font-size: 14px;
-  color: var(--ds-text-primary);
-  background-color: var(--ds-bg-card);
-  outline: none;
-  transition: var(--ds-trans-fast);
-}
-
-.form-input:focus {
-  border-color: var(--ds-color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
-}
-
-.form-input--error {
-  border-color: var(--ds-color-danger);
-}
-
-.form-error {
-  font-size: 12px;
-  color: var(--ds-color-danger);
-}
-
-.btn-primary {
-  width: 100%;
-  padding: 12px 20px;
-  border-radius: var(--ds-radius-md);
-  background-color: var(--ds-color-primary);
-  color: var(--ds-text-white);
-  font-size: 14px;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: var(--ds-trans-fast);
-  box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
-}
-
-.btn-primary:hover {
-  background-color: var(--ds-color-primary-hover);
-  transform: translateY(-1px);
-}
-
-.auth-footer-text {
-  text-align: center;
-  font-size: 13px;
-  color: var(--ds-text-secondary);
-  margin-top: 24px;
-}
-
-.auth-link {
-  color: var(--ds-color-primary);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.auth-link:hover {
-  text-decoration: underline;
-}
-
-/* ── Footer ─────────────────────────────────────────────────── */
-.footer {
-  padding: var(--ds-space-3) var(--ds-space-4);
-  border-top: 1px solid var(--ds-border);
-  background-color: var(--ds-bg-card);
-  display: flex;
-  align-items: center;
   justify-content: space-between;
-  font-size: 12px;
-  color: var(--ds-text-secondary);
+  position: relative;
+  overflow: hidden;
+  border-right: var(--ds-border-glass);
 }
 
-/* ── Responsive Breakpoints ──────────────────────────────────── */
+.auth-form-side {
+  padding: var(--ds-space-64);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background-color: #FFFFFF;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
 @media (max-width: 1280px) {
-  .map-telemetry-row {
-    grid-template-columns: 1fr;
+  .telemetry-dashboard-grid {
+    grid-template-columns: 76px 1fr;
   }
-  .stats-grid {
-    grid-template-columns: repeat(2, 1fr);
+  .right-telemetry-stack {
+    grid-column: span 2;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
   }
 }
 
 @media (max-width: 768px) {
-  .dashboard-shell {
+  .telemetry-dashboard-grid {
     grid-template-columns: 1fr;
+    padding: 16px;
   }
-  .sidebar {
+  .sidebar-dock {
     display: none;
   }
-  .stats-grid {
-    grid-template-columns: 1fr;
-  }
-  .dashboard-two-col {
+  .right-telemetry-stack {
+    grid-column: span 1;
     grid-template-columns: 1fr;
   }
 }

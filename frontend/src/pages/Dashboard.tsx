@@ -1,66 +1,37 @@
 /**
- * Dashboard.tsx – Main Fleet Operations Center Page
- * Assembles DashboardCards, MapPlaceholder, VehicleTelemetry,
- * FleetHealth, RecentAlerts, VehicleList, FleetAnalytics, and Footer.
+ * Dashboard.tsx – Automotive Telemetry Infotainment Dashboard Page
+ * 12-Column Grid Layout: Vertical Dock Sidebar | Center Stage Map | Right Telemetry Stack
  */
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import DashboardCards from '../components/DashboardCards';
-import MapPlaceholder from '../components/MapPlaceholder';
-import VehicleTelemetry from '../components/dashboard/VehicleTelemetry';
-import FleetHealth from '../components/dashboard/FleetHealth';
-import RecentAlerts from '../components/RecentAlerts';
-import VehicleList from '../components/VehicleList';
-import FleetAnalytics from '../components/FleetAnalytics';
-import Footer from '../components/Footer';
-import type { Vehicle } from '../types/fleet';
+import React from 'react';
+import SidebarNav from '../components/layout/SidebarNav';
+import FleetMapCanvas from '../components/canvas/FleetMapCanvas';
+import VehicleGauge from '../components/canvas/VehicleGauge';
+import VehicleHealthCard from '../components/widgets/VehicleHealthCard';
+import FuelEfficiencyCard from '../components/widgets/FuelEfficiencyCard';
 import '../styles/dashboard.css';
 
 const Dashboard: React.FC = () => {
-  const [selectedVehicle, setSelectedVehicle] = useState<Vehicle | undefined>(undefined);
-
-  const handleSelectVehicle = (vehicle: Vehicle) => {
-    setSelectedVehicle(vehicle);
-  };
-
   return (
-    <motion.div
-      className="page-container"
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.3 }}
-    >
-      {/* ── 1. Statistics / KPI Metrics Row ────────────────────── */}
-      <DashboardCards />
+    <div className="telemetry-dashboard-grid" id="automotive-telemetry-dashboard">
+      {/* Col 1: Vertical Dock Sidebar */}
+      <SidebarNav />
 
-      {/* ── 2. Live Fleet Map (Centerpiece) + Telemetry Panel ─── */}
-      <div className="map-telemetry-row">
-        <MapPlaceholder
-          height={520}
-          selectedVehicleId={selectedVehicle?.id || 'FLT-024'}
-        />
-        <VehicleTelemetry vehicle={selectedVehicle} />
+      {/* Col 2-8: Central Visual Focal Point (Interactive Fleet Map Stage + Floating Overlays) */}
+      <FleetMapCanvas />
+
+      {/* Col 9-12: Right Telemetry Stack */}
+      <div className="right-telemetry-stack">
+        {/* Speed / Performance Gauge */}
+        <VehicleGauge />
+
+        {/* Vehicle Health Card */}
+        <VehicleHealthCard vehicleId="FLT-024" />
+
+        {/* Fuel & Energy Utilization Card */}
+        <FuelEfficiencyCard />
       </div>
-
-      {/* ── 3. Fleet Health + Recent Alerts Row ───────────────── */}
-      <div className="dashboard-two-col">
-        <FleetHealth />
-        <RecentAlerts />
-      </div>
-
-      {/* ── 4. Fleet Telemetry Table ──────────────────────────── */}
-      <VehicleList
-        onSelectVehicle={handleSelectVehicle}
-        selectedVehicleId={selectedVehicle?.id}
-      />
-
-      {/* ── 5. Fleet Performance & Efficiency Analytics ───────── */}
-      <FleetAnalytics />
-
-      {/* ── 6. Footer ─────────────────────────────────────────── */}
-      <Footer />
-    </motion.div>
+    </div>
   );
 };
 
