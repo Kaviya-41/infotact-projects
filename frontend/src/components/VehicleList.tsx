@@ -15,7 +15,7 @@
  * - Preserves all existing FleetDash data structures, props, and logic 100%
  */
 
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { PremiumSkeleton, PremiumEmptyState, PremiumErrorState } from './StateFeedback';
 

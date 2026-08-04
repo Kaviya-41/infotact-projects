@@ -1,166 +1,171 @@
 /**
- * Dashboard.tsx – Main dashboard page
- * Assembles DashboardCards, MapPlaceholder, VehicleList,
- * RecentAlerts, FleetStatusCard, FleetAnalytics, and Footer.
- * Week 1 – All static dummy data.
+ * Dashboard.tsx – Main Disaster Intelligence Command Center page
  *
- * Future integration points (Weeks 2–4):
- *  - Connect FleetSocketContext to receive live telemetry
- *  - Pass live stats → DashboardCards + FleetStatusCard
- *  - Pass live vehicles → VehicleList
- *  - Pass live alerts → RecentAlerts
- *  - Canvas renderer will mount inside MapPlaceholder's #fleet-map-canvas
+ * Layout: Hero banner → KPI cards → Canvas + Telemetry Grid
+ * Center: Interactive incident map with floating overlay cards
+ * Right: Threat gauge, system health, resource allocation
  */
 
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
-import DashboardCards from '../components/DashboardCards';
-import MapPlaceholder from '../components/MapPlaceholder';
-import VehicleList from '../components/VehicleList';
-import { useVehicles } from '../hooks/useVehicles';
-import RecentAlerts from '../components/RecentAlerts';
-import FleetStatusCard from '../components/FleetStatusCard';
+import { Shield, Users, AlertTriangle, Truck } from 'lucide-react';
+import { useSocketTelemetry } from '../hooks/useSocketTelemetry';
+import IncidentMapCanvas from '../components/canvas/IncidentMapCanvas';
+import ThreatGauge from '../components/canvas/ThreatGauge';
+import EvacuationCard from '../components/widgets/EvacuationCard';
+import AlertBannerStack from '../components/widgets/AlertBanner';
+import SystemHealthCard from '../components/widgets/SystemHealthCard';
+import ResourceUsageCard from '../components/widgets/ResourceUsageCard';
 import Footer from '../components/Footer';
 
-import RightSidebar from '../components/RightSidebar';
+// ── Animation variants ─────────────────────────────────────────────────────────
 
-// ── Lazy load analytics (heavy charts) ────────────────────────────────────────
-const FleetAnalytics = lazy(() => import('../components/FleetAnalytics'));
-
-// ── Skeleton fallback ─────────────────────────────────────────────────────────
-const AnalyticsSkeleton: React.FC = () => (
-  <div className="analytics-section" aria-busy="true" aria-label="Loading analytics">
-    <div className="skeleton-header">
-      <div className="skeleton skeleton-title" />
-      <div className="skeleton skeleton-badge" />
-    </div>
-    <div className="analytics-grid">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div key={i} className={`analytics-card${i === 0 ? ' analytics-card--wide' : ''} skeleton-card`}>
-          <div className="skeleton skeleton-card-title" />
-          <div className="skeleton skeleton-chart" />
-        </div>
-      ))}
-    </div>
-  </div>
-);
-
-// ── Page transition variants ───────────────────────────────────────────────────
-
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const pageVariants: Record<string, any> = {
-  initial: { opacity: 0 },
-  enter:   { opacity: 1, transition: { duration: 0.45 } },
+const containerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { staggerChildren: 0.08 },
+  },
 };
 
-// ── Section label helper ───────────────────────────────────────────────────────
+const itemVariants = {
+  hidden: { opacity: 0, y: 16 },
+  visible: { opacity: 1, y: 0, transition: { duration: 0.4, ease: [0.25, 1, 0.5, 1] as const } },
+};
 
-const SectionLabel: React.FC<{ icon: string; title: string; subtitle?: string }> = ({ icon, title, subtitle }) => (
-  <div className="dashboard-section-label">
-    <span className="section-label-icon" aria-hidden="true">{icon}</span>
-    <div>
-      <h2 className="section-label-title">{title}</h2>
-      {subtitle && <p className="section-label-subtitle">{subtitle}</p>}
-    </div>
-  </div>
-);
+// ── KPI data ───────────────────────────────────────────────────────────────────
+
+const KPI_CARDS = [
+  {
+    id: 'active-incidents',
+    label: 'Active Incidents',
+    value: '12',
+    trend: '+3',
+    trendDir: 'up' as const,
+    variant: 'danger',
+    icon: <AlertTriangle size={18} />,
+  },
+  {
+    id: 'responders-deployed',
+    label: 'Responders Deployed',
+    value: '342',
+    trend: '+28',
+    trendDir: 'up' as const,
+    variant: 'primary',
+    icon: <Users size={18} />,
+  },
+  {
+    id: 'evacuees-safe',
+    label: 'Evacuees Safe',
+    value: '1,847',
+    trend: '+156',
+    trendDir: 'up' as const,
+    variant: 'success',
+    icon: <Shield size={18} />,
+  },
+  {
+    id: 'vehicles-active',
+    label: 'Vehicles Active',
+    value: '87',
+    trend: '-2',
+    trendDir: 'down' as const,
+    variant: 'warning',
+    icon: <Truck size={18} />,
+  },
+];
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
 const Dashboard: React.FC = () => {
-  const { vehicles, loading, error } = useVehicles();
+  const { threat, infrastructure, evacuation, alerts, resources } = useSocketTelemetry(2500);
 
   return (
     <motion.div
       className="dashboard-page"
-      variants={pageVariants}
-      initial="initial"
-      animate="enter"
+      variants={containerVariants}
+      initial="hidden"
+      animate="visible"
     >
-      {/* ── Dashboard Command Center Hero Banner ───────────────────── */}
-      <div className="dashboard-hero" id="dashboard-hero-banner">
+      {/* ── Hero Banner ── */}
+      <motion.div className="dashboard-hero" id="dashboard-hero-banner" variants={itemVariants}>
         <div className="hero-content">
           <div className="hero-badge">
             <span className="live-dot" />
-            ENTERPRISE LOGISTICS COMMAND CENTER
+            DISASTER INTELLIGENCE COMMAND CENTER
           </div>
-          <h1 className="hero-title">Fleet Operations Center</h1>
+          <h1 className="hero-title">Emergency Operations Center</h1>
           <p className="hero-subtitle">
-            Autonomous Fleet Telemetry · Route Optimization · Global Supply Chain Monitoring
+            Real-Time Threat Assessment · Infrastructure Monitoring · Evacuation Logistics
           </p>
         </div>
         <div className="hero-metrics-pill">
           <div className="h-metric">
-            <span className="h-val green">3,420 km</span>
-            <span className="h-lbl">Distance Today</span>
+            <span className="h-val green">12</span>
+            <span className="h-lbl">Active Incidents</span>
           </div>
           <div className="h-divider" />
           <div className="h-metric">
-            <span className="h-val cyan">42 Vehicles</span>
-            <span className="h-lbl">Telemetry Active</span>
+            <span className="h-val cyan">342</span>
+            <span className="h-lbl">Responders Active</span>
           </div>
           <div className="h-divider" />
           <div className="h-metric">
-            <span className="h-val purple">99.99%</span>
-            <span className="h-lbl">Network Uptime</span>
+            <span className="h-val purple">99.2%</span>
+            <span className="h-lbl">System Uptime</span>
           </div>
         </div>
-      </div>
+      </motion.div>
 
-      {/* ── Main Layout: Dashboard Content + Floating Right Panel ── */}
-      <div className="dashboard-main-container">
-        <div className="dashboard-center-content">
-          {/* ── KPI Stats ─────────────────────────────────────────────── */}
-          <SectionLabel
-            icon="📊"
-            title="Fleet Overview"
-            subtitle="Live key performance indicators"
-          />
-          <DashboardCards />
+      {/* ── KPI Cards ── */}
+      <motion.div className="kpi-grid" variants={itemVariants}>
+        {KPI_CARDS.map(kpi => (
+          <motion.div
+            key={kpi.id}
+            className={`kpi-card kpi-card--${kpi.variant}`}
+            id={`kpi-${kpi.id}`}
+            variants={itemVariants}
+            whileHover={{ y: -4 }}
+          >
+            <div className="kpi-card__top">
+              <div className="kpi-card__icon">
+                {kpi.icon}
+              </div>
+              <span className={`kpi-card__trend kpi-card__trend--${kpi.trendDir}`}>
+                {kpi.trendDir === 'up' ? '↑' : '↓'} {kpi.trend}
+              </span>
+            </div>
+            <div className="kpi-card__value">{kpi.value}</div>
+            <div className="kpi-card__label">{kpi.label}</div>
+          </motion.div>
+        ))}
+      </motion.div>
 
-          {/* ── Live Map ──────────────────────────────────────────────── */}
-          <SectionLabel
-            icon="🗺"
-            title="Live Command Map"
-            subtitle="Real-time vehicle positions, geofences & route tracking"
-          />
-          <MapPlaceholder height={580} />
+      {/* ── Main Grid: Canvas + Telemetry Panel ── */}
+      <motion.div className="dashboard-main-grid" variants={itemVariants}>
+        {/* Center: Incident Map with Floating Overlays */}
+        <div style={{ position: 'relative' }}>
+          <IncidentMapCanvas />
 
-          {/* ── Fleet Status + Recent Alerts Row ──────────────────────── */}
-          <SectionLabel
-            icon="🚦"
-            title="Status & Incident Stream"
-            subtitle="Fleet health breakdown and real-time alert feed"
-          />
-          <div className="dashboard-two-col">
-            <FleetStatusCard />
-            <RecentAlerts />
+          {/* Floating overlay cards */}
+          <div className="canvas-overlay">
+            <div className="canvas-overlay__top-left">
+              <EvacuationCard data={evacuation} />
+            </div>
+            <div className="canvas-overlay__top-center">
+              <AlertBannerStack alerts={alerts} maxVisible={2} />
+            </div>
           </div>
-
-          {/* ── Vehicle Table ──────────────────────────────────────────── */}
-          <SectionLabel
-            icon="🚛"
-            title="Vehicle Fleet Telemetry"
-            subtitle="Detailed view of all connected vehicles and driver status"
-          />
-          <VehicleList
-            vehicles={vehicles.length > 0 ? vehicles : undefined}
-            isLoading={loading}
-            isError={!!error}
-            errorMessage={error ?? undefined}
-          />
-
-          {/* ── Fleet Analytics ────────────────────────────────────────── */}
-          <Suspense fallback={<AnalyticsSkeleton />}>
-            <FleetAnalytics />
-          </Suspense>
         </div>
 
-        {/* ── Floating Right Panel ───────────────────────────────────── */}
-        <RightSidebar />
-      </div>
+        {/* Right: Telemetry Panel */}
+        <div className="telemetry-panel">
+          <ThreatGauge data={threat} />
+          <SystemHealthCard items={infrastructure} />
+          <ResourceUsageCard resources={resources} />
+        </div>
+      </motion.div>
 
-      {/* ── Footer ────────────────────────────────────────────────── */}
+      {/* ── Footer ── */}
       <Footer />
     </motion.div>
   );

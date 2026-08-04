@@ -1,28 +1,28 @@
 /**
- * AlertsPage.tsx – Full alerts management view.
- * Reuses RecentAlerts component.
+ * AlertsPage.tsx – Full alert console page
  */
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import RecentAlerts from '../components/RecentAlerts';
+import { useSocketTelemetry } from '../hooks/useSocketTelemetry';
+import AlertBannerStack from '../components/widgets/AlertBanner';
+import GlassCard from '../components/ui/GlassCard';
 
-const AlertsPage: React.FC = () => (
-  <motion.div
-    className="dashboard-page"
-    initial={{ opacity: 0 }}
-    animate={{ opacity: 1 }}
-    transition={{ duration: 0.4 }}
-  >
-    <div className="dashboard-section-label">
-      <span className="section-label-icon" aria-hidden="true">🔔</span>
-      <div>
-        <h2 className="section-label-title">Alerts &amp; Notifications</h2>
-        <p className="section-label-subtitle">Monitor critical events and fleet incidents</p>
-      </div>
-    </div>
-    <RecentAlerts />
-  </motion.div>
-);
+const AlertsPage: React.FC = () => {
+  const { alerts } = useSocketTelemetry(2000);
+
+  return (
+    <motion.div
+      className="dashboard-page"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.4 }}
+    >
+      <GlassCard title="Active Alerts" titleIcon="🚨" id="alerts-console">
+        <AlertBannerStack alerts={alerts} maxVisible={8} />
+      </GlassCard>
+    </motion.div>
+  );
+};
 
 export default AlertsPage;

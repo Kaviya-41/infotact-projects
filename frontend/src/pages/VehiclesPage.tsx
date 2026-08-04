@@ -1,15 +1,16 @@
 /**
- * VehiclesPage.tsx – Full vehicle fleet management view.
- * Reuses VehicleList component.
+ * VehiclesPage.tsx → InfrastructurePage
+ * Infrastructure monitoring view
  */
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import VehicleList from '../components/VehicleList';
-import { useVehicles } from '../hooks/useVehicles';
+import { useSocketTelemetry } from '../hooks/useSocketTelemetry';
+import SystemHealthCard from '../components/widgets/SystemHealthCard';
+import ResourceUsageCard from '../components/widgets/ResourceUsageCard';
 
-const VehiclesPage: React.FC = () => {
-  const { vehicles, loading, error } = useVehicles();
+const InfrastructurePage: React.FC = () => {
+  const { infrastructure, resources } = useSocketTelemetry(2000);
 
   return (
     <motion.div
@@ -18,22 +19,12 @@ const VehiclesPage: React.FC = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.4 }}
     >
-      <div className="dashboard-section-label">
-        <span className="section-label-icon" aria-hidden="true">🚚</span>
-        <div>
-          <h2 className="section-label-title">Vehicle Fleet</h2>
-          <p className="section-label-subtitle">Manage and monitor all vehicles in your fleet</p>
-        </div>
+      <div className="dashboard-two-col">
+        <SystemHealthCard items={infrastructure} />
+        <ResourceUsageCard resources={resources} />
       </div>
-      <VehicleList
-        vehicles={vehicles.length > 0 ? vehicles : undefined}
-        isLoading={loading}
-        isError={!!error}
-        errorMessage={error ?? undefined}
-      />
     </motion.div>
   );
 };
 
-export default VehiclesPage;
-
+export default InfrastructurePage;
