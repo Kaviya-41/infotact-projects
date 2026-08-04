@@ -1,25 +1,22 @@
 /**
- * ReportsPage.tsx – Placeholder reports page
+ * ReportsPage.tsx – Dedicated Fleet Analytics Page
  */
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import FleetAnalytics from '../components/FleetAnalytics';
+import Footer from '../components/Footer';
 
 const ReportsPage: React.FC = () => {
   return (
     <motion.div
-      className="dashboard-page"
+      className="page-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.3 }}
     >
-      <div className="placeholder-page">
-        <span className="placeholder-page__icon">📊</span>
-        <h2 className="placeholder-page__title">Reports & Analytics</h2>
-        <p className="placeholder-page__desc">
-          Historical incident analysis, response performance metrics, and exportable disaster intelligence reports. Coming soon.
-        </p>
-      </div>
+      <FleetAnalytics />
+      <Footer />
     </motion.div>
   );
 };

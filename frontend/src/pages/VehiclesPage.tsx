@@ -1,30 +1,24 @@
 /**
- * VehiclesPage.tsx → InfrastructurePage
- * Infrastructure monitoring view
+ * VehiclesPage.tsx – Dedicated Fleet Vehicles Management Page
  */
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useSocketTelemetry } from '../hooks/useSocketTelemetry';
-import SystemHealthCard from '../components/widgets/SystemHealthCard';
-import ResourceUsageCard from '../components/widgets/ResourceUsageCard';
+import VehicleList from '../components/VehicleList';
+import Footer from '../components/Footer';
 
-const InfrastructurePage: React.FC = () => {
-  const { infrastructure, resources } = useSocketTelemetry(2000);
-
+const VehiclesPage: React.FC = () => {
   return (
     <motion.div
-      className="dashboard-page"
+      className="page-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.3 }}
     >
-      <div className="dashboard-two-col">
-        <SystemHealthCard items={infrastructure} />
-        <ResourceUsageCard resources={resources} />
-      </div>
+      <VehicleList />
+      <Footer />
     </motion.div>
   );
 };
 
-export default InfrastructurePage;
+export default VehiclesPage;

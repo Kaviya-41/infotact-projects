@@ -1,6 +1,6 @@
 /**
- * ProtectedRoute.tsx – Route guard component
- * Redirects to /login if user is not authenticated.
+ * ProtectedRoute.tsx – Route guard component for FleetDash
+ * Redirects unauthenticated users to /login
  */
 
 import React from 'react';

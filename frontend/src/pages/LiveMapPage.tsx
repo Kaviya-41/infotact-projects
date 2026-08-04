@@ -1,40 +1,28 @@
 /**
- * LiveMapPage.tsx → IncidentMapPage
- * Full-screen incident map view
+ * LiveMapPage.tsx – Dedicated Full Live Fleet Map Page
  */
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import IncidentMapCanvas from '../components/canvas/IncidentMapCanvas';
-import EvacuationCard from '../components/widgets/EvacuationCard';
-import AlertBannerStack from '../components/widgets/AlertBanner';
-import { useSocketTelemetry } from '../hooks/useSocketTelemetry';
+import MapPlaceholder from '../components/MapPlaceholder';
+import VehicleTelemetry from '../components/dashboard/VehicleTelemetry';
+import Footer from '../components/Footer';
 
-const IncidentMapPage: React.FC = () => {
-  const { evacuation, alerts } = useSocketTelemetry(3000);
-
+const LiveMapPage: React.FC = () => {
   return (
     <motion.div
-      className="dashboard-page"
+      className="page-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.3 }}
     >
-      <div style={{ position: 'relative' }}>
-        <div style={{ minHeight: '70vh' }}>
-          <IncidentMapCanvas />
-        </div>
-        <div className="canvas-overlay">
-          <div className="canvas-overlay__top-left">
-            <EvacuationCard data={evacuation} />
-          </div>
-          <div className="canvas-overlay__top-center">
-            <AlertBannerStack alerts={alerts} maxVisible={4} />
-          </div>
-        </div>
+      <div className="map-telemetry-row">
+        <MapPlaceholder height={680} />
+        <VehicleTelemetry />
       </div>
+      <Footer />
     </motion.div>
   );
 };
 
-export default IncidentMapPage;
+export default LiveMapPage;

@@ -1,26 +1,26 @@
 /**
- * AlertsPage.tsx – Full alert console page
+ * AlertsPage.tsx – Dedicated Fleet Telemetry Alerts Stream Page
  */
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { useSocketTelemetry } from '../hooks/useSocketTelemetry';
-import AlertBannerStack from '../components/widgets/AlertBanner';
-import GlassCard from '../components/ui/GlassCard';
+import RecentAlerts from '../components/RecentAlerts';
+import FleetHealth from '../components/dashboard/FleetHealth';
+import Footer from '../components/Footer';
 
 const AlertsPage: React.FC = () => {
-  const { alerts } = useSocketTelemetry(2000);
-
   return (
     <motion.div
-      className="dashboard-page"
+      className="page-container"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.4 }}
+      transition={{ duration: 0.3 }}
     >
-      <GlassCard title="Active Alerts" titleIcon="🚨" id="alerts-console">
-        <AlertBannerStack alerts={alerts} maxVisible={8} />
-      </GlassCard>
+      <div className="dashboard-two-col">
+        <RecentAlerts />
+        <FleetHealth />
+      </div>
+      <Footer />
     </motion.div>
   );
 };

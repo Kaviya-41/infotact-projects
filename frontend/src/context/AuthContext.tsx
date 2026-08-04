@@ -1,37 +1,22 @@
 /**
- * AuthContext.tsx – Authentication context for DisasterIQ
- * Client-side only auth using localStorage for demo purposes.
- * Provides login, signup, logout, and user state.
+ * AuthContext.tsx – Frontend Authentication Context for FleetDash
+ * Handles user login, signup, and session state via localStorage.
  */
 
-import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import type { User } from '../types/fleet';
 
-// ── Types ──────────────────────────────────────────────────────────────────────
-
-interface User {
-  name: string;
-  email: string;
-  role: string;
-}
-
-interface AuthContextValue {
-  isAuthenticated: boolean;
+interface AuthContextType {
   user: User | null;
+  isAuthenticated: boolean;
   login: (email: string, password: string) => { success: boolean; error?: string };
-  signup: (name: string, email: string, password: string) => { success: boolean; error?: string };
+  signup: (name: string, email: string, password: string, company?: string) => { success: boolean; error?: string };
   logout: () => void;
 }
 
-// ── Storage keys ───────────────────────────────────────────────────────────────
+const STORAGE_KEY_USER = 'fleetdash_user';
 
-const STORAGE_KEY_USER = 'disasteriq_user';
-const STORAGE_KEY_ACCOUNTS = 'disasteriq_accounts';
-
-// ── Context ────────────────────────────────────────────────────────────────────
-
-const AuthContext = createContext<AuthContextValue | null>(null);
-
-// ── Provider ───────────────────────────────────────────────────────────────────
+const AuthContext = createContext<AuthContextType | null>(null);
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<User | null>(() => {
@@ -43,9 +28,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   });
 
-  const isAuthenticated = user !== null;
-
-  // Persist user to localStorage
   useEffect(() => {
     if (user) {
       localStorage.setItem(STORAGE_KEY_USER, JSON.stringify(user));
@@ -54,78 +36,51 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   }, [user]);
 
-  // Get stored accounts
-  const getAccounts = (): Record<string, { name: string; password: string }> => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY_ACCOUNTS);
-      return raw ? JSON.parse(raw) : {};
-    } catch {
-      return {};
-    }
-  };
-
-  const login = useCallback((email: string, password: string): { success: boolean; error?: string } => {
+  const login = useCallback((email: string, password: string) => {
     if (!email || !password) {
-      return { success: false, error: 'Please fill in all fields.' };
+      return { success: false, error: 'Please enter both email and password.' };
     }
-
-    const accounts = getAccounts();
-    const account = accounts[email.toLowerCase()];
-
-    if (!account) {
-      return { success: false, error: 'No account found with this email.' };
-    }
-
-    if (account.password !== password) {
-      return { success: false, error: 'Incorrect password.' };
-    }
-
-    setUser({ name: account.name, email: email.toLowerCase(), role: 'Emergency Coordinator' });
+    // Demo validation
+    const newUser: User = {
+      name: email.split('@')[0].replace('.', ' '),
+      email,
+      role: 'Fleet Dispatcher',
+      company: 'LogiTech Logistics',
+    };
+    setUser(newUser);
     return { success: true };
   }, []);
 
-  const signup = useCallback((name: string, email: string, password: string): { success: boolean; error?: string } => {
+  const signup = useCallback((name: string, email: string, password: string, company?: string) => {
     if (!name || !email || !password) {
-      return { success: false, error: 'Please fill in all fields.' };
+      return { success: false, error: 'Please fill in all required fields.' };
     }
-
-    if (password.length < 6) {
-      return { success: false, error: 'Password must be at least 6 characters.' };
-    }
-
-    const accounts = getAccounts();
-    const emailLower = email.toLowerCase();
-
-    if (accounts[emailLower]) {
-      return { success: false, error: 'An account with this email already exists.' };
-    }
-
-    accounts[emailLower] = { name, password };
-    localStorage.setItem(STORAGE_KEY_ACCOUNTS, JSON.stringify(accounts));
-
-    setUser({ name, email: emailLower, role: 'Emergency Coordinator' });
+    const newUser: User = {
+      name,
+      email,
+      company: company || 'Logistics Inc',
+      role: 'Fleet Manager',
+    };
+    setUser(newUser);
     return { success: true };
   }, []);
 
   const logout = useCallback(() => {
     setUser(null);
+    localStorage.removeItem(STORAGE_KEY_USER);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, signup, logout }}>
+    <AuthContext.Provider value={{ user, isAuthenticated: !!user, login, signup, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// ── Hook ───────────────────────────────────────────────────────────────────────
-
-export const useAuth = (): AuthContextValue => {
-  const ctx = useContext(AuthContext);
-  if (!ctx) {
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
     throw new Error('useAuth must be used within an AuthProvider');
   }
-  return ctx;
+  return context;
 };
-
-export default AuthContext;

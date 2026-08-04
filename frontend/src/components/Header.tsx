@@ -1,75 +1,68 @@
 /**
- * Header.tsx – Top header bar for DisasterIQ
- * Light-themed with search, notifications, and live status indicator.
+ * Header.tsx – FleetDash Enterprise Light Header Component
  */
 
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Search, Bell, Maximize2 } from 'lucide-react';
+import { Search, Bell } from 'lucide-react';
+import { useAuth } from '../context/AuthContext';
 
 interface HeaderProps {
-  title: string;
-  subtitle: string;
+  title?: string;
+  subtitle?: string;
 }
 
-const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
+const Header: React.FC<HeaderProps> = ({
+  title = "Good Morning, Fleet Manager",
+  subtitle = "Here's what's happening with your fleet today."
+}) => {
+  const { user } = useAuth();
+  const currentDate = new Date().toLocaleDateString('en-US', {
+    weekday: 'short',
+    month: 'short',
+    day: 'numeric',
+  });
+
   return (
-    <header className="header" id="dashboard-header" role="banner">
+    <header className="header">
       <div className="header__left">
-        <h1 className="header__title">{title}</h1>
+        <h1 className="header__greeting">
+          {user ? `Good Morning, ${user.name.split(' ')[0]}` : title}
+        </h1>
         <p className="header__subtitle">{subtitle}</p>
       </div>
 
       <div className="header__right">
-        {/* Live badge */}
-        <div className="header__live-badge" aria-label="System online">
-          <span className="live-dot" aria-hidden="true" />
-          LIVE
+        {/* GPS Live Status */}
+        <div className="header__gps-badge">
+          <span className="header__gps-dot" />
+          <span>GPS Connected</span>
+        </div>
+
+        {/* Date Display */}
+        <div style={{ fontSize: '13px', color: '#64748B', fontWeight: 500, padding: '0 8px' }}>
+          {currentDate}
         </div>
 
         {/* Search */}
         <div className="header__search">
-          <Search size={14} className="header__search-icon" />
+          <Search size={15} className="header__search-icon" />
           <input
-            className="header__search-input"
             type="search"
-            placeholder="Search incidents, locations…"
-            id="header-search-input"
-            aria-label="Search incidents"
+            className="header__search-input"
+            placeholder="Search vehicles, drivers, locations…"
           />
         </div>
 
-        {/* Notification bell */}
-        <motion.button
-          className="header__icon-btn"
-          type="button"
-          aria-label="Notifications"
-          id="header-notification-btn"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-        >
-          <Bell size={16} />
-          <span className="notification-dot" aria-hidden="true" />
-        </motion.button>
+        {/* Notifications */}
+        <button className="header__icon-btn" aria-label="Notifications">
+          <Bell size={18} />
+          <span className="header__notification-dot" />
+        </button>
 
-        {/* Fullscreen toggle */}
-        <motion.button
-          className="header__icon-btn"
-          type="button"
-          aria-label="Toggle fullscreen"
-          id="header-fullscreen-btn"
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => {
-            if (!document.fullscreenElement) {
-              document.documentElement.requestFullscreen?.();
-            } else {
-              document.exitFullscreen?.();
-            }
-          }}
-        >
-          <Maximize2 size={16} />
-        </motion.button>
+        {/* User Avatar */}
+        <div className="sidebar__avatar" style={{ width: '36px', height: '36px', cursor: 'pointer' }}>
+          {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 'FM'}
+        </div>
       </div>
     </header>
   );

@@ -1,21 +1,23 @@
 /**
- * Footer.tsx – Dashboard footer for DisasterIQ
+ * Footer.tsx – FleetDash Enterprise Light Footer Component
  */
 
 import React from 'react';
 
 const Footer: React.FC = () => {
   return (
-    <footer className="footer" id="dashboard-footer" role="contentinfo">
-      <span className="footer__brand">
-        Disaster<span>IQ</span> Intelligence Platform
-      </span>
-      <div className="footer__links">
-        <a href="#" className="footer__link">Documentation</a>
-        <a href="#" className="footer__link">Support</a>
-        <a href="#" className="footer__link">Status</a>
+    <footer className="footer">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+        <span style={{ fontWeight: 600, color: '#0F172A' }}>FleetDash Telemetry Platform</span>
+        <span>•</span>
+        <span>High-Throughput Fleet Management System</span>
       </div>
-      <span>© {new Date().getFullYear()} DisasterIQ. All rights reserved.</span>
+
+      <div style={{ display: 'flex', gap: '16px' }}>
+        <a href="#system" onClick={(e) => e.preventDefault()} style={{ color: '#64748B', textDecoration: 'none' }}>System Status: Operational</a>
+        <a href="#docs" onClick={(e) => e.preventDefault()} style={{ color: '#64748B', textDecoration: 'none' }}>API Docs</a>
+        <a href="#support" onClick={(e) => e.preventDefault()} style={{ color: '#64748B', textDecoration: 'none' }}>Support</a>
+      </div>
     </footer>
   );
 };
