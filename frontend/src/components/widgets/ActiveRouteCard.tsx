@@ -1,98 +1,77 @@
 /**
- * ActiveRouteCard.tsx – Floating Active Delivery Route Overlay Card
+ * ActiveRouteCard.tsx – Floating Active Delivery Route Overlay Card (DispatchOverlayCard)
  * Position: Top Left floating above the Fleet Map.
  */
 
 import React from 'react';
-import { Navigation, Clock, MapPin, User, CornerUpRight } from 'lucide-react';
+import { CornerUpRight, ArrowRight } from 'lucide-react';
+import { GlassCard } from '../ui/GlassCard';
 import type { ActiveRouteData } from '../../types/telemetry';
 
-interface ActiveRouteCardProps {
+
+export interface ActiveRouteCardProps {
   data?: ActiveRouteData;
+  className?: string;
 }
 
 const DEFAULT_ROUTE: ActiveRouteData = {
-  routeName: 'Delivery Route #14',
-  origin: 'Bengaluru Logistics Hub',
-  destination: 'Hosur Distribution Center',
+  routeName: 'Active Dispatch Route',
+  origin: 'Hub 104',
+  destination: 'Zone B',
   vehicleId: 'FLT-024',
   driverName: 'Arjun Kumar',
-  nextTurn: 'Turn right in 450 m onto Hosur Main Rd',
-  eta: '28 min',
+  nextTurn: '600m Turn Right',
+  eta: '14 mins',
   totalDistance: '32.4 km',
   steps: [
-    { id: 's1', instruction: 'Depart Bengaluru Terminal', distance: '1.2 km', status: 'completed' },
-    { id: 's2', instruction: 'Merge onto Electronic City Flyover', distance: '14.8 km', status: 'completed' },
-    { id: 's3', instruction: 'Turn right onto Hosur Main Rd', distance: '0.45 km', status: 'active' },
-    { id: 's4', instruction: 'Arrive at Hosur Distribution Hub', distance: '15.95 km', status: 'pending' },
+    { id: 's1', instruction: 'Depart Hub 104', distance: '1.2 km', status: 'completed' },
+    { id: 's2', instruction: 'Merge onto Expressway', distance: '14.8 km', status: 'completed' },
+    { id: 's3', instruction: 'Turn right in 600m onto Zone B Access', distance: '0.6 km', status: 'active' },
+    { id: 's4', instruction: 'Arrive at Zone B', distance: '15.95 km', status: 'pending' },
   ],
 };
 
-const ActiveRouteCard: React.FC<ActiveRouteCardProps> = ({ data = DEFAULT_ROUTE }) => {
+export const ActiveRouteCard: React.FC<ActiveRouteCardProps> = ({ data = DEFAULT_ROUTE, className = '' }) => {
   return (
-    <div className="active-route-card" id="active-route-card">
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <div style={{ width: '28px', height: '28px', borderRadius: '8px', backgroundColor: '#EFF6FF', color: '#2563EB', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <Navigation size={15} />
+    <GlassCard className={`w-80 active-route-card ${className}`} id="active-route-card">
+      <div className="flex items-center justify-between border-b border-white/10 pb-3 mb-3">
+        <div className="flex items-center gap-2">
+          <div className="w-7 h-7 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center justify-center">
+            <CornerUpRight size={16} />
           </div>
           <div>
-            <div style={{ fontSize: '10px', fontWeight: 700, color: '#2563EB', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-              Active Route
-            </div>
-            <div style={{ fontSize: '14px', fontWeight: 800, color: '#0F172A' }}>{data.vehicleId}</div>
+            <p className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">Active Dispatch Route</p>
+            <p className="text-base font-bold text-white tracking-tight flex items-center gap-1.5">
+              <span>{data.origin}</span>
+              <ArrowRight size={14} className="text-[#FF8A00]" />
+              <span>{data.destination}</span>
+            </p>
           </div>
         </div>
-
-        <span className="status-badge status-badge--moving">
-          <span className="status-badge__dot" />
-          EN ROUTE
+        <span className="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+          Optimal
         </span>
       </div>
 
-      {/* Origin -> Destination */}
-      <div style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A', marginBottom: '10px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-        <span>{data.origin.split(' ')[0]}</span>
-        <span style={{ color: '#2563EB' }}>→</span>
-        <span>{data.destination.split(' ')[0]}</span>
-      </div>
-
-      {/* Next Turn Direction Box */}
-      <div style={{ backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0', borderRadius: '10px', padding: '10px 12px', marginBottom: '12px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-        <CornerUpRight size={18} color="#2563EB" />
+      <div className="flex items-center justify-between text-xs text-gray-400 mt-2">
         <div>
-          <div style={{ fontSize: '10px', fontWeight: 600, color: '#64748B', textTransform: 'uppercase' }}>Next Maneuver</div>
-          <div style={{ fontSize: '12px', fontWeight: 600, color: '#0F172A' }}>{data.nextTurn}</div>
+          <p className="text-[10px] text-gray-500">Target ETA</p>
+          <p className="font-mono text-sm text-white font-semibold">{data.eta}</p>
+        </div>
+        <div className="text-center">
+          <p className="text-[10px] text-gray-500">Next Maneuver</p>
+          <p className="text-xs text-gray-200 font-semibold">{data.nextTurn}</p>
+        </div>
+        <div className="text-right">
+          <p className="text-[10px] text-gray-500">Active Trucks</p>
+          <p className="font-mono text-sm text-[#FF8A00] font-semibold">1,240 Units</p>
         </div>
       </div>
-
-      {/* Stats Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', paddingTop: '8px', borderTop: '1px solid rgba(15,23,42,0.06)' }}>
-        <div>
-          <div style={{ fontSize: '10px', color: '#64748B', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '3px' }}>
-            <Clock size={11} /> ETA
-          </div>
-          <div style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A' }} className="font-mono">{data.eta}</div>
-        </div>
-
-        <div>
-          <div style={{ fontSize: '10px', color: '#64748B', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '3px' }}>
-            <MapPin size={11} /> Distance
-          </div>
-          <div style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A' }} className="font-mono">{data.totalDistance}</div>
-        </div>
-
-        <div>
-          <div style={{ fontSize: '10px', color: '#64748B', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '3px' }}>
-            <User size={11} /> Driver
-          </div>
-          <div style={{ fontSize: '12px', fontWeight: 600, color: '#0F172A', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-            {data.driverName.split(' ')[0]}
-          </div>
-        </div>
-      </div>
-    </div>
+    </GlassCard>
   );
 };
 
+export const DispatchOverlayCard = ActiveRouteCard;
+
 export default ActiveRouteCard;
+

@@ -1,6 +1,6 @@
 /**
  * FleetMapCanvas.tsx – Live Fleet Map / Vehicle Telemetry Canvas Stage
- * Centerpiece stage preserving #fleet-map-canvas for Week 3 integration.
+ * Centerpiece stage preserving #fleet-map-canvas for Canvas node visualization.
  */
 
 import React, { useState } from 'react';
@@ -27,123 +27,96 @@ const SAMPLE_MARKERS: VehicleMarker[] = [
   { id: 'FLT-005', name: 'Isuzu NPR #05', driver: 'Kenji Sato', status: 'Moving', speed: 48, x: 18, y: 45 },
 ];
 
-const FleetMapCanvas: React.FC = () => {
+export const FleetMapCanvas: React.FC = () => {
   const [selectedId, setSelectedId] = useState('FLT-024');
   const [zoomLevel, setZoomLevel] = useState(12);
 
   return (
-    <div className="center-stage" id="fleet-map-stage">
-      {/* Top Floating Overlay Cards */}
-      <div className="canvas-overlay-top-left">
-        <ActiveRouteCard />
-      </div>
+    <div className="center-stage relative bg-[#13161F]/40 border border-white/10 rounded-3xl overflow-hidden flex flex-col justify-between p-6 h-full min-h-[620px]" id="fleet-map-stage">
+      {/* Background Grid Pattern representing map viewport environment */}
+      <div className="absolute inset-0 bg-[radial-gradient(#1e2638_1px,transparent_1px)] [background-size:16px_16px] opacity-40 pointer-events-none" />
 
-      <div className="canvas-overlay-top-center">
+      {/* Top Floating Overlays */}
+      <div className="relative z-10 flex justify-between items-start w-full">
+        <ActiveRouteCard />
         <VehicleAlertBanner />
       </div>
 
       {/* Main Map Visualizer Stage */}
-      <div style={{ position: 'relative', width: '100%', height: '100%', minHeight: '620px', flex: 1 }}>
-        {/* Preserved Canvas Element for Week 3 integration */}
+      <div className="absolute inset-0 w-full h-full">
+        {/* Preserved Canvas Element for HTML5 Canvas Node Viewport */}
         <canvas
           id="fleet-map-canvas"
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
-            width: '100%',
-            height: '100%',
-            pointerEvents: 'none',
-            zIndex: 1,
-          }}
+          className="absolute inset-0 w-full h-full pointer-events-none z-10"
         ></canvas>
 
-        {/* Vector SVG Light Map Grid & Road Network */}
-        <svg width="100%" height="100%" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#F8FAFC' }}>
+        {/* Vector SVG Dark Map Grid & Road Network */}
+        <svg width="100%" height="100%" className="absolute inset-0 bg-[#0E1118]">
           <defs>
-            <pattern id="light-map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(15, 23, 42, 0.05)" strokeWidth="1" />
+            <pattern id="dark-map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="rgba(255, 255, 255, 0.04)" strokeWidth="1" />
             </pattern>
           </defs>
-          <rect width="100%" height="100%" fill="url(#light-map-grid)" />
+          <rect width="100%" height="100%" fill="url(#dark-map-grid)" />
 
-          {/* Primary Arterial Road Lines */}
-          <path d="M -50 200 Q 350 240 700 180 T 1300 320" fill="none" stroke="#CBD5E1" strokeWidth="8" strokeLinecap="round" />
-          <path d="M 240 -50 Q 270 280 440 680" fill="none" stroke="#CBD5E1" strokeWidth="8" strokeLinecap="round" />
-          <path d="M -50 460 Q 550 420 1200 520" fill="none" stroke="#E2E8F0" strokeWidth="5" />
-          <path d="M 720 -50 Q 640 340 820 680" fill="none" stroke="#E2E8F0" strokeWidth="5" />
+          {/* Primary Dark Arterial Road Lines */}
+          <path d="M -50 200 Q 350 240 700 180 T 1300 320" fill="none" stroke="#1E2638" strokeWidth="8" strokeLinecap="round" />
+          <path d="M 240 -50 Q 270 280 440 680" fill="none" stroke="#1E2638" strokeWidth="8" strokeLinecap="round" />
+          <path d="M -50 460 Q 550 420 1200 520" fill="none" stroke="#171F30" strokeWidth="5" />
+          <path d="M 720 -50 Q 640 340 820 680" fill="none" stroke="#171F30" strokeWidth="5" />
 
-          {/* Active Fleet Route (Highlight Blue Line) */}
+          {/* Active Fleet Route (Highlight Cyan/Orange Line) */}
           <path
             d="M 200 480 Q 300 640 440 400 T 700 280"
             fill="none"
-            stroke="#2563EB"
-            strokeWidth="4"
+            stroke="#FF8A00"
+            strokeWidth="3.5"
             strokeDasharray="8 5"
           />
 
-          {/* Geofence Overlay */}
+          {/* Geofence Overlay Region */}
           <polygon
             points="340,190 540,200 600,340 400,360"
-            fill="rgba(37, 99, 235, 0.04)"
-            stroke="#2563EB"
+            fill="rgba(6, 182, 212, 0.08)"
+            stroke="#06B6D4"
             strokeWidth="1.5"
             strokeDasharray="4 4"
           />
-          <text x="360" y="220" fill="#2563EB" fontSize="11" fontWeight="700" letterSpacing="0.5">
+          <text x="360" y="220" fill="#06B6D4" fontSize="11" fontWeight="700" letterSpacing="0.5">
             GEOFENCE REGION ALPHA
           </text>
         </svg>
 
-        {/* Vehicle Markers */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 10 }}>
+        {/* Canvas Placeholder Node Label */}
+        <div className="absolute inset-0 flex items-center justify-center text-white/20 font-mono text-sm pointer-events-none z-10">
+          [ HTML5 Canvas Node Viewport — 5000+ Vehicles Map Layer ]
+        </div>
+
+        {/* Interactive Vehicle Markers */}
+        <div className="absolute inset-0 z-20">
           {SAMPLE_MARKERS.map((v) => {
             const isSelected = selectedId === v.id;
-            const statusColor = v.status === 'Moving' ? '#16A34A' : v.status === 'Stopped' ? '#D97706' : '#DC2626';
+            const statusColor = v.status === 'Moving' ? '#10B981' : v.status === 'Stopped' ? '#FF8A00' : '#EF4444';
 
             return (
               <div
                 key={v.id}
                 onClick={() => setSelectedId(v.id)}
+                className="absolute cursor-pointer flex flex-col items-center gap-1 transition-transform hover:scale-110"
                 style={{
-                  position: 'absolute',
                   left: `${v.x}%`,
                   top: `${v.y}%`,
                   transform: 'translate(-50%, -50%)',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  gap: '4px',
                 }}
               >
-                <div style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '6px',
-                  backgroundColor: isSelected ? '#0F172A' : '#FFFFFF',
-                  color: isSelected ? '#FFFFFF' : '#0F172A',
-                  padding: '5px 12px',
-                  borderRadius: '20px',
-                  fontSize: '11px',
-                  fontWeight: 700,
-                  boxShadow: '0 4px 12px rgba(15, 23, 42, 0.15)',
-                  border: isSelected ? '2px solid #2563EB' : '1px solid rgba(15, 23, 42, 0.1)',
-                  whiteSpace: 'nowrap',
-                }}>
-                  <span style={{
-                    width: '8px',
-                    height: '8px',
-                    borderRadius: '50%',
-                    backgroundColor: statusColor,
-                    display: 'inline-block',
-                  }}></span>
-                  <Truck size={13} />
+                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold shadow-lg backdrop-blur-md border ${
+                  isSelected ? 'bg-slate-900 text-white border-[#FF8A00]' : 'bg-[#161B26]/90 text-gray-200 border-white/10'
+                }`}>
+                  <span className="w-2 h-2 rounded-full" style={{ backgroundColor: statusColor }}></span>
+                  <Truck size={12} />
                   <span>{v.id}</span>
                   {v.status === 'Moving' && (
-                    <span style={{ fontSize: '10px', color: isSelected ? '#60A5FA' : '#2563EB', fontWeight: 700 }} className="font-mono">
+                    <span className="text-[10px] text-[#FF8A00] font-mono font-bold">
                       {v.speed} km/h
                     </span>
                   )}
@@ -153,86 +126,39 @@ const FleetMapCanvas: React.FC = () => {
           })}
         </div>
 
-        {/* Map Bottom Legend & Controls */}
-        <div style={{
-          position: 'absolute',
-          bottom: '24px',
-          left: '24px',
-          zIndex: 20,
-          backgroundColor: 'rgba(255, 255, 255, 0.92)',
-          backdropFilter: 'blur(16px)',
-          border: '1px solid rgba(15, 23, 42, 0.08)',
-          borderRadius: '12px',
-          padding: '10px 16px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '16px',
-          fontSize: '12px',
-          boxShadow: '0 4px 16px rgba(15, 23, 42, 0.06)'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#16A34A', display: 'inline-block' }}></span>
-            <span style={{ fontWeight: 600, color: '#334155' }}>Moving (28)</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#D97706', display: 'inline-block' }}></span>
-            <span style={{ fontWeight: 600, color: '#334155' }}>Stopped (9)</span>
-          </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#DC2626', display: 'inline-block' }}></span>
-            <span style={{ fontWeight: 600, color: '#334155' }}>Offline (5)</span>
-          </div>
-        </div>
-
-        {/* Bottom Right Scale & Controls */}
-        <div style={{
-          position: 'absolute',
-          bottom: '24px',
-          right: '24px',
-          zIndex: 20,
-          display: 'flex',
-          alignItems: 'center',
-          gap: '12px'
-        }}>
-          <div style={{ display: 'flex', gap: '6px' }}>
-            <button onClick={() => setZoomLevel(prev => Math.min(prev + 1, 18))} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#FFFFFF', cursor: 'pointer' }}>
+        {/* Bottom Right Map Zoom Controls */}
+        <div className="absolute bottom-16 right-6 z-20 flex items-center gap-2">
+          <div className="flex gap-1">
+            <button
+              onClick={() => setZoomLevel(prev => Math.min(prev + 1, 18))}
+              className="p-2 rounded-lg border border-white/10 bg-[#161B26]/80 text-white hover:bg-white/10 cursor-pointer"
+            >
               <ZoomIn size={14} />
             </button>
-            <button onClick={() => setZoomLevel(prev => Math.max(prev - 1, 6))} style={{ padding: '8px 12px', borderRadius: '8px', border: '1px solid #E2E8F0', background: '#FFFFFF', cursor: 'pointer' }}>
+            <button
+              onClick={() => setZoomLevel(prev => Math.max(prev - 1, 6))}
+              className="p-2 rounded-lg border border-white/10 bg-[#161B26]/80 text-white hover:bg-white/10 cursor-pointer"
+            >
               <ZoomOut size={14} />
             </button>
           </div>
-
-          <div style={{
-            backgroundColor: 'rgba(255, 255, 255, 0.92)',
-            backdropFilter: 'blur(16px)',
-            border: '1px solid rgba(15, 23, 42, 0.08)',
-            borderRadius: '8px',
-            padding: '8px 14px',
-            fontSize: '11px',
-            fontWeight: 600,
-            color: '#64748B'
-          }}>
-            Scale: 5 km | {zoomLevel}x
+          <div className="bg-[#161B26]/80 backdrop-blur-md border border-white/10 rounded-lg px-3 py-1.5 text-xs text-gray-400 font-mono">
+            {zoomLevel}x
           </div>
-
-          <div style={{
-            width: '36px',
-            height: '36px',
-            borderRadius: '50%',
-            backgroundColor: '#FFFFFF',
-            border: '1px solid #E2E8F0',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            boxShadow: '0 2px 8px rgba(15, 23, 42, 0.06)'
-          }}>
-            <Compass size={20} color="#2563EB" />
+          <div className="w-8 h-8 rounded-full bg-[#161B26]/80 border border-white/10 flex items-center justify-center text-cyan-400">
+            <Compass size={18} />
           </div>
         </div>
+      </div>
+
+      {/* Bottom Bar Info Telemetry Stream */}
+      <div className="relative z-20 flex justify-between items-center bg-[#161B26]/80 backdrop-blur-md border border-white/10 rounded-xl px-4 py-2 text-xs text-gray-400 mt-auto">
+        <span>Engine: <strong className="text-emerald-400 font-mono">Canvas 2D / RAF (60 FPS)</strong></span>
+        <span>WebSocket Stream: <strong className="text-cyan-400 font-mono">Connected (5,000 evt/s)</strong></span>
       </div>
     </div>
   );
 };
 
 export default FleetMapCanvas;
+

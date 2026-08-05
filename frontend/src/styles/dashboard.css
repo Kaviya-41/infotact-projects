@@ -1,6 +1,6 @@
 /* ============================================================
    FleetDash – Automotive Telematics Infotainment Dashboard CSS
-   Light Glassmorphism + Tesla / Infotainment Cockpit Layout
+   Dark Obsidian Glassmorphism + Telemetry Cockpit Layout
    ============================================================ */
 
 @import './design-system.css';
@@ -29,7 +29,7 @@ body {
   background-color: var(--ds-bg-main);
 }
 
-/* ── Light Glassmorphism Card ───────────────────────────────── */
+/* ── Dark Glassmorphism Card ───────────────────────────────── */
 .glass-card {
   background: var(--ds-bg-card-glass);
   backdrop-filter: var(--ds-glass-backdrop);
@@ -42,8 +42,8 @@ body {
 }
 
 .glass-card:hover {
-  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.12);
-  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 .glass-card--compact {
@@ -71,9 +71,9 @@ body {
   position: sticky;
   top: 24px;
   height: calc(100vh - 48px);
-  background: var(--ds-bg-card-glass);
-  backdrop-filter: var(--ds-glass-backdrop);
-  -webkit-backdrop-filter: var(--ds-glass-backdrop);
+  background: rgba(19, 22, 31, 0.6);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   border: var(--ds-border-glass);
   border-radius: var(--ds-radius-dock);
   box-shadow: var(--ds-glass-shadow);
@@ -89,12 +89,14 @@ body {
   width: 44px;
   height: 44px;
   border-radius: 14px;
-  background-color: var(--ds-color-primary);
-  color: #FFFFFF;
+  background: linear-gradient(135deg, #FF8A00 0%, #FBBF24 100%);
+  color: #000000;
+  font-weight: 800;
+  font-size: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+  box-shadow: 0 4px 20px rgba(255, 138, 0, 0.35);
 }
 
 .sidebar-dock__nav {
@@ -117,13 +119,13 @@ body {
 }
 
 .sidebar-dock__item:hover {
-  background-color: rgba(15, 23, 42, 0.05);
-  color: var(--ds-text-primary);
+  background-color: rgba(255, 255, 255, 0.08);
+  color: #FFFFFF;
 }
 
 .sidebar-dock__item.active {
-  background-color: var(--ds-color-primary-light);
-  color: var(--ds-color-primary);
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
   font-weight: 600;
 }
 
@@ -136,7 +138,7 @@ body {
   width: 4px;
   height: 18px;
   border-radius: 0 4px 4px 0;
-  background-color: var(--ds-color-primary);
+  background-color: var(--ds-color-amber);
 }
 
 .sidebar-dock__badge {
@@ -146,7 +148,7 @@ body {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--ds-color-danger);
+  background-color: var(--ds-color-rose);
 }
 
 /* ── Center Stage & Floating Cards ──────────────────────────── */
@@ -159,7 +161,7 @@ body {
   min-height: 600px;
   display: flex;
   flex-direction: column;
-  background-color: #F8FAFC;
+  background-color: rgba(19, 22, 31, 0.4);
 }
 
 .canvas-container {
@@ -174,7 +176,7 @@ body {
   top: 24px;
   left: 24px;
   z-index: 20;
-  max-width: 320px;
+  max-width: 340px;
   width: 100%;
 }
 
@@ -184,13 +186,13 @@ body {
   left: 50%;
   transform: translateX(-50%);
   z-index: 20;
-  max-width: 380px;
+  max-width: 400px;
   width: 100%;
 }
 
-/* ── Active Route Card (Top Left Floating) ──────────────────── */
+/* ── Active Route Card (Top Left Floating Overlay) ──────────── */
 .active-route-card {
-  background: rgba(255, 255, 255, 0.88);
+  background: rgba(22, 27, 38, 0.85);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border: var(--ds-border-glass);
@@ -206,15 +208,15 @@ body {
 }
 
 .route-step-dot--active {
-  background-color: var(--ds-color-primary);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2);
+  background-color: var(--ds-color-amber);
+  box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.25);
 }
 
 .route-step-dot--done {
-  background-color: var(--ds-color-success);
+  background-color: var(--ds-color-emerald);
 }
 
-/* ── Vehicle Alert Banners (Top Center Floating) ────────────── */
+/* ── Vehicle Alert Banners (Top Center Floating Overlay) ─────── */
 .alert-banner-stack {
   display: flex;
   flex-direction: column;
@@ -226,28 +228,29 @@ body {
   align-items: center;
   gap: 12px;
   padding: 12px 16px;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.92);
+  border-radius: 14px;
+  background: rgba(24, 30, 44, 0.85);
   backdrop-filter: blur(16px);
-  border: 1px solid rgba(15, 23, 42, 0.08);
-  box-shadow: 0 4px 16px rgba(15, 23, 42, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
   font-size: 13px;
 }
 
 .vehicle-alert-banner--critical {
-  border-left: 4px solid var(--ds-color-danger);
-  background: rgba(254, 242, 242, 0.95);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(24, 30, 44, 0.9);
 }
 
 .vehicle-alert-banner--warning {
-  border-left: 4px solid var(--ds-color-warning);
-  background: rgba(255, 251, 235, 0.95);
+  border: 1px solid rgba(255, 138, 0, 0.3);
+  background: rgba(24, 30, 44, 0.9);
 }
 
 .vehicle-alert-banner--info {
-  border-left: 4px solid var(--ds-color-primary);
-  background: rgba(239, 246, 255, 0.95);
+  border: 1px solid rgba(6, 182, 212, 0.3);
+  background: rgba(24, 30, 44, 0.9);
 }
+
 
 /* ── Right Telemetry Stack ──────────────────────────────────── */
 .right-telemetry-stack {

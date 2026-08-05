@@ -4,6 +4,7 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { LayoutGrid, Map, Truck, BarChart3, Bell, Settings, LogOut } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -24,65 +25,62 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'settings',  label: 'Settings',  icon: <Settings size={20} />, path: '/settings' },
 ];
 
-const SidebarNav: React.FC = () => {
+export const SidebarNav: React.FC = () => {
   const { user, logout } = useAuth();
 
   return (
-    <aside className="sidebar-dock" aria-label="Automotive Telemetry Navigation">
+    <aside className="sidebar-dock w-16 h-full bg-[#13161F]/60 backdrop-blur-xl border-r border-white/10 flex flex-col items-center justify-between py-6 rounded-3xl" aria-label="Automotive Telemetry Navigation">
       {/* Brand Icon Header */}
-      <div className="sidebar-dock__logo" title="FleetDash Telemetry Platform">
-        <Truck size={22} />
+      <div className="sidebar-dock__logo w-10 h-10 rounded-full bg-gradient-to-tr from-[#FF8A00] to-amber-300 flex items-center justify-center shadow-lg shadow-orange-500/20 font-bold text-black text-xs" title="FleetDash Telemetry Platform">
+        FD
       </div>
 
       {/* Main Nav Capsule Items */}
-      <nav className="sidebar-dock__nav">
+      <nav className="sidebar-dock__nav flex flex-col gap-6">
         {NAV_ITEMS.map((item) => (
           <NavLink
             key={item.id}
             to={item.path}
             end={item.path === '/dashboard'}
-            className={({ isActive }) => `sidebar-dock__item${isActive ? ' active' : ''}`}
+            className={({ isActive }) => `sidebar-dock__item w-10 h-10 rounded-xl flex items-center justify-center transition-colors ${
+              isActive ? 'bg-white/15 text-white active' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+            }`}
             title={item.label}
           >
-            {item.icon}
+            <motion.div
+              whileHover={{ scale: 1.15 }}
+              whileTap={{ scale: 0.9 }}
+              className="flex items-center justify-center"
+            >
+              {item.icon}
+            </motion.div>
             {item.badge && <span className="sidebar-dock__badge" />}
           </NavLink>
         ))}
       </nav>
 
       {/* Footer Profile & Logout */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'center' }}>
+      <div className="flex flex-col gap-3 items-center">
         <div
-          style={{
-            width: '38px',
-            height: '38px',
-            borderRadius: '50%',
-            backgroundColor: '#EFF6FF',
-            color: '#2563EB',
-            fontWeight: 700,
-            fontSize: '13px',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            border: '1px solid #BFDBFE',
-            cursor: 'pointer'
-          }}
+          className="w-8 h-8 rounded-full bg-slate-700 border border-white/20 flex items-center justify-center text-xs text-white font-bold cursor-pointer"
           title={user?.name || 'Fleet Manager'}
         >
-          {user?.name ? user.name.split(' ').map((n) => n[0]).join('').slice(0, 2) : 'FM'}
+          {user?.name ? user.name.split(' ').map((n) => n[0]).join('').slice(0, 2) : 'OP'}
         </div>
 
-        <button
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.9 }}
           onClick={logout}
-          className="sidebar-dock__item"
-          style={{ color: '#DC2626', background: 'none', border: 'none', cursor: 'pointer' }}
+          className="sidebar-dock__item text-rose-400 hover:text-rose-300 bg-none border-none cursor-pointer"
           title="Sign Out"
         >
-          <LogOut size={20} />
-        </button>
+          <LogOut size={18} />
+        </motion.button>
       </div>
     </aside>
   );
 };
 
 export default SidebarNav;
+

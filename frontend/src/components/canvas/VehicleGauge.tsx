@@ -1,110 +1,47 @@
 /**
- * VehicleGauge.tsx – Radial Automotive Speed & Performance Gauge
- * SVG Radial speedometer replacing ThreatGauge from earlier spec.
+ * VehicleGauge.tsx – Radial Fleet Speed & Velocity Telemetry Gauge
  */
 
 import React from 'react';
 import GlassCard from '../ui/GlassCard';
 import type { VehicleSpeed } from '../../types/telemetry';
 
-interface VehicleGaugeProps {
+export interface VehicleGaugeProps {
   data?: VehicleSpeed;
 }
 
 const DEFAULT_SPEED: VehicleSpeed = {
-  value: 68,
+  value: 58,
   rpm: 2100,
   fuelEfficiency: 12.4,
   tripDistance: 142,
-  updated: '2 sec ago',
+  updated: 'Just now',
 };
 
-const SIZE = 220;
-const STROKE = 14;
-const RADIUS = (SIZE - STROKE) / 2;
-const CENTER = SIZE / 2;
-const START_ANGLE = 135;
-const END_ANGLE = 405;
-const ARC_RANGE = END_ANGLE - START_ANGLE;
-
-const degToRad = (d: number) => (d * Math.PI) / 180;
-
-const describeArc = (cx: number, cy: number, r: number, startDeg: number, endDeg: number): string => {
-  const startRad = degToRad(startDeg);
-  const endRad = degToRad(endDeg);
-  const x1 = cx + r * Math.cos(startRad);
-  const y1 = cy + r * Math.sin(startRad);
-  const x2 = cx + r * Math.cos(endRad);
-  const y2 = cy + r * Math.sin(endRad);
-  const largeArc = endDeg - startDeg > 180 ? 1 : 0;
-  return `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
-};
-
-const VehicleGauge: React.FC<VehicleGaugeProps> = ({ data = DEFAULT_SPEED }) => {
-  const valueDeg = START_ANGLE + (Math.min(data.value, 140) / 140) * ARC_RANGE;
-
-  const bgArc = describeArc(CENTER, CENTER, RADIUS, START_ANGLE, END_ANGLE);
-  const valueArc = describeArc(CENTER, CENTER, RADIUS, START_ANGLE, Math.min(valueDeg, END_ANGLE));
-
+export const VehicleGauge: React.FC<VehicleGaugeProps> = ({ data = DEFAULT_SPEED }) => {
   return (
-    <GlassCard title="Vehicle Speed & Performance" titleIcon="⚡" id="vehicle-speed-gauge">
-      <div className="speed-gauge-card">
-        <div style={{ position: 'relative', width: '200px', margin: '0 auto' }}>
-          <svg viewBox={`0 0 ${SIZE} ${SIZE * 0.72}`} width="100%">
-            <defs>
-              <linearGradient id="speedGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#2563EB" />
-                <stop offset="70%" stopColor="#1D4ED8" />
-                <stop offset="100%" stopColor="#DC2626" />
-              </linearGradient>
-            </defs>
+    <GlassCard className="flex flex-col items-center justify-center relative overflow-hidden text-white" id="vehicle-speed-gauge">
+      <div className="w-full flex items-center justify-between text-xs font-semibold text-gray-400 mb-2">
+        <span>Fleet Velocity</span>
+        <span className="text-[10px] text-[#FF8A00] font-mono font-medium">REALTIME</span>
+      </div>
 
-            {/* Background Arc */}
-            <path
-              d={bgArc}
-              fill="none"
-              stroke="rgba(15, 23, 42, 0.08)"
-              strokeWidth={STROKE}
-              strokeLinecap="round"
-            />
+      <div className="my-3 flex flex-col items-center">
+        <span className="text-5xl font-black text-white tracking-tighter drop-shadow-[0_0_15px_rgba(255,138,0,0.35)]">
+          {data.value} <span className="text-sm font-normal text-gray-400">km/h</span>
+        </span>
+        <span className="text-[11px] text-[#FF8A00] font-medium mt-1">Average Fleet Speed</span>
+      </div>
 
-            {/* Value Arc */}
-            <path
-              d={valueArc}
-              fill="none"
-              stroke="url(#speedGrad)"
-              strokeWidth={STROKE}
-              strokeLinecap="round"
-            />
-          </svg>
-
-          {/* Center Speed Readout */}
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', paddingTop: '10px' }}>
-            <div className="speed-gauge__val">{data.value}</div>
-            <div className="speed-gauge__unit">km / h</div>
-          </div>
-        </div>
-
-        {/* Secondary Telemetry Info */}
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '8px', marginTop: '16px', paddingTop: '12px', borderTop: '1px solid #F1F5F9' }}>
-          <div>
-            <div style={{ fontSize: '10px', color: '#64748B', fontWeight: 600 }}>Engine RPM</div>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A', marginTop: '2px' }} className="font-mono">{data.rpm}</div>
-          </div>
-
-          <div>
-            <div style={{ fontSize: '10px', color: '#64748B', fontWeight: 600 }}>Efficiency</div>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#16A34A', marginTop: '2px' }} className="font-mono">{data.fuelEfficiency} km/L</div>
-          </div>
-
-          <div>
-            <div style={{ fontSize: '10px', color: '#64748B', fontWeight: 600 }}>Trip Dist</div>
-            <div style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A', marginTop: '2px' }} className="font-mono">{data.tripDistance} km</div>
-          </div>
-        </div>
+      <div className="w-full bg-gray-800/80 rounded-full h-1.5 overflow-hidden mt-1">
+        <div
+          className="bg-[#FF8A00] h-full rounded-full transition-all duration-500 shadow-[0_0_8px_#FF8A00]"
+          style={{ width: `${Math.min((data.value / 120) * 100, 100)}%` }}
+        />
       </div>
     </GlassCard>
   );
 };
 
 export default VehicleGauge;
+

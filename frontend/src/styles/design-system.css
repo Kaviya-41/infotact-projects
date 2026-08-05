@@ -1,45 +1,51 @@
 /* ============================================================
-   FleetDash Automotive Telematics Light Theme Design System
-   Light Glassmorphism + Tesla / Infotainment Infotainment UI
+   FleetDash Automotive Telematics Dark Obsidian Design System
+   Dark Glassmorphism + Tesla / Infotainment UI
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  /* ── Core Light Theme Colors ── */
-  --ds-bg-main:         #F6F8FB;
-  --ds-bg-elevated:     #F8FAFC;
-  --ds-bg-card-glass:   rgba(255, 255, 255, 0.78);
-  --ds-bg-card-solid:   #FFFFFF;
+  /* ── Core Dark Obsidian Theme Colors ── */
+  --ds-bg-main:         #0B0D12;
+  --ds-bg-elevated:     #13161F;
+  --ds-bg-surface:      rgba(22, 27, 38, 0.65);
+  --ds-bg-card-glass:   rgba(22, 27, 38, 0.65);
+  --ds-bg-card-solid:   #161B26;
 
   /* ── Typography Colors ── */
-  --ds-text-primary:    #0F172A;
-  --ds-text-secondary:  #64748B;
-  --ds-text-muted:      #94A3B8;
+  --ds-text-primary:    #FFFFFF;
+  --ds-text-secondary:  #94A3B8;
+  --ds-text-muted:      #64748B;
 
   /* ── Accents & Status ── */
-  --ds-color-primary:   #2563EB;
-  --ds-color-primary-hover: #1D4ED8;
-  --ds-color-primary-light: #EFF6FF;
+  --ds-color-primary:   #3B82F6;
+  --ds-color-primary-hover: #60A5FA;
+  --ds-color-primary-light: rgba(59, 130, 246, 0.15);
 
-  --ds-color-success:   #16A34A;
-  --ds-color-success-bg:#F0FDF4;
+  --ds-color-amber:     #FF8A00;
+  --ds-color-emerald:   #10B981;
+  --ds-color-rose:      #EF4444;
+  --ds-color-cyan:      #06B6D4;
 
-  --ds-color-warning:   #D97706;
-  --ds-color-warning-bg:#FFFBEB;
+  --ds-color-success:   #10B981;
+  --ds-color-success-bg:rgba(16, 185, 129, 0.12);
 
-  --ds-color-danger:    #DC2626;
-  --ds-color-danger-bg: #FEF2F2;
+  --ds-color-warning:   #FF8A00;
+  --ds-color-warning-bg:rgba(255, 138, 0, 0.12);
 
-  --ds-color-info:      #0284C7;
-  --ds-color-info-bg:   #F0F9FF;
+  --ds-color-danger:    #EF4444;
+  --ds-color-danger-bg: rgba(239, 68, 68, 0.12);
+
+  --ds-color-info:      #06B6D4;
+  --ds-color-info-bg:   rgba(6, 182, 212, 0.12);
 
   /* ── Glass Borders & Shadows ── */
-  --ds-border-glass:    1px solid rgba(15, 23, 42, 0.08);
-  --ds-border-subtle:   1px solid rgba(15, 23, 42, 0.04);
-  --ds-glass-backdrop:  blur(18px);
-  --ds-glass-shadow:    0 8px 32px rgba(15, 23, 42, 0.08);
-  --ds-shadow-sm:       0 2px 8px rgba(15, 23, 42, 0.04);
+  --ds-border-glass:    1px solid rgba(255, 255, 255, 0.08);
+  --ds-border-subtle:   1px solid rgba(255, 255, 255, 0.04);
+  --ds-glass-backdrop:  blur(16px);
+  --ds-glass-shadow:    0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  --ds-shadow-sm:       0 4px 12px rgba(0, 0, 0, 0.25);
 
   /* ── Fonts & Tabular Nums ── */
   --ds-font-family: 'Inter', system-ui, -apple-system, sans-serif;
@@ -63,3 +69,4 @@
   font-family: var(--ds-font-mono);
   font-variant-numeric: tabular-nums;
 }
+
