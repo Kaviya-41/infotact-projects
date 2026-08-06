@@ -1,6 +1,8 @@
 /**
  * FleetMapCanvas.tsx – Live Fleet Map / Vehicle Telemetry Canvas Stage
- * Centerpiece stage preserving #fleet-map-canvas for Canvas node visualization.
+ * @deprecated This dark-themed canvas map is superseded by the light-theme
+ * MapPlaceholder.tsx used in the Dashboard. Retained as the base reference
+ * for Week 3 Canvas API integration work.
  */
 
 import React, { useState } from 'react';

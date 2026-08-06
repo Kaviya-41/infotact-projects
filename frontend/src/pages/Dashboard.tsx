@@ -1,34 +1,85 @@
 /**
- * Dashboard.tsx – Automotive Telemetry Infotainment Dashboard Page for FleetDash
- * 12-Column Grid Layout: Vertical Dock Sidebar | Center Stage Canvas Map | Right Telemetry Panel
+ * Dashboard.tsx – FleetDash Premium Light Fleet Operations Center
+ * Automotive-inspired composition: KPI grid → Fleet Map (hero) + Right Panel → Analytics
  */
 
-import React from 'react';
-import { SidebarNav } from '../components/layout/SidebarNav';
-import { FleetMapCanvas } from '../components/canvas/FleetMapCanvas';
-import { FleetTelemetryPanel } from '../components/widgets/FleetTelemetryPanel';
+import React, { memo } from 'react';
+import { motion } from 'framer-motion';
+import DashboardLayout from '../layout/DashboardLayout';
+import DashboardCards from '../components/DashboardCards';
+import MapPlaceholder from '../components/MapPlaceholder';
+import RecentAlerts from '../components/RecentAlerts';
+import SystemHealth from '../components/dashboard/SystemHealth';
+import FleetAnalytics from '../components/FleetAnalytics';
 import '../styles/dashboard.css';
 
-export const FleetDashPage: React.FC = () => {
+const fadeIn = {
+  hidden: { opacity: 0, y: 15 },
+  visible: (delay: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] },
+  }),
+};
+
+const Dashboard: React.FC = () => {
   return (
-    <div className="h-screen w-screen bg-[#0B0D12] text-white overflow-hidden p-6 gap-6 grid grid-cols-12" id="automotive-telemetry-dashboard">
-      {/* Col 1: Left Vertical Dock */}
-      <div className="col-span-1 flex justify-center h-full">
-        <SidebarNav />
-      </div>
+    <DashboardLayout>
+      <div className="dashboard">
+        {/* Hero Title */}
+        <motion.div
+          className="dashboard__hero"
+          initial="hidden"
+          animate="visible"
+          custom={0}
+          variants={fadeIn}
+        >
+          <div>
+            <h2 className="dashboard__hero-title">Fleet Operations Center</h2>
+            <p className="dashboard__hero-subtitle">
+              Real-time telemetry, vehicle tracking, and fleet intelligence
+            </p>
+          </div>
+          <div className="dashboard__hero-badge">
+            <span className="dashboard__hero-badge-dot" aria-hidden="true" />
+            Live Monitoring Active
+          </div>
+        </motion.div>
 
-      {/* Col 2–8: Main Visual Focal Point (Interactive Canvas Map Stage & Overlays) */}
-      <div className="col-span-7 h-full">
-        <FleetMapCanvas />
-      </div>
+        {/* KPI Grid */}
+        <DashboardCards />
 
-      {/* Col 9–12: Right Telemetry Column Stack */}
-      <div className="col-span-4 h-full">
-        <FleetTelemetryPanel />
+        {/* Fleet Command Center: Map + Right Panel */}
+        <motion.div
+          className="command-center"
+          initial="hidden"
+          animate="visible"
+          custom={0.15}
+          variants={fadeIn}
+        >
+          {/* Main Map (Hero Element) */}
+          <MapPlaceholder />
+
+          {/* Right Panel Stack */}
+          <div className="command-center__right">
+            <RecentAlerts />
+            <SystemHealth />
+          </div>
+        </motion.div>
+
+        {/* Fleet Analytics */}
+        <motion.div
+          initial="hidden"
+          animate="visible"
+          custom={0.25}
+          variants={fadeIn}
+        >
+          <FleetAnalytics />
+        </motion.div>
       </div>
-    </div>
+    </DashboardLayout>
   );
 };
 
-export default FleetDashPage;
-
+export { Dashboard as FleetDashPage };
+export default memo(Dashboard);

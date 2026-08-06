@@ -1,5 +1,8 @@
 /**
  * SidebarNav.tsx – Vertical Navigation Capsule Control Dock
+ * @deprecated This dark-themed sidebar is superseded by the light-theme
+ * Sidebar.tsx component used in DashboardLayout. Retained for reference
+ * and potential Week 3 Canvas fullscreen mode.
  */
 
 import React from 'react';

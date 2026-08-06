@@ -1,5 +1,7 @@
 /**
- * Sidebar.tsx – FleetDash Enterprise Light Navigation Sidebar
+ * Sidebar.tsx – FleetDash Premium Light Navigation Sidebar
+ * Fixed sidebar with brand, navigation, and user profile.
+ * Collapses to icon-only on tablet breakpoint via CSS.
  */
 
 import React from 'react';
@@ -8,6 +10,7 @@ import {
   LayoutGrid, Map, Truck, Bell, BarChart3, Settings, LogOut
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import '../styles/dashboard.css';
 
 interface NavItem {
   id: string;
@@ -40,7 +43,7 @@ const Sidebar: React.FC = () => {
       id={`sidebar-nav-${item.id}`}
       className={({ isActive }) => `sidebar__nav-item${isActive ? ' active' : ''}`}
     >
-      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
         {item.icon}
       </span>
       <span>{item.label}</span>
@@ -51,7 +54,7 @@ const Sidebar: React.FC = () => {
   );
 
   return (
-    <aside className="sidebar">
+    <aside className="sidebar" aria-label="Main navigation">
       {/* Brand Header */}
       <div className="sidebar__header">
         <div className="sidebar__logo-icon">
@@ -75,7 +78,7 @@ const Sidebar: React.FC = () => {
           <div className="sidebar__avatar">
             {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 'FM'}
           </div>
-          <div style={{ overflow: 'hidden' }}>
+          <div style={{ overflow: 'hidden', flex: 1 }}>
             <div className="sidebar__user-name">{user?.name || 'Fleet Manager'}</div>
             <div className="sidebar__user-role">{user?.company || 'LogiTech Operations'}</div>
           </div>
@@ -84,10 +87,13 @@ const Sidebar: React.FC = () => {
         <button
           onClick={logout}
           className="sidebar__nav-item"
-          style={{ width: '100%', marginTop: '6px', border: 'none', background: 'transparent', color: '#DC2626' }}
+          style={{ width: '100%', marginTop: '6px', color: '#EF4444', fontFamily: 'inherit', fontSize: '14px' }}
           title="Sign Out"
+          aria-label="Sign out of FleetDash"
         >
-          <LogOut size={18} />
+          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <LogOut size={18} />
+          </span>
           <span>Sign Out</span>
         </button>
       </div>

@@ -1,6 +1,6 @@
-/* index.css – Base reset for Disaster Intelligence Dashboard.
+/* index.css – FleetDash base reset.
    All theme tokens and component styles live in:
-   src/styles/dashboard.css (imported from App.tsx) */
+   src/styles/dashboard.css (imported from component files) */
 
 *,
 *::before,
@@ -20,8 +20,8 @@ html {
 body {
   margin: 0;
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  background: #F5F7FA;
-  color: #1A1D26;
+  background: #F5F7FB;
+  color: #0F172A;
   overflow-x: hidden;
 }
 

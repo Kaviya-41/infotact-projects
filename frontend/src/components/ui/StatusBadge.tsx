@@ -1,37 +1,43 @@
 /**
- * StatusBadge.tsx – Automotive Status Badge Component
+ * StatusBadge.tsx – Accessible Status Badge with text + color indicator
+ * Ensures status is communicated through both color AND text label.
  */
 
 import React from 'react';
+import '../../styles/dashboard.css';
 
-type BadgeVariant = 'moving' | 'stopped' | 'offline' | 'healthy' | 'warning' | 'critical';
+type BadgeVariant = 'moving' | 'stopped' | 'offline' | 'maintenance' | 'idle';
 
 interface StatusBadgeProps {
-  variant: BadgeVariant;
-  label: string;
+  status: BadgeVariant;
+  label?: string;
+  className?: string;
 }
 
-const StatusBadge: React.FC<StatusBadgeProps> = ({ variant, label }) => {
-  const getVariantClass = () => {
-    switch (variant) {
-      case 'moving':
-      case 'healthy':
-        return 'status-badge--moving';
-      case 'stopped':
-      case 'warning':
-        return 'status-badge--stopped';
-      case 'offline':
-      case 'critical':
-        return 'status-badge--offline';
-      default:
-        return 'status-badge--moving';
-    }
-  };
+const STATUS_LABELS: Record<BadgeVariant, string> = {
+  moving: 'Moving',
+  stopped: 'Stopped',
+  offline: 'Offline',
+  maintenance: 'Maintenance',
+  idle: 'Idle',
+};
+
+export const StatusBadge: React.FC<StatusBadgeProps> = ({
+  status,
+  label,
+  className = '',
+}) => {
+  const displayLabel = label || STATUS_LABELS[status] || status;
+  const variantClass = status === 'idle' ? 'stopped' : status;
 
   return (
-    <span className={`status-badge ${getVariantClass()}`}>
+    <span
+      className={`status-badge status-badge--${variantClass} ${className}`}
+      role="status"
+      aria-label={`Vehicle status: ${displayLabel}`}
+    >
       <span className="status-badge__dot" aria-hidden="true" />
-      {label}
+      {displayLabel}
     </span>
   );
 };

@@ -1,5 +1,6 @@
 /**
- * DashboardLayout.tsx – Main Shell Layout Wrapper for FleetDash
+ * DashboardLayout.tsx – FleetDash AppShell Layout Wrapper
+ * Fixed sidebar + sticky header + scrollable content area.
  */
 
 import React from 'react';
@@ -13,11 +14,11 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   return (
-    <div className="dashboard-shell">
+    <div className="app-shell">
       <Sidebar />
-      <div className="main-content">
+      <div className="app-shell__main">
         <Header />
-        <div style={{ flex: 1, overflowY: 'auto' }}>
+        <div className="app-shell__content">
           {children}
         </div>
       </div>

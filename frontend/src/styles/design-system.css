@@ -1,72 +1,162 @@
 /* ============================================================
-   FleetDash Automotive Telematics Dark Obsidian Design System
-   Dark Glassmorphism + Tesla / Infotainment UI
+   FleetDash — Premium Enterprise Light Design System
+   Clean, high-contrast, automotive-inspired light theme
    ============================================================ */
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 :root {
-  /* ── Core Dark Obsidian Theme Colors ── */
-  --ds-bg-main:         #0B0D12;
-  --ds-bg-elevated:     #13161F;
-  --ds-bg-surface:      rgba(22, 27, 38, 0.65);
-  --ds-bg-card-glass:   rgba(22, 27, 38, 0.65);
-  --ds-bg-card-solid:   #161B26;
+  /* ── Core Light Theme Surfaces ── */
+  --fd-bg-page:         #F5F7FB;
+  --fd-bg-card:         #FFFFFF;
+  --fd-bg-surface:      #F8FAFC;
+  --fd-bg-elevated:     #FFFFFF;
+  --fd-bg-sidebar:      #FFFFFF;
+  --fd-bg-header:       rgba(255, 255, 255, 0.85);
+  --fd-bg-input:        #FFFFFF;
+  --fd-bg-hover:        #F1F5F9;
 
   /* ── Typography Colors ── */
-  --ds-text-primary:    #FFFFFF;
-  --ds-text-secondary:  #94A3B8;
-  --ds-text-muted:      #64748B;
+  --fd-text-primary:    #0F172A;
+  --fd-text-secondary:  #475569;
+  --fd-text-muted:      #94A3B8;
+  --fd-text-inverse:    #FFFFFF;
 
-  /* ── Accents & Status ── */
-  --ds-color-primary:   #3B82F6;
-  --ds-color-primary-hover: #60A5FA;
-  --ds-color-primary-light: rgba(59, 130, 246, 0.15);
+  /* ── Primary Brand ── */
+  --fd-color-primary:       #2563EB;
+  --fd-color-primary-hover:  #1D4ED8;
+  --fd-color-primary-light:  rgba(37, 99, 235, 0.08);
+  --fd-color-primary-glow:   rgba(37, 99, 235, 0.15);
 
-  --ds-color-amber:     #FF8A00;
-  --ds-color-emerald:   #10B981;
-  --ds-color-rose:      #EF4444;
-  --ds-color-cyan:      #06B6D4;
+  /* ── Electric / Accent Blues ── */
+  --fd-color-electric:  #0EA5E9;
+  --fd-color-cyan:      #06B6D4;
 
-  --ds-color-success:   #10B981;
-  --ds-color-success-bg:rgba(16, 185, 129, 0.12);
+  /* ── Status Colors ── */
+  --fd-color-success:     #10B981;
+  --fd-color-success-bg:  rgba(16, 185, 129, 0.08);
+  --fd-color-success-border: rgba(16, 185, 129, 0.2);
 
-  --ds-color-warning:   #FF8A00;
-  --ds-color-warning-bg:rgba(255, 138, 0, 0.12);
+  --fd-color-warning:     #F59E0B;
+  --fd-color-warning-bg:  rgba(245, 158, 11, 0.08);
+  --fd-color-warning-border: rgba(245, 158, 11, 0.2);
 
-  --ds-color-danger:    #EF4444;
-  --ds-color-danger-bg: rgba(239, 68, 68, 0.12);
+  --fd-color-danger:      #EF4444;
+  --fd-color-danger-bg:   rgba(239, 68, 68, 0.08);
+  --fd-color-danger-border: rgba(239, 68, 68, 0.2);
 
-  --ds-color-info:      #06B6D4;
-  --ds-color-info-bg:   rgba(6, 182, 212, 0.12);
+  --fd-color-maintenance: #8B5CF6;
+  --fd-color-maintenance-bg: rgba(139, 92, 246, 0.08);
+  --fd-color-maintenance-border: rgba(139, 92, 246, 0.2);
 
-  /* ── Glass Borders & Shadows ── */
-  --ds-border-glass:    1px solid rgba(255, 255, 255, 0.08);
-  --ds-border-subtle:   1px solid rgba(255, 255, 255, 0.04);
-  --ds-glass-backdrop:  blur(16px);
-  --ds-glass-shadow:    0 8px 32px 0 rgba(0, 0, 0, 0.37);
-  --ds-shadow-sm:       0 4px 12px rgba(0, 0, 0, 0.25);
+  --fd-color-info:        #0EA5E9;
+  --fd-color-info-bg:     rgba(14, 165, 233, 0.08);
+  --fd-color-info-border: rgba(14, 165, 233, 0.2);
 
-  /* ── Fonts & Tabular Nums ── */
-  --ds-font-family: 'Inter', system-ui, -apple-system, sans-serif;
-  --ds-font-mono: 'JetBrains Mono', monospace;
+  /* ── Borders & Shadows ── */
+  --fd-border-color:     #E2E8F0;
+  --fd-border-subtle:    rgba(226, 232, 240, 0.7);
+  --fd-border-card:      1px solid var(--fd-border-subtle);
+  --fd-border-strong:    1px solid var(--fd-border-color);
 
-  /* ── Spacing Scale (8px Grid) ── */
-  --ds-space-8: 8px;
-  --ds-space-16: 16px;
-  --ds-space-24: 24px;
-  --ds-space-32: 32px;
-  --ds-space-48: 48px;
-  --ds-space-64: 64px;
+  --fd-shadow-xs:   0 1px 2px rgba(15, 23, 42, 0.04);
+  --fd-shadow-sm:   0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
+  --fd-shadow-md:   0 4px 12px rgba(15, 23, 42, 0.07);
+  --fd-shadow-lg:   0 10px 30px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04);
+  --fd-shadow-xl:   0 20px 50px rgba(15, 23, 42, 0.1), 0 8px 16px rgba(15, 23, 42, 0.06);
+  --fd-shadow-glow-blue: 0 0 0 3px var(--fd-color-primary-glow);
+
+  /* ── Glass / Backdrop ── */
+  --fd-glass-bg:        rgba(255, 255, 255, 0.85);
+  --fd-glass-backdrop:   blur(16px);
+  --fd-glass-border:     1px solid rgba(255, 255, 255, 0.6);
+
+  /* ── Fonts ── */
+  --fd-font-family:  'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --fd-font-mono:    'JetBrains Mono', 'Fira Code', monospace;
+
+  /* ── 8px Spacing Scale ── */
+  --fd-space-4:   4px;
+  --fd-space-8:   8px;
+  --fd-space-12:  12px;
+  --fd-space-16:  16px;
+  --fd-space-20:  20px;
+  --fd-space-24:  24px;
+  --fd-space-32:  32px;
+  --fd-space-48:  48px;
+  --fd-space-64:  64px;
 
   /* ── Radii ── */
-  --ds-radius-card: 16px;   /* rounded-2xl */
-  --ds-radius-dock: 24px;   /* rounded-3xl */
-  --ds-radius-full: 9999px;
+  --fd-radius-sm:   8px;
+  --fd-radius-md:   12px;
+  --fd-radius-lg:   16px;    /* rounded-2xl */
+  --fd-radius-xl:   20px;
+  --fd-radius-2xl:  24px;    /* rounded-3xl */
+  --fd-radius-full: 9999px;
+
+  /* ── Transitions ── */
+  --fd-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
+  --fd-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --fd-duration-fast:   150ms;
+  --fd-duration-normal: 300ms;
+  --fd-duration-slow:   500ms;
+
+  /* ── Sidebar ── */
+  --fd-sidebar-width:      260px;
+  --fd-sidebar-collapsed:  72px;
+
+  /* ── Header ── */
+  --fd-header-height: 64px;
+
+  /* ── Z-index Scale ── */
+  --fd-z-base:     1;
+  --fd-z-overlay:  10;
+  --fd-z-dropdown: 20;
+  --fd-z-header:   30;
+  --fd-z-sidebar:  40;
+  --fd-z-modal:    50;
 }
 
-.font-mono {
-  font-family: var(--ds-font-mono);
+/* ── Utility Classes ── */
+.tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
+.font-mono {
+  font-family: var(--fd-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Reduce Motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Focus Visible ── */
+*:focus-visible {
+  outline: 2px solid var(--fd-color-primary);
+  outline-offset: 2px;
+  border-radius: var(--fd-radius-sm);
+}
+
+/* ── Scrollbar Styling ── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--fd-border-color);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--fd-text-muted);
+}

@@ -1,10 +1,11 @@
 /* ============================================================
-   FleetDash – Automotive Telematics Infotainment Dashboard CSS
-   Dark Obsidian Glassmorphism + Telemetry Cockpit Layout
+   FleetDash — Premium Enterprise Light Dashboard Styles
+   Automotive-inspired composition: sidebar + header + 12-col grid
    ============================================================ */
 
 @import './design-system.css';
 
+/* ── Base Reset ────────────────────────────────────────────── */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -13,302 +14,853 @@
 
 body {
   margin: 0;
-  font-family: var(--ds-font-family);
-  background-color: var(--ds-bg-main);
-  color: var(--ds-text-primary);
+  font-family: var(--fd-font-family);
+  background-color: var(--fd-bg-page);
+  color: var(--fd-text-primary);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* ── 12-Column Automotive Grid Layout ──────────────────────── */
-.telemetry-dashboard-grid {
+/* ============================================================
+   APP SHELL — Sidebar + Main Area
+   ============================================================ */
+.app-shell {
   display: grid;
-  grid-template-columns: 76px 1fr 360px;
-  gap: var(--ds-space-24);
-  padding: var(--ds-space-24);
+  grid-template-columns: var(--fd-sidebar-width) 1fr;
   min-height: 100vh;
-  background-color: var(--ds-bg-main);
+  background: var(--fd-bg-page);
 }
 
-/* ── Dark Glassmorphism Card ───────────────────────────────── */
-.glass-card {
-  background: var(--ds-bg-card-glass);
-  backdrop-filter: var(--ds-glass-backdrop);
-  -webkit-backdrop-filter: var(--ds-glass-backdrop);
-  border: var(--ds-border-glass);
-  border-radius: var(--ds-radius-card);
-  box-shadow: var(--ds-glass-shadow);
-  padding: var(--ds-space-24);
-  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-.glass-card:hover {
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
-  border-color: rgba(255, 255, 255, 0.14);
-}
-
-.glass-card--compact {
-  padding: var(--ds-space-16);
-}
-
-.glass-card__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: var(--ds-space-16);
-}
-
-.glass-card__title {
-  font-size: 15px;
-  font-weight: 600;
-  color: var(--ds-text-primary);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-/* ── Vertical Capsule Dock Sidebar ──────────────────────────── */
-.sidebar-dock {
-  position: sticky;
-  top: 24px;
-  height: calc(100vh - 48px);
-  background: rgba(19, 22, 31, 0.6);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: var(--ds-border-glass);
-  border-radius: var(--ds-radius-dock);
-  box-shadow: var(--ds-glass-shadow);
+.app-shell__main {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: space-between;
-  padding: var(--ds-space-24) 12px;
-  z-index: 50;
+  min-height: 100vh;
+  overflow: hidden;
 }
 
-.sidebar-dock__logo {
-  width: 44px;
-  height: 44px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #FF8A00 0%, #FBBF24 100%);
-  color: #000000;
+.app-shell__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: var(--fd-space-32);
+}
+
+/* ============================================================
+   SIDEBAR — Light enterprise sidebar
+   ============================================================ */
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: var(--fd-sidebar-width);
+  height: 100vh;
+  background: var(--fd-bg-sidebar);
+  border-right: var(--fd-border-card);
+  display: flex;
+  flex-direction: column;
+  z-index: var(--fd-z-sidebar);
+  transition: width var(--fd-duration-normal) var(--fd-ease-out);
+}
+
+.sidebar__header {
+  display: flex;
+  align-items: center;
+  gap: var(--fd-space-12);
+  padding: var(--fd-space-24) var(--fd-space-24) var(--fd-space-20);
+  border-bottom: var(--fd-border-card);
+}
+
+.sidebar__logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--fd-radius-md);
+  background: linear-gradient(135deg, var(--fd-color-primary) 0%, var(--fd-color-electric) 100%);
+  color: var(--fd-text-inverse);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  box-shadow: 0 4px 14px rgba(37, 99, 235, 0.25);
+}
+
+.sidebar__logo-text {
+  font-size: 20px;
   font-weight: 800;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4px 20px rgba(255, 138, 0, 0.35);
+  color: var(--fd-text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1;
 }
 
-.sidebar-dock__nav {
+.sidebar__logo-text span {
+  color: var(--fd-color-primary);
+}
+
+.sidebar__nav {
+  flex: 1;
+  padding: var(--fd-space-16) var(--fd-space-12);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: var(--fd-space-4);
+  overflow-y: auto;
 }
 
-.sidebar-dock__item {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+.sidebar__section-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fd-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: var(--fd-space-8) var(--fd-space-12) var(--fd-space-4);
+}
+
+.sidebar__nav-item {
   display: flex;
   align-items: center;
-  justify-content: center;
-  color: var(--ds-text-secondary);
+  gap: var(--fd-space-12);
+  padding: 10px var(--fd-space-12);
+  border-radius: var(--fd-radius-md);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fd-text-secondary);
   text-decoration: none;
-  transition: all 0.2s ease;
+  cursor: pointer;
+  transition: all var(--fd-duration-fast) ease;
   position: relative;
+  border: none;
+  background: transparent;
 }
 
-.sidebar-dock__item:hover {
-  background-color: rgba(255, 255, 255, 0.08);
-  color: #FFFFFF;
+.sidebar__nav-item:hover {
+  background: var(--fd-bg-hover);
+  color: var(--fd-text-primary);
 }
 
-.sidebar-dock__item.active {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: #FFFFFF;
+.sidebar__nav-item.active {
+  background: var(--fd-color-primary-light);
+  color: var(--fd-color-primary);
   font-weight: 600;
 }
 
-.sidebar-dock__item.active::before {
+.sidebar__nav-item.active::before {
   content: '';
   position: absolute;
   left: -12px;
   top: 50%;
   transform: translateY(-50%);
-  width: 4px;
-  height: 18px;
+  width: 3px;
+  height: 20px;
   border-radius: 0 4px 4px 0;
-  background-color: var(--ds-color-amber);
+  background: var(--fd-color-primary);
 }
 
-.sidebar-dock__badge {
+.sidebar__badge {
+  margin-left: auto;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: var(--fd-radius-full);
+  background: var(--fd-color-danger);
+  color: var(--fd-text-inverse);
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar__footer {
+  padding: var(--fd-space-16) var(--fd-space-16);
+  border-top: var(--fd-border-card);
+  margin-top: auto;
+}
+
+.sidebar__user {
+  display: flex;
+  align-items: center;
+  gap: var(--fd-space-12);
+  padding: var(--fd-space-8);
+  border-radius: var(--fd-radius-md);
+}
+
+.sidebar__avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--fd-radius-full);
+  background: linear-gradient(135deg, var(--fd-color-primary), var(--fd-color-electric));
+  color: var(--fd-text-inverse);
+  font-size: 13px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.sidebar__user-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fd-text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sidebar__user-role {
+  font-size: 12px;
+  color: var(--fd-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ============================================================
+   HEADER — Top bar with status indicators
+   ============================================================ */
+.header {
+  position: sticky;
+  top: 0;
+  height: var(--fd-header-height);
+  background: var(--fd-bg-header);
+  backdrop-filter: var(--fd-glass-backdrop);
+  -webkit-backdrop-filter: var(--fd-glass-backdrop);
+  border-bottom: var(--fd-border-card);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 var(--fd-space-32);
+  z-index: var(--fd-z-header);
+}
+
+.header__left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.header__greeting {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--fd-text-primary);
+  letter-spacing: -0.3px;
+  line-height: 1.2;
+}
+
+.header__subtitle {
+  font-size: 13px;
+  color: var(--fd-text-muted);
+  font-weight: 400;
+}
+
+.header__right {
+  display: flex;
+  align-items: center;
+  gap: var(--fd-space-12);
+}
+
+.header__status-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--fd-radius-full);
+  font-size: 12px;
+  font-weight: 600;
+  border: 1px solid transparent;
+  white-space: nowrap;
+}
+
+.header__status-badge--online {
+  background: var(--fd-color-success-bg);
+  color: var(--fd-color-success);
+  border-color: var(--fd-color-success-border);
+}
+
+.header__status-badge--warning {
+  background: var(--fd-color-warning-bg);
+  color: var(--fd-color-warning);
+  border-color: var(--fd-color-warning-border);
+}
+
+.header__status-badge--offline {
+  background: var(--fd-color-danger-bg);
+  color: var(--fd-color-danger);
+  border-color: var(--fd-color-danger-border);
+}
+
+.header__status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.header__status-dot--green {
+  background: var(--fd-color-success);
+  box-shadow: 0 0 0 3px var(--fd-color-success-bg);
+  animation: header-pulse 2s ease-in-out infinite;
+}
+
+.header__status-dot--amber {
+  background: var(--fd-color-warning);
+  box-shadow: 0 0 0 3px var(--fd-color-warning-bg);
+}
+
+.header__status-dot--red {
+  background: var(--fd-color-danger);
+  box-shadow: 0 0 0 3px var(--fd-color-danger-bg);
+}
+
+@keyframes header-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.header__search {
+  display: flex;
+  align-items: center;
+  background: var(--fd-bg-surface);
+  border: var(--fd-border-card);
+  border-radius: var(--fd-radius-full);
+  padding: 0 var(--fd-space-16);
+  height: 36px;
+  min-width: 220px;
+  transition: border-color var(--fd-duration-fast) ease, box-shadow var(--fd-duration-fast) ease;
+}
+
+.header__search:focus-within {
+  border-color: var(--fd-color-primary);
+  box-shadow: var(--fd-shadow-glow-blue);
+}
+
+.header__search-icon {
+  color: var(--fd-text-muted);
+  flex-shrink: 0;
+}
+
+.header__search-input {
+  border: none;
+  background: transparent;
+  font-family: var(--fd-font-family);
+  font-size: 13px;
+  color: var(--fd-text-primary);
+  padding: 0 var(--fd-space-8);
+  width: 100%;
+  outline: none;
+}
+
+.header__search-input::placeholder {
+  color: var(--fd-text-muted);
+}
+
+.header__icon-btn {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: var(--fd-radius-md);
+  border: var(--fd-border-card);
+  background: var(--fd-bg-card);
+  color: var(--fd-text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all var(--fd-duration-fast) ease;
+}
+
+.header__icon-btn:hover {
+  background: var(--fd-bg-hover);
+  color: var(--fd-text-primary);
+}
+
+.header__notification-dot {
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 6px;
+  right: 6px;
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--ds-color-rose);
+  background: var(--fd-color-danger);
+  border: 2px solid var(--fd-bg-card);
 }
 
-/* ── Center Stage & Floating Cards ──────────────────────────── */
-.center-stage {
-  position: relative;
-  border-radius: var(--ds-radius-dock);
-  overflow: hidden;
-  box-shadow: var(--ds-glass-shadow);
-  border: var(--ds-border-glass);
-  min-height: 600px;
-  display: flex;
-  flex-direction: column;
-  background-color: rgba(19, 22, 31, 0.4);
-}
-
-.canvas-container {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-}
-
-.canvas-overlay-top-left {
-  position: absolute;
-  top: 24px;
-  left: 24px;
-  z-index: 20;
-  max-width: 340px;
-  width: 100%;
-}
-
-.canvas-overlay-top-center {
-  position: absolute;
-  top: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 20;
-  max-width: 400px;
-  width: 100%;
-}
-
-/* ── Active Route Card (Top Left Floating Overlay) ──────────── */
-.active-route-card {
-  background: rgba(22, 27, 38, 0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: var(--ds-border-glass);
-  border-radius: var(--ds-radius-card);
-  padding: 20px;
-  box-shadow: var(--ds-glass-shadow);
-}
-
-.route-step-dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-}
-
-.route-step-dot--active {
-  background-color: var(--ds-color-amber);
-  box-shadow: 0 0 0 3px rgba(255, 138, 0, 0.25);
-}
-
-.route-step-dot--done {
-  background-color: var(--ds-color-emerald);
-}
-
-/* ── Vehicle Alert Banners (Top Center Floating Overlay) ─────── */
-.alert-banner-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.vehicle-alert-banner {
+.header__gps-badge {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 12px 16px;
-  border-radius: 14px;
-  background: rgba(24, 30, 44, 0.85);
-  backdrop-filter: blur(16px);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
-  font-size: 13px;
-}
-
-.vehicle-alert-banner--critical {
-  border: 1px solid rgba(239, 68, 68, 0.3);
-  background: rgba(24, 30, 44, 0.9);
-}
-
-.vehicle-alert-banner--warning {
-  border: 1px solid rgba(255, 138, 0, 0.3);
-  background: rgba(24, 30, 44, 0.9);
-}
-
-.vehicle-alert-banner--info {
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  background: rgba(24, 30, 44, 0.9);
-}
-
-
-/* ── Right Telemetry Stack ──────────────────────────────────── */
-.right-telemetry-stack {
-  display: flex;
-  flex-direction: column;
-  gap: var(--ds-space-24);
-}
-
-/* ── Radial Speed Gauge ─────────────────────────────────────── */
-.speed-gauge-card {
-  text-align: center;
-}
-
-.speed-gauge__val {
-  font-size: 48px;
-  font-weight: 800;
-  letter-spacing: -1px;
-  color: var(--ds-color-primary);
-  font-family: var(--ds-font-mono);
-  font-variant-numeric: tabular-nums;
-  line-height: 1;
-}
-
-.speed-gauge__unit {
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--fd-radius-full);
   font-size: 12px;
   font-weight: 600;
-  color: var(--ds-text-secondary);
-  text-transform: uppercase;
+  background: var(--fd-color-success-bg);
+  color: var(--fd-color-success);
+  border: 1px solid var(--fd-color-success-border);
+}
+
+.header__gps-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--fd-color-success);
+  box-shadow: 0 0 0 3px var(--fd-color-success-bg);
+  animation: header-pulse 2s ease-in-out infinite;
+}
+
+/* ============================================================
+   DASHBOARD CONTENT
+   ============================================================ */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fd-space-32);
+}
+
+.dashboard__hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard__hero-title {
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--fd-text-primary);
+  letter-spacing: -0.5px;
+  line-height: 1.2;
+}
+
+.dashboard__hero-subtitle {
+  font-size: 14px;
+  color: var(--fd-text-muted);
   margin-top: 4px;
 }
 
-/* ── Status Badges ──────────────────────────────────────────── */
+.dashboard__hero-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  background: var(--fd-color-primary-light);
+  border: 1px solid rgba(37, 99, 235, 0.15);
+  border-radius: var(--fd-radius-full);
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fd-color-primary);
+}
+
+.dashboard__hero-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fd-color-primary);
+  animation: hero-badge-pulse 2s ease-in-out infinite;
+}
+
+@keyframes hero-badge-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.3); }
+  50% { box-shadow: 0 0 0 6px rgba(37, 99, 235, 0); }
+}
+
+/* ============================================================
+   FD-CARD — Universal light card primitive
+   ============================================================ */
+.fd-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--fd-border-subtle);
+  border-radius: var(--fd-radius-lg);
+  box-shadow: var(--fd-shadow-sm);
+  padding: var(--fd-space-24);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: all var(--fd-duration-normal) var(--fd-ease-out);
+}
+
+.fd-card:hover {
+  box-shadow: var(--fd-shadow-lg);
+  transform: translateY(-1px);
+}
+
+.fd-card--no-hover:hover {
+  box-shadow: var(--fd-shadow-sm);
+  transform: none;
+}
+
+.fd-card--compact {
+  padding: var(--fd-space-16);
+}
+
+.fd-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--fd-space-16);
+}
+
+.fd-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fd-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Legacy compat aliases */
+.fleet-card { composes: fd-card; }
+.fleet-card {
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid var(--fd-border-subtle);
+  border-radius: var(--fd-radius-lg);
+  box-shadow: var(--fd-shadow-sm);
+  padding: var(--fd-space-24);
+  backdrop-filter: blur(8px);
+  transition: all var(--fd-duration-normal) var(--fd-ease-out);
+}
+
+.fleet-card:hover {
+  box-shadow: var(--fd-shadow-lg);
+  transform: translateY(-1px);
+}
+
+.fleet-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--fd-space-16);
+}
+
+.fleet-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fd-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ============================================================
+   KPI / STATS GRID
+   ============================================================ */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--fd-space-24);
+}
+
+.stat-card {
+  background: var(--fd-bg-card);
+  border: 1px solid var(--fd-border-subtle);
+  border-radius: var(--fd-radius-lg);
+  padding: var(--fd-space-24);
+  box-shadow: var(--fd-shadow-sm);
+  transition: all var(--fd-duration-normal) var(--fd-ease-out);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  box-shadow: var(--fd-shadow-lg);
+  transform: translateY(-2px);
+}
+
+.stat-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--fd-space-12);
+}
+
+.stat-card__icon-box {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--fd-radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.stat-card__icon-box--blue {
+  background: var(--fd-color-primary-light);
+  color: var(--fd-color-primary);
+  border: 1px solid rgba(37, 99, 235, 0.12);
+}
+
+.stat-card__icon-box--green {
+  background: var(--fd-color-success-bg);
+  color: var(--fd-color-success);
+  border: 1px solid var(--fd-color-success-border);
+}
+
+.stat-card__icon-box--amber {
+  background: var(--fd-color-warning-bg);
+  color: var(--fd-color-warning);
+  border: 1px solid var(--fd-color-warning-border);
+}
+
+.stat-card__icon-box--red {
+  background: var(--fd-color-danger-bg);
+  color: var(--fd-color-danger);
+  border: 1px solid var(--fd-color-danger-border);
+}
+
+.stat-card__icon-box--purple {
+  background: var(--fd-color-maintenance-bg);
+  color: var(--fd-color-maintenance);
+  border: 1px solid var(--fd-color-maintenance-border);
+}
+
+.stat-card__value {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--fd-text-primary);
+  line-height: 1;
+  margin-bottom: var(--fd-space-8);
+}
+
+.stat-card__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.stat-card__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fd-text-secondary);
+}
+
+.stat-card__trend {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 3px 8px;
+  border-radius: var(--fd-radius-full);
+}
+
+.stat-card__trend--up {
+  background: var(--fd-color-success-bg);
+  color: var(--fd-color-success);
+}
+
+.stat-card__trend--down {
+  background: var(--fd-color-danger-bg);
+  color: var(--fd-color-danger);
+}
+
+/* ============================================================
+   FLEET COMMAND CENTER — Map + Right Panel Grid
+   ============================================================ */
+.command-center {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: var(--fd-space-24);
+  min-height: 560px;
+}
+
+.command-center__right {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fd-space-24);
+}
+
+/* ============================================================
+   MAP CONTAINER
+   ============================================================ */
+.map-container-card {
+  background: var(--fd-bg-card);
+  border: 1px solid var(--fd-border-subtle);
+  border-radius: var(--fd-radius-xl);
+  box-shadow: var(--fd-shadow-md);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 500px;
+}
+
+.map-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--fd-space-16) var(--fd-space-20);
+  border-bottom: var(--fd-border-card);
+  z-index: 15;
+  position: relative;
+  background: var(--fd-bg-card);
+}
+
+.map-title-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fd-text-primary);
+}
+
+.map-controls-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: var(--fd-radius-sm);
+  border: var(--fd-border-card);
+  background: var(--fd-bg-card);
+  color: var(--fd-text-secondary);
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--fd-duration-fast) ease;
+}
+
+.map-btn:hover {
+  background: var(--fd-bg-hover);
+  color: var(--fd-text-primary);
+}
+
+.map-visualizer {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
+/* ============================================================
+   VEHICLE HUD — Selected Vehicle Overlay
+   ============================================================ */
+.vehicle-hud {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 25;
+  background: var(--fd-glass-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--fd-border-subtle);
+  border-radius: var(--fd-radius-xl);
+  padding: var(--fd-space-20) var(--fd-space-24);
+  box-shadow: var(--fd-shadow-xl);
+  min-width: 480px;
+  max-width: 600px;
+}
+
+.vehicle-hud__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--fd-space-12);
+  gap: var(--fd-space-16);
+}
+
+.vehicle-hud__id {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--fd-text-primary);
+  letter-spacing: -0.3px;
+}
+
+.vehicle-hud__speed {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+}
+
+.vehicle-hud__speed-value {
+  font-size: 42px;
+  font-weight: 800;
+  color: var(--fd-color-primary);
+  font-family: var(--fd-font-mono);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.vehicle-hud__speed-unit {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fd-text-muted);
+}
+
+.vehicle-hud__route {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fd-text-secondary);
+  margin-bottom: var(--fd-space-16);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.vehicle-hud__route-arrow {
+  color: var(--fd-color-primary);
+}
+
+.vehicle-hud__metrics {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--fd-space-16);
+  padding-top: var(--fd-space-12);
+  border-top: var(--fd-border-card);
+}
+
+.vehicle-hud__metric-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--fd-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.vehicle-hud__metric-value {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--fd-text-primary);
+  margin-top: 2px;
+}
+
+/* ============================================================
+   STATUS BADGES
+   ============================================================ */
 .status-badge {
   display: inline-flex;
   align-items: center;
   gap: 6px;
   padding: 4px 10px;
-  border-radius: var(--ds-radius-full);
+  border-radius: var(--fd-radius-full);
   font-size: 12px;
   font-weight: 600;
 }
 
 .status-badge--moving {
-  background-color: var(--ds-color-success-bg);
-  color: var(--ds-color-success);
-  border: 1px solid rgba(22, 163, 74, 0.2);
+  background: var(--fd-color-success-bg);
+  color: var(--fd-color-success);
+  border: 1px solid var(--fd-color-success-border);
 }
 
 .status-badge--stopped {
-  background-color: var(--ds-color-warning-bg);
-  color: var(--ds-color-warning);
-  border: 1px solid rgba(217, 119, 6, 0.2);
+  background: var(--fd-color-warning-bg);
+  color: var(--fd-color-warning);
+  border: 1px solid var(--fd-color-warning-border);
 }
 
 .status-badge--offline {
-  background-color: var(--ds-color-danger-bg);
-  color: var(--ds-color-danger);
-  border: 1px solid rgba(220, 38, 38, 0.2);
+  background: var(--fd-color-danger-bg);
+  color: var(--fd-color-danger);
+  border: 1px solid var(--fd-color-danger-border);
+}
+
+.status-badge--maintenance {
+  background: var(--fd-color-maintenance-bg);
+  color: var(--fd-color-maintenance);
+  border: 1px solid var(--fd-color-maintenance-border);
 }
 
 .status-badge__dot {
@@ -317,59 +869,558 @@ body {
   border-radius: 50%;
 }
 
-.status-badge--moving .status-badge__dot { background-color: var(--ds-color-success); }
-.status-badge--stopped .status-badge__dot { background-color: var(--ds-color-warning); }
-.status-badge--offline .status-badge__dot { background-color: var(--ds-color-danger); }
+.status-badge--moving .status-badge__dot { background: var(--fd-color-success); }
+.status-badge--stopped .status-badge__dot { background: var(--fd-color-warning); }
+.status-badge--offline .status-badge__dot { background: var(--fd-color-danger); }
+.status-badge--maintenance .status-badge__dot { background: var(--fd-color-maintenance); }
 
-/* ── Auth Split Screen Pages ────────────────────────────────── */
+/* ============================================================
+   TELEMETRY PANEL — Vehicle details panel
+   ============================================================ */
+.telemetry-panel {
+  background: var(--fd-bg-card);
+  border: 1px solid var(--fd-border-subtle);
+  border-radius: var(--fd-radius-lg);
+  padding: var(--fd-space-24);
+  box-shadow: var(--fd-shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: var(--fd-space-16);
+}
+
+.telemetry-panel__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.telemetry-panel__id {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--fd-text-primary);
+  letter-spacing: -0.3px;
+}
+
+.telemetry-hero-speed {
+  text-align: center;
+  padding: var(--fd-space-16) 0;
+}
+
+.telemetry-hero-speed__value {
+  font-size: 52px;
+  font-weight: 800;
+  color: var(--fd-color-primary);
+  font-family: var(--fd-font-mono);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+  letter-spacing: -2px;
+}
+
+.telemetry-hero-speed__unit {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--fd-text-muted);
+  text-transform: uppercase;
+  margin-top: 4px;
+}
+
+.telemetry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--fd-space-12);
+}
+
+.telemetry-item {
+  padding: var(--fd-space-12);
+  background: var(--fd-bg-surface);
+  border-radius: var(--fd-radius-md);
+  border: 1px solid var(--fd-border-subtle);
+}
+
+.telemetry-item__label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fd-text-muted);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-bottom: 4px;
+}
+
+.telemetry-item__val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fd-text-primary);
+}
+
+/* ============================================================
+   ANALYTICS SECTION
+   ============================================================ */
+.analytics-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fd-space-24);
+}
+
+/* ============================================================
+   AUTH PAGES — Split-screen login/signup
+   ============================================================ */
 .auth-split-layout {
   min-height: 100vh;
   display: grid;
   grid-template-columns: 1fr 480px;
-  background-color: var(--ds-bg-main);
+  background: var(--fd-bg-page);
 }
 
 .auth-hero-panel {
-  background: linear-gradient(135deg, #EFF6FF 0%, #F6F8FB 100%);
-  padding: var(--ds-space-64);
+  background: linear-gradient(135deg, #EFF6FF 0%, #F5F7FB 50%, #EFF6FF 100%);
+  padding: var(--fd-space-64);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   position: relative;
   overflow: hidden;
-  border-right: var(--ds-border-glass);
+  border-right: var(--fd-border-card);
 }
 
 .auth-form-side {
-  padding: var(--ds-space-64);
+  padding: var(--fd-space-64);
   display: flex;
   flex-direction: column;
   justify-content: center;
-  background-color: #FFFFFF;
+  background: var(--fd-bg-card);
 }
 
-/* ── Responsive ─────────────────────────────────────────────── */
-@media (max-width: 1280px) {
-  .telemetry-dashboard-grid {
-    grid-template-columns: 76px 1fr;
-  }
-  .right-telemetry-stack {
-    grid-column: span 2;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-  }
+/* ============================================================
+   SYSTEM HEALTH CARD
+   ============================================================ */
+.system-health {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fd-space-12);
 }
 
-@media (max-width: 768px) {
-  .telemetry-dashboard-grid {
-    grid-template-columns: 1fr;
-    padding: 16px;
+.system-health__metric {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--fd-space-8) 0;
+}
+
+.system-health__label {
+  font-size: 13px;
+  color: var(--fd-text-secondary);
+  font-weight: 500;
+}
+
+.system-health__value {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--fd-font-mono);
+}
+
+.system-health__gauge {
+  margin-top: var(--fd-space-4);
+}
+
+.system-health__gauge-track {
+  height: 6px;
+  background: var(--fd-bg-surface);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--fd-border-subtle);
+}
+
+.system-health__gauge-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s var(--fd-ease-out);
+}
+
+/* ============================================================
+   RIGHT SIDEBAR LEGACY COMPAT
+   ============================================================ */
+.right-sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fd-space-16);
+}
+
+.right-sidebar__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: var(--fd-space-12);
+  border-bottom: var(--fd-border-card);
+}
+
+.right-sidebar__title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--fd-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.right-sidebar__badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--fd-color-success);
+  background: var(--fd-color-success-bg);
+  padding: 3px 8px;
+  border-radius: var(--fd-radius-full);
+  border: 1px solid var(--fd-color-success-border);
+}
+
+.right-sidebar__card {
+  background: var(--fd-bg-card);
+  border: 1px solid var(--fd-border-subtle);
+  border-radius: var(--fd-radius-lg);
+  padding: var(--fd-space-20);
+  box-shadow: var(--fd-shadow-sm);
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: var(--fd-space-8);
+  margin-bottom: var(--fd-space-12);
+}
+
+.card-title-row h3 {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--fd-text-primary);
+  flex: 1;
+}
+
+.card-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--fd-radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  flex-shrink: 0;
+}
+
+.card-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.card-status-dot.green {
+  background: var(--fd-color-success);
+  box-shadow: 0 0 0 3px var(--fd-color-success-bg);
+}
+
+.metric-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fd-space-8);
+}
+
+.metric-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--fd-space-4) 0;
+}
+
+.metric-label {
+  font-size: 13px;
+  color: var(--fd-text-secondary);
+  font-weight: 500;
+}
+
+.metric-value {
+  font-size: 13px;
+  font-weight: 700;
+  font-family: var(--fd-font-mono);
+  color: var(--fd-text-primary);
+}
+
+.metric-value.green { color: var(--fd-color-success); }
+.metric-value.cyan { color: var(--fd-color-cyan); }
+.metric-value.amber { color: var(--fd-color-warning); }
+.metric-value.red { color: var(--fd-color-danger); }
+
+/* Weather Widget */
+.weather-widget-body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--fd-space-8);
+}
+
+.weather-main {
+  display: flex;
+  align-items: baseline;
+  gap: var(--fd-space-8);
+}
+
+.weather-temp {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--fd-text-primary);
+}
+
+.weather-city {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--fd-text-secondary);
+}
+
+.weather-desc {
+  font-size: 13px;
+  color: var(--fd-text-muted);
+}
+
+.weather-details {
+  display: flex;
+  gap: var(--fd-space-16);
+  margin-top: var(--fd-space-4);
+}
+
+.weather-details div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.weather-details span {
+  font-size: 11px;
+  color: var(--fd-text-muted);
+}
+
+.weather-details strong {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--fd-text-primary);
+}
+
+/* Health Badges */
+.health-badges {
+  display: flex;
+  gap: var(--fd-space-8);
+  margin-top: var(--fd-space-8);
+  flex-wrap: wrap;
+}
+
+.h-badge {
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: var(--fd-radius-full);
+}
+
+.h-badge.green {
+  background: var(--fd-color-success-bg);
+  color: var(--fd-color-success);
+  border: 1px solid var(--fd-color-success-border);
+}
+
+.h-badge.amber {
+  background: var(--fd-color-warning-bg);
+  color: var(--fd-color-warning);
+  border: 1px solid var(--fd-color-warning-border);
+}
+
+/* Gauge components */
+.right-sidebar__gauge {
+  margin-bottom: var(--fd-space-12);
+}
+
+.gauge-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--fd-space-4);
+}
+
+.gauge-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fd-text-secondary);
+}
+
+.gauge-val {
+  font-size: 14px;
+  font-weight: 700;
+  font-family: var(--fd-font-mono);
+}
+
+.gauge-track {
+  height: 6px;
+  background: var(--fd-bg-surface);
+  border-radius: 3px;
+  overflow: hidden;
+  border: 1px solid var(--fd-border-subtle);
+}
+
+.gauge-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1.2s var(--fd-ease-out);
+}
+
+.gauge-subtext {
+  font-size: 11px;
+  color: var(--fd-text-muted);
+  margin-top: var(--fd-space-4);
+  display: block;
+}
+
+/* Live pulse ring */
+.live-pulse-ring {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--fd-color-success);
+  box-shadow: 0 0 0 0 var(--fd-color-success);
+  animation: live-ring-pulse 2s ease-out infinite;
+}
+
+@keyframes live-ring-pulse {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+  70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+/* ============================================================
+   RESPONSIVE BREAKPOINTS
+   ============================================================ */
+
+/* Tablet: 768 – 1279 */
+@media (max-width: 1279px) {
+  .app-shell {
+    grid-template-columns: var(--fd-sidebar-collapsed) 1fr;
   }
-  .sidebar-dock {
+
+  .sidebar {
+    width: var(--fd-sidebar-collapsed);
+  }
+
+  .sidebar__logo-text,
+  .sidebar__section-title,
+  .sidebar__user-name,
+  .sidebar__user-role,
+  .sidebar__badge,
+  .sidebar__nav-item span:not(:first-child) {
     display: none;
   }
-  .right-telemetry-stack {
-    grid-column: span 1;
+
+  .sidebar__nav-item {
+    justify-content: center;
+    padding: 10px;
+  }
+
+  .sidebar__nav-item.active::before {
+    left: -6px;
+  }
+
+  .sidebar__header {
+    justify-content: center;
+    padding: var(--fd-space-16) var(--fd-space-8);
+  }
+
+  .sidebar__user {
+    justify-content: center;
+  }
+
+  .sidebar__footer {
+    padding: var(--fd-space-12) var(--fd-space-8);
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .command-center {
     grid-template-columns: 1fr;
+  }
+
+  .vehicle-hud {
+    min-width: auto;
+    max-width: calc(100% - 40px);
+  }
+
+  .header__search {
+    min-width: 160px;
+  }
+}
+
+/* Mobile: < 768 */
+@media (max-width: 767px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    display: none;
+  }
+
+  .app-shell__content {
+    padding: var(--fd-space-16);
+  }
+
+  .header {
+    padding: 0 var(--fd-space-16);
+  }
+
+  .header__left {
+    display: none;
+  }
+
+  .header__search {
+    min-width: 120px;
+    flex: 1;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--fd-space-12);
+  }
+
+  .command-center {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+
+  .map-container-card {
+    min-height: 350px;
+  }
+
+  .vehicle-hud {
+    position: relative;
+    bottom: auto;
+    left: auto;
+    transform: none;
+    min-width: auto;
+    max-width: 100%;
+    margin-top: var(--fd-space-16);
+  }
+
+  .vehicle-hud__metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .dashboard__hero-title {
+    font-size: 24px;
+  }
+
+  .auth-split-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .auth-hero-panel {
+    display: none;
+  }
+
+  .auth-form-side {
+    padding: var(--fd-space-32) var(--fd-space-24);
   }
 }
