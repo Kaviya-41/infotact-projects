@@ -1,11 +1,11 @@
 /**
- * MapPlaceholder.tsx – Premium Light Fleet Map Visualization
- * Central hero element with SVG road network, vehicle markers, and HUD overlay.
- * Preserves #fleet-map-canvas for Week 3 Canvas API integration.
+ * MapPlaceholder.tsx – Live Fleet Map Component
+ * Centerpiece hero visualizer with top controls (Live, Satellite, Traffic, Fullscreen),
+ * vehicle markers, bottom status legend, and vehicle drawer click trigger.
  */
 
 import React, { useState, useCallback, memo } from 'react';
-import { Compass, ZoomIn, ZoomOut, Layers, Navigation, Truck, ArrowRight } from 'lucide-react';
+import { Compass, ZoomIn, ZoomOut, Layers, Navigation, Truck, Maximize2 } from 'lucide-react';
 import VehicleHUD from './dashboard/VehicleHUD';
 import '../styles/dashboard.css';
 
@@ -13,7 +13,7 @@ interface VehicleMarker {
   id: string;
   name: string;
   driver: string;
-  status: 'Moving' | 'Stopped' | 'Offline';
+  status: 'Moving' | 'Stopped' | 'Offline' | 'Maintenance' | 'Idle';
   speed: number;
   fuel: number;
   tripProgress: number;
@@ -24,18 +24,19 @@ interface VehicleMarker {
 }
 
 const SAMPLE_MARKERS: VehicleMarker[] = [
-  { id: 'FLT-004', name: 'Cascadia #04', driver: 'Arun Kumar', status: 'Moving', speed: 68, fuel: 72, tripProgress: 68, eta: '01:42 PM', route: { origin: 'Bengaluru', destination: 'Hosur' }, x: 42, y: 38 },
-  { id: 'FLT-012', name: 'Sprinter Van #12', driver: 'Sarah Chen', status: 'Moving', speed: 54, fuel: 85, tripProgress: 42, eta: '02:15 PM', route: { origin: 'Mumbai', destination: 'Pune' }, x: 28, y: 62 },
-  { id: 'FLT-007', name: 'Volvo FH16 #07', driver: 'Marcus Vance', status: 'Moving', speed: 72, fuel: 58, tripProgress: 88, eta: '12:30 PM', route: { origin: 'Delhi', destination: 'Jaipur' }, x: 68, y: 25 },
-  { id: 'FLT-031', name: 'Ford Transit #31', driver: 'Elena Rostova', status: 'Stopped', speed: 0, fuel: 45, tripProgress: 100, eta: '—', route: { origin: 'Chennai', destination: 'Coimbatore' }, x: 55, y: 70 },
-  { id: 'FLT-018', name: 'Kenworth T680 #18', driver: 'David Miller', status: 'Offline', speed: 0, fuel: 20, tripProgress: 0, eta: '—', route: { origin: 'Hyderabad', destination: 'Bangalore' }, x: 78, y: 52 },
-  { id: 'FLT-005', name: 'Isuzu NPR #05', driver: 'Kenji Sato', status: 'Moving', speed: 48, fuel: 91, tripProgress: 35, eta: '03:00 PM', route: { origin: 'Kolkata', destination: 'Patna' }, x: 18, y: 45 },
+  { id: 'FLT-001', name: 'Volvo FH16 #01', driver: 'Arjun Kumar', status: 'Moving', speed: 68, fuel: 72, tripProgress: 72, eta: '02:45 PM', route: { origin: 'Bengaluru', destination: 'Hosur' }, x: 42, y: 38 },
+  { id: 'FLT-002', name: 'Cascadia #02', driver: 'Rohan Sharma', status: 'Moving', speed: 48, fuel: 82, tripProgress: 45, eta: '04:10 PM', route: { origin: 'Bengaluru', destination: 'Mysore' }, x: 28, y: 62 },
+  { id: 'FLT-003', name: 'Kenworth #03', driver: 'Rajesh Verma', status: 'Idle', speed: 0, fuel: 34, tripProgress: 90, eta: '04:15 PM', route: { origin: 'Mumbai', destination: 'Pune' }, x: 55, y: 70 },
+  { id: 'FLT-004', name: 'Freightliner #04', driver: 'Karthik S', status: 'Moving', speed: 54, fuel: 48, tripProgress: 48, eta: '05:20 PM', route: { origin: 'Bengaluru', destination: 'Chennai' }, x: 68, y: 25 },
+  { id: 'FLT-007', name: 'Scania R500 #07', driver: 'Marcus Vance', status: 'Moving', speed: 64, fuel: 18, tripProgress: 88, eta: '12:30 PM', route: { origin: 'Delhi', destination: 'Jaipur' }, x: 18, y: 45 },
+  { id: 'FLT-008', name: 'Tata Prima #08', driver: 'Vikram Singh', status: 'Maintenance', speed: 0, fuel: 60, tripProgress: 0, eta: '—', route: { origin: 'Depot', destination: 'Service' }, x: 35, y: 80 },
+  { id: 'FLT-010', name: 'Isuzu Giga #10', driver: 'Suresh Patel', status: 'Offline', speed: 0, fuel: 40, tripProgress: 15, eta: '—', route: { origin: 'Ahmedabad', destination: 'Surat' }, x: 78, y: 52 },
 ];
 
 interface MapPlaceholderProps {
   height?: number;
   onSelectVehicle?: (id: string) => void;
-  selectedVehicleId?: string;
+  selectedVehicleId?: string | null;
 }
 
 const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
@@ -43,10 +44,11 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
   onSelectVehicle,
   selectedVehicleId: externalSelectedId,
 }) => {
-  const [internalSelectedId, setInternalSelectedId] = useState('FLT-004');
+  const [internalSelectedId, setInternalSelectedId] = useState<string | null>('FLT-004');
   const [zoomLevel, setZoomLevel] = useState(12);
+  const [mapMode, setMapMode] = useState<'Live' | 'Satellite' | 'Traffic'>('Live');
 
-  const selectedId = externalSelectedId || internalSelectedId;
+  const selectedId = externalSelectedId !== undefined ? externalSelectedId : internalSelectedId;
   const selectedVehicle = SAMPLE_MARKERS.find(v => v.id === selectedId);
 
   const handleSelect = useCallback((id: string) => {
@@ -60,27 +62,54 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
       <div className="map-header">
         <div className="map-title-badge">
           <Navigation size={16} color="#2563EB" />
-          <span>Live Fleet Command Map</span>
+          <span>Live Fleet Map</span>
           <span style={{ fontSize: '11px', color: '#94A3B8', fontWeight: 500 }}>
-            ({SAMPLE_MARKERS.length} Tracked)
+            (Real-time vehicle positions)
           </span>
         </div>
 
+        {/* Top-right controls: Live Satellite Traffic Fullscreen */}
         <div className="map-controls-group">
-          <button className="map-btn" title="Toggle Layers" aria-label="Toggle map layers">
-            <Layers size={14} /> Satellite
+          {(['Live', 'Satellite', 'Traffic'] as const).map((mode) => (
+            <button
+              key={mode}
+              className="map-btn"
+              style={{
+                backgroundColor: mapMode === mode ? '#2563EB' : '#FFFFFF',
+                color: mapMode === mode ? '#FFFFFF' : '#475569',
+                borderColor: mapMode === mode ? '#2563EB' : '#E2E8F0',
+                fontWeight: mapMode === mode ? 700 : 500,
+              }}
+              onClick={() => setMapMode(mode)}
+            >
+              {mode === 'Satellite' && <Layers size={13} style={{ marginRight: '3px' }} />}
+              {mode}
+            </button>
+          ))}
+
+          <button
+            className="map-btn"
+            title="Fullscreen"
+            aria-label="Toggle Fullscreen"
+            onClick={() => {
+              const el = document.getElementById('fleet-map-stage');
+              if (el) el.requestFullscreen?.();
+            }}
+          >
+            <Maximize2 size={13} />
           </button>
+
           <button className="map-btn" onClick={() => setZoomLevel(prev => Math.min(prev + 1, 18))} title="Zoom In" aria-label="Zoom in">
-            <ZoomIn size={14} />
+            <ZoomIn size={13} />
           </button>
           <button className="map-btn" onClick={() => setZoomLevel(prev => Math.max(prev - 1, 6))} title="Zoom Out" aria-label="Zoom out">
-            <ZoomOut size={14} />
+            <ZoomOut size={13} />
           </button>
         </div>
       </div>
 
       {/* Map Visualizer */}
-      <div className="map-visualizer">
+      <div className="map-visualizer" id="fleet-map-stage">
         {/* Canvas for Week 3 */}
         <canvas
           id="fleet-map-canvas"
@@ -93,27 +122,23 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
         {/* SVG Map Background */}
         <svg
           width="100%" height="100%"
-          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: '#F8FAFC' }}
+          style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: mapMode === 'Satellite' ? '#0F172A' : '#F8FAFC' }}
         >
           {/* Grid Pattern */}
           <defs>
             <pattern id="light-map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#E2E8F0" strokeWidth="0.5" />
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke={mapMode === 'Satellite' ? '#1E293B' : '#E2E8F0'} strokeWidth="0.5" />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#light-map-grid)" />
 
           {/* Primary Highways */}
-          <path d="M -50 180 Q 300 220 600 150 T 1200 300" fill="none" stroke="#CBD5E1" strokeWidth="6" strokeLinecap="round" />
-          <path d="M 220 -50 Q 250 250 400 600" fill="none" stroke="#CBD5E1" strokeWidth="6" strokeLinecap="round" />
-          <path d="M -50 420 Q 500 380 1100 480" fill="none" stroke="#E2E8F0" strokeWidth="4" />
-          <path d="M 650 -50 Q 580 300 750 600" fill="none" stroke="#E2E8F0" strokeWidth="4" />
+          <path d="M -50 180 Q 300 220 600 150 T 1200 300" fill="none" stroke={mapMode === 'Satellite' ? '#334155' : '#CBD5E1'} strokeWidth="6" strokeLinecap="round" />
+          <path d="M 220 -50 Q 250 250 400 600" fill="none" stroke={mapMode === 'Satellite' ? '#334155' : '#CBD5E1'} strokeWidth="6" strokeLinecap="round" />
+          <path d="M -50 420 Q 500 380 1100 480" fill="none" stroke={mapMode === 'Satellite' ? '#1E293B' : '#E2E8F0'} strokeWidth="4" />
 
           {/* Active Fleet Route (Blue Highlight) */}
           <path d="M 180 450 Q 280 620 420 380 T 680 250" fill="none" stroke="#2563EB" strokeWidth="3" strokeDasharray="6 4" opacity="0.7" />
-
-          {/* Secondary Route */}
-          <path d="M 100 300 Q 200 200 350 280 T 600 200" fill="none" stroke="#0EA5E9" strokeWidth="2" strokeDasharray="4 3" opacity="0.4" />
 
           {/* Geofence Region */}
           <path d="M 320 180 L 520 190 L 580 320 L 380 340 Z" fill="rgba(37, 99, 235, 0.04)" stroke="#2563EB" strokeWidth="1.5" strokeDasharray="4 4" />
@@ -126,7 +151,15 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 5 }}>
           {SAMPLE_MARKERS.map((v) => {
             const isSelected = selectedId === v.id;
-            const statusColor = v.status === 'Moving' ? '#10B981' : v.status === 'Stopped' ? '#F59E0B' : '#EF4444';
+            const statusColor = v.status === 'Moving'
+              ? '#10B981'
+              : v.status === 'Idle'
+                ? '#F59E0B'
+                : v.status === 'Maintenance'
+                  ? '#8B5CF6'
+                  : v.status === 'Offline'
+                    ? '#EF4444'
+                    : '#2563EB';
 
             return (
               <div
@@ -161,7 +194,7 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
                   fontSize: '11px',
                   fontWeight: 700,
                   boxShadow: isSelected
-                    ? '0 4px 20px rgba(37, 99, 235, 0.3), 0 0 0 2px #2563EB'
+                    ? '0 4px 20px rgba(37, 99, 235, 0.35), 0 0 0 2px #2563EB'
                     : '0 2px 8px rgba(15, 23, 42, 0.1)',
                   border: isSelected ? '2px solid #2563EB' : '1px solid #E2E8F0',
                   whiteSpace: 'nowrap',
@@ -174,7 +207,7 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
                   }} aria-hidden="true" />
                   <Truck size={12} />
                   <span>{v.id}</span>
-                  {v.status === 'Moving' && (
+                  {v.speed > 0 && (
                     <span style={{ fontSize: '10px', color: isSelected ? '#60A5FA' : '#2563EB', fontWeight: 600 }}>
                       {v.speed} km/h
                     </span>
@@ -188,25 +221,33 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
         {/* Vehicle HUD Overlay */}
         {selectedVehicle && <VehicleHUD vehicle={selectedVehicle} />}
 
-        {/* Bottom Left Legend */}
+        {/* Bottom Legend: Online Moving Idle Offline Maintenance */}
         <div style={{
           position: 'absolute', bottom: '16px', left: '16px', zIndex: 10,
           backgroundColor: 'rgba(255, 255, 255, 0.95)', backdropFilter: 'blur(8px)',
-          border: '1px solid #E2E8F0', borderRadius: '10px', padding: '10px 14px',
-          display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px',
+          border: '1px solid #E2E8F0', borderRadius: '10px', padding: '8px 14px',
+          display: 'flex', alignItems: 'center', gap: '14px', fontSize: '12px',
           boxShadow: '0 2px 8px rgba(15, 23, 42, 0.06)',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981', display: 'inline-block' }} aria-hidden="true" />
-            <span style={{ fontWeight: 500, color: '#334155' }}>● Moving</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#10B981' }} aria-hidden="true" />
+            <span style={{ fontWeight: 600, color: '#334155' }}>Online</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#F59E0B', display: 'inline-block' }} aria-hidden="true" />
-            <span style={{ fontWeight: 500, color: '#334155' }}>● Stopped</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#2563EB' }} aria-hidden="true" />
+            <span style={{ fontWeight: 600, color: '#334155' }}>Moving</span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EF4444', display: 'inline-block' }} aria-hidden="true" />
-            <span style={{ fontWeight: 500, color: '#334155' }}>● Offline</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#F59E0B' }} aria-hidden="true" />
+            <span style={{ fontWeight: 600, color: '#334155' }}>Idle</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#EF4444' }} aria-hidden="true" />
+            <span style={{ fontWeight: 600, color: '#334155' }}>Offline</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: '#8B5CF6' }} aria-hidden="true" />
+            <span style={{ fontWeight: 600, color: '#334155' }}>Maintenance</span>
           </div>
         </div>
 

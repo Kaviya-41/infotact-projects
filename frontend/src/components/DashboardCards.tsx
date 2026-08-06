@@ -1,6 +1,6 @@
 /**
- * DashboardCards.tsx – Premium Light KPI Statistics Cards with Framer Motion stagger
- * 4-card grid showing Total Vehicles, Online, Active Trips, Live Alerts.
+ * DashboardCards.tsx – Premium Light KPI Statistics Cards with Sparklines
+ * Shows Total Vehicles, Online Vehicles, Active Trips, and Active Alerts.
  */
 
 import React from 'react';
@@ -17,47 +17,55 @@ interface KPIData {
   trend: { direction: 'up' | 'down'; value: string };
   subtitle: string;
   valueColor?: string;
+  sparklinePoints?: string;
+  sparklineColor?: string;
 }
 
 const KPI_DATA: KPIData[] = [
   {
     id: 'total-vehicles',
-    label: 'Total Fleet Vehicles',
+    label: 'Total Vehicles',
     value: 42,
     icon: <Truck size={18} />,
     iconVariant: 'blue',
-    trend: { direction: 'up', value: '+8.4%' },
-    subtitle: 'vs last week',
+    trend: { direction: 'up', value: '↑ 8.4% from last month' },
+    subtitle: 'All registered fleet vehicles',
+    sparklinePoints: '0,25 20,20 40,22 60,14 80,18 100,8 120,12',
+    sparklineColor: '#2563EB',
   },
   {
     id: 'online-vehicles',
-    label: 'Vehicles Online',
-    value: 37,
+    label: 'Online Vehicles',
+    value: 35,
     icon: <Navigation size={18} />,
     iconVariant: 'green',
-    trend: { direction: 'up', value: '+4.2%' },
-    subtitle: 'Active telemetry',
+    trend: { direction: 'up', value: '83.3% operational' },
+    subtitle: 'Currently transmitting telemetry',
     valueColor: '#10B981',
+    sparklinePoints: '0,28 20,24 40,18 60,20 80,12 100,10 120,6',
+    sparklineColor: '#10B981',
   },
   {
     id: 'active-trips',
     label: 'Active Trips',
-    value: 28,
+    value: 18,
     icon: <Route size={18} />,
     iconVariant: 'purple',
-    trend: { direction: 'up', value: '+12%' },
-    subtitle: 'In progress now',
+    trend: { direction: 'up', value: '↑ 12% today' },
+    subtitle: 'Trips currently in progress',
     valueColor: '#8B5CF6',
+    sparklinePoints: '0,30 20,28 40,22 60,24 80,16 100,14 120,10',
+    sparklineColor: '#8B5CF6',
   },
   {
-    id: 'live-alerts',
-    label: 'Live Alerts',
-    value: 5,
+    id: 'active-alerts',
+    label: 'Active Alerts',
+    value: 3,
     icon: <AlertTriangle size={18} />,
     iconVariant: 'amber',
-    trend: { direction: 'down', value: '-2.1%' },
-    subtitle: '3 Critical, 2 Warning',
-    valueColor: '#F59E0B',
+    trend: { direction: 'down', value: '1 Critical' },
+    subtitle: 'Requires attention',
+    valueColor: '#EF4444',
   },
 ];
 
@@ -93,19 +101,37 @@ const DashboardCards: React.FC = () => {
               {kpi.icon}
             </div>
             <span className={`stat-card__trend stat-card__trend--${kpi.trend.direction}`}>
-              {kpi.trend.direction === 'up' ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
+              {kpi.trend.direction === 'up' ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
               {kpi.trend.value}
             </span>
           </div>
+
           <div
             className="stat-card__value tabular-nums"
             style={kpi.valueColor ? { color: kpi.valueColor } : undefined}
           >
             {kpi.value}
           </div>
+
           <div className="stat-card__bottom">
-            <span className="stat-card__label">{kpi.label}</span>
-            <span style={{ fontSize: '11px', color: '#94A3B8' }}>{kpi.subtitle}</span>
+            <div>
+              <div className="stat-card__label">{kpi.label}</div>
+              <div style={{ fontSize: '11px', color: '#94A3B8', marginTop: '2px' }}>{kpi.subtitle}</div>
+            </div>
+
+            {/* Sparkline chart */}
+            {kpi.sparklinePoints && (
+              <svg width="60" height="24" viewBox="0 0 120 32" style={{ overflow: 'visible', flexShrink: 0 }}>
+                <polyline
+                  fill="none"
+                  stroke={kpi.sparklineColor}
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  points={kpi.sparklinePoints}
+                />
+              </svg>
+            )}
           </div>
         </motion.div>
       ))}

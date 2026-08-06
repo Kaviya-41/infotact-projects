@@ -1,16 +1,27 @@
 /**
- * Dashboard.tsx – FleetDash Premium Light Fleet Operations Center
- * Automotive-inspired composition: KPI grid → Fleet Map (hero) + Right Panel → Analytics
+ * Dashboard.tsx – FleetDash Enterprise Fleet Operations Center Page
+ * Complete hierarchy:
+ * 1. Top Header & Action Controls
+ * 2. 4 KPI Overview Cards (with Sparklines)
+ * 3. Live Fleet Map (Hero) + Live Operations Card
+ * 4. Active Trips + Live Alerts
+ * 5. Fleet Performance (Analytics) + Vehicle Health
+ * 6. Recent Activity Stream
+ * 7. Selected Vehicle Slide-in Drawer (Framer Motion)
  */
 
-import React, { memo } from 'react';
+import React, { useState, useCallback, memo } from 'react';
 import { motion } from 'framer-motion';
 import DashboardLayout from '../layout/DashboardLayout';
 import DashboardCards from '../components/DashboardCards';
 import MapPlaceholder from '../components/MapPlaceholder';
+import LiveOperationsCard from '../components/dashboard/LiveOperationsCard';
+import ActiveTripsCard from '../components/dashboard/ActiveTripsCard';
 import RecentAlerts from '../components/RecentAlerts';
-import SystemHealth from '../components/dashboard/SystemHealth';
 import FleetAnalytics from '../components/FleetAnalytics';
+import VehicleHealthProgressCard from '../components/dashboard/VehicleHealthProgressCard';
+import RecentActivityCard from '../components/dashboard/RecentActivityCard';
+import VehicleDrawer from '../components/dashboard/VehicleDrawer';
 import '../styles/dashboard.css';
 
 const fadeIn = {
@@ -23,59 +34,81 @@ const fadeIn = {
 };
 
 const Dashboard: React.FC = () => {
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
+
+  const handleSelectVehicle = useCallback((id: string) => {
+    setSelectedVehicleId(id);
+  }, []);
+
+  const handleCloseDrawer = useCallback(() => {
+    setSelectedVehicleId(null);
+  }, []);
+
   return (
     <DashboardLayout>
       <div className="dashboard">
-        {/* Hero Title */}
+        {/* KPI Overview (4 Cards with Sparklines) */}
+        <DashboardCards />
+
+        {/* Live Fleet Map (Hero Element) + Live Operations Card */}
         <motion.div
-          className="dashboard__hero"
+          className="command-center"
           initial="hidden"
           animate="visible"
-          custom={0}
+          custom={0.1}
           variants={fadeIn}
         >
-          <div>
-            <h2 className="dashboard__hero-title">Fleet Operations Center</h2>
-            <p className="dashboard__hero-subtitle">
-              Real-time telemetry, vehicle tracking, and fleet intelligence
-            </p>
-          </div>
-          <div className="dashboard__hero-badge">
-            <span className="dashboard__hero-badge-dot" aria-hidden="true" />
-            Live Monitoring Active
+          {/* Main Map Visualizer */}
+          <MapPlaceholder
+            selectedVehicleId={selectedVehicleId}
+            onSelectVehicle={handleSelectVehicle}
+          />
+
+          {/* Live Operations Panel */}
+          <div className="command-center__right">
+            <LiveOperationsCard />
           </div>
         </motion.div>
 
-        {/* KPI Grid */}
-        <DashboardCards />
-
-        {/* Fleet Command Center: Map + Right Panel */}
+        {/* Row 2: Active Trips + Live Alerts */}
         <motion.div
-          className="command-center"
+          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}
           initial="hidden"
           animate="visible"
           custom={0.15}
           variants={fadeIn}
         >
-          {/* Main Map (Hero Element) */}
-          <MapPlaceholder />
-
-          {/* Right Panel Stack */}
-          <div className="command-center__right">
-            <RecentAlerts />
-            <SystemHealth />
-          </div>
+          <ActiveTripsCard />
+          <RecentAlerts onSelectVehicle={handleSelectVehicle} />
         </motion.div>
 
-        {/* Fleet Analytics */}
+        {/* Row 3: Fleet Performance Analytics + Vehicle Health Breakdown */}
+        <motion.div
+          style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px' }}
+          initial="hidden"
+          animate="visible"
+          custom={0.2}
+          variants={fadeIn}
+        >
+          <FleetAnalytics />
+          <VehicleHealthProgressCard />
+        </motion.div>
+
+        {/* Row 4: Recent Activity Stream */}
         <motion.div
           initial="hidden"
           animate="visible"
           custom={0.25}
           variants={fadeIn}
         >
-          <FleetAnalytics />
+          <RecentActivityCard />
         </motion.div>
+
+        {/* Selected Vehicle Slide-in Drawer */}
+        <VehicleDrawer
+          vehicleId={selectedVehicleId}
+          onClose={handleCloseDrawer}
+        />
       </div>
     </DashboardLayout>
   );
