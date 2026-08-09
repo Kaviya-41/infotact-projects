@@ -7,7 +7,7 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Search, Bell, Plus, Route as RouteIcon, Wifi, Server, Radio,
   HelpCircle, X, AlertTriangle, AlertCircle, Fuel, Menu,
@@ -33,6 +33,49 @@ const Header: React.FC<HeaderProps> = ({
 }) => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const getRouteHeader = () => {
+    switch (location.pathname) {
+      case '/live-map':
+        return {
+          title: 'Live Fleet Map',
+          subtitle: 'Real-time vehicle positions, corridor routes and operational alerts.'
+        };
+      case '/vehicles':
+        return {
+          title: 'Vehicles',
+          subtitle: 'Monitor and manage all registered fleet vehicles.'
+        };
+      case '/analytics':
+      case '/reports':
+        return {
+          title: 'Fleet Analytics',
+          subtitle: 'Analyze fleet utilization, trips and operational performance.'
+        };
+      case '/alerts':
+      case '/activity':
+        return {
+          title: 'Alerts Center',
+          subtitle: 'Monitor operational warnings and critical fleet events.'
+        };
+      case '/settings':
+        return {
+          title: 'Settings',
+          subtitle: 'Manage your account, fleet thresholds, notifications and preferences.'
+        };
+      case '/dashboard':
+      default:
+        return {
+          title: 'Operations',
+          subtitle: 'Monitor your fleet, active trips and operational alerts in real time.'
+        };
+    }
+  };
+
+  const routeHeader = getRouteHeader();
+  const displayTitle = title !== 'Operations' ? title : routeHeader.title;
+  const displaySubtitle = subtitle !== 'Monitor your fleet, active trips and operational alerts in real time.' ? subtitle : routeHeader.subtitle;
 
   // Dialog & popover states
   const [isAddVehicleOpen, setIsAddVehicleOpen] = useState(false);
@@ -156,8 +199,8 @@ const Header: React.FC<HeaderProps> = ({
               <Menu size={20} />
             </button>
             <div>
-              <h1 className="header__greeting">{title}</h1>
-              <p className="header__subtitle">{subtitle}</p>
+              <h1 className="header__greeting">{displayTitle}</h1>
+              <p className="header__subtitle">{displaySubtitle}</p>
             </div>
           </div>
 
