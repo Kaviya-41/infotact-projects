@@ -1981,8 +1981,10 @@ body {
 }
 
 @media (max-width: 900px) {
-  .dashboard-two-col {
-    grid-template-columns: 1fr;
+  .dashboard-two-col,
+  .live-map-row-1,
+  .live-map-row-2 {
+    grid-template-columns: 1fr !important;
   }
   .header__telemetry-pills {
     display: none;
@@ -2013,6 +2015,10 @@ body {
   .header__search {
     width: 100%;
     max-width: 100%;
+  }
+  .live-map-row-1,
+  .live-map-row-2 {
+    grid-template-columns: 1fr !important;
   }
 }
 

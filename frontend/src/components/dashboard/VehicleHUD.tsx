@@ -1,12 +1,12 @@
 /**
  * VehicleHUD.tsx – Selected Vehicle Head-Up Display Overlay
- * Automotive-inspired telemetry overlay showing speed, route, driver, and metrics
- * for the currently selected vehicle on the fleet map.
+ * Automotive-inspired telemetry overlay showing speed, route, driver, engine health,
+ * telemetry status and metrics for the currently selected vehicle on the fleet map.
  */
 
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, User, Fuel, Clock, TrendingUp } from 'lucide-react';
+import { ArrowRight, User, Fuel, Clock, Activity, Radio, X } from 'lucide-react';
 import '../../styles/dashboard.css';
 
 interface VehicleData {
@@ -19,13 +19,17 @@ interface VehicleData {
   tripProgress: number;
   eta: string;
   route: { origin: string; destination: string };
+  engineStatus?: string;
+  lastUpdate?: string;
 }
 
 interface VehicleHUDProps {
   vehicle: VehicleData;
+  onClose?: () => void;
+  onOpenDrawer?: (id: string) => void;
 }
 
-const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle }) => {
+const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle, onClose, onOpenDrawer }) => {
   const statusLabel = vehicle.status.toUpperCase();
   const statusColor =
     vehicle.status === 'Moving'
@@ -43,21 +47,38 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle }) => {
       <motion.div
         key={vehicle.id}
         className="vehicle-hud"
-        initial={{ opacity: 0, y: 20, scale: 0.97 }}
-        animate={{ opacity: 1, y: 0, scale: 1 }}
-        exit={{ opacity: 0, y: 10, scale: 0.98 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        initial={{ opacity: 0, x: 10, scale: 0.98 }}
+        animate={{ opacity: 1, x: 0, scale: 1 }}
+        exit={{ opacity: 0, x: 10, scale: 0.98 }}
+        transition={{ duration: 0.22, ease: 'easeOut' }}
         role="region"
         aria-label={`Selected vehicle: ${vehicle.id}`}
+        style={{
+          position: 'absolute',
+          bottom: '20px',
+          right: '20px',
+          zIndex: 30,
+          background: 'rgba(255, 255, 255, 0.97)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
+          border: '1px solid #E2E8F0',
+          borderRadius: '14px',
+          padding: '16px 20px',
+          boxShadow: '0 10px 30px rgba(15, 23, 42, 0.12), 0 1px 3px rgba(15, 23, 42, 0.04)',
+          width: '380px',
+          maxWidth: 'calc(100% - 40px)',
+        }}
       >
-        {/* Top Row: ID + Status + Speed */}
-        <div className="vehicle-hud__top">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <span className="vehicle-hud__id">{vehicle.id}</span>
+        {/* Top Header: ID + Status + Speed + Close */}
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <span style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.3px' }}>
+              {vehicle.id}
+            </span>
             <span style={{
-              display: 'inline-flex', alignItems: 'center', gap: '4px',
-              padding: '3px 10px', borderRadius: '9999px',
-              fontSize: '11px', fontWeight: 700,
+              display: 'inline-flex', alignItems: 'center', gap: '5px',
+              padding: '3px 9px', borderRadius: '9999px',
+              fontSize: '10.5px', fontWeight: 700,
               backgroundColor: `${statusColor}14`, color: statusColor,
               border: `1px solid ${statusColor}33`,
             }}>
@@ -66,51 +87,120 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle }) => {
             </span>
           </div>
 
-          <div className="vehicle-hud__speed">
-            <span className="vehicle-hud__speed-value">{vehicle.speed}</span>
-            <span className="vehicle-hud__speed-unit">km/h</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
+              <span style={{ fontSize: '24px', fontWeight: 800, color: '#2563EB', fontFamily: 'var(--fd-font-mono, monospace)', lineHeight: 1 }}>
+                {vehicle.speed}
+              </span>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: '#64748B' }}>km/h</span>
+            </div>
+            {onClose && (
+              <button
+                onClick={onClose}
+                style={{
+                  width: '24px', height: '24px', borderRadius: '6px',
+                  border: '1px solid #E2E8F0', background: '#FFFFFF',
+                  color: '#64748B', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  cursor: 'pointer', marginLeft: '4px',
+                }}
+                aria-label="Close vehicle HUD"
+              >
+                <X size={13} />
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Route */}
-        <div className="vehicle-hud__route">
-          <span>{vehicle.route.origin}</span>
-          <ArrowRight size={14} className="vehicle-hud__route-arrow" />
-          <span>{vehicle.route.destination}</span>
+        {/* Route Banner */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '7px 12px', borderRadius: '8px',
+          backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0',
+          fontSize: '12px', fontWeight: 600, color: '#0F172A',
+          marginBottom: '12px'
+        }}>
+          <span style={{ color: '#0F172A' }}>{vehicle.route.origin}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#2563EB' }}>
+            <span style={{ fontSize: '10.5px', color: '#64748B', fontWeight: 500 }}>Route</span>
+            <ArrowRight size={13} />
+          </div>
+          <span style={{ color: '#0F172A' }}>{vehicle.route.destination}</span>
         </div>
 
-        {/* Metrics Grid */}
-        <div className="vehicle-hud__metrics">
-          <div>
-            <div className="vehicle-hud__metric-label">
-              <User size={10} style={{ display: 'inline', marginRight: '3px', verticalAlign: 'middle' }} />
-              Driver
+        {/* 2x2 Telemetry Metrics Grid */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
+          {/* Driver */}
+          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
+            <div style={{ fontSize: '10.5px', fontWeight: 600, color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <User size={11} color="#2563EB" />
+              <span>Driver</span>
             </div>
-            <div className="vehicle-hud__metric-value">{vehicle.driver}</div>
+            <div style={{ fontSize: '12.5px', fontWeight: 700, color: '#0F172A', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              {vehicle.driver}
+            </div>
           </div>
-          <div>
-            <div className="vehicle-hud__metric-label">
-              <Fuel size={10} style={{ display: 'inline', marginRight: '3px', verticalAlign: 'middle' }} />
-              Fuel
+
+          {/* ETA */}
+          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
+            <div style={{ fontSize: '10.5px', fontWeight: 600, color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <Clock size={11} color="#2563EB" />
+              <span>Target ETA</span>
             </div>
-            <div className="vehicle-hud__metric-value" style={{ color: vehicle.fuel < 25 ? '#EF4444' : '#10B981' }}>
+            <div style={{ fontSize: '12.5px', fontWeight: 700, color: '#0F172A', marginTop: '2px' }}>
+              {vehicle.eta}
+            </div>
+          </div>
+
+          {/* Engine Status */}
+          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
+            <div style={{ fontSize: '10.5px', fontWeight: 600, color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <Activity size={11} color="#10B981" />
+              <span>Engine</span>
+            </div>
+            <div style={{ fontSize: '12px', fontWeight: 700, color: '#10B981', marginTop: '2px' }}>
+              {vehicle.engineStatus || (vehicle.status === 'Offline' ? 'Disconnected' : vehicle.status === 'Maintenance' ? 'Service Needed' : 'Normal')}
+            </div>
+          </div>
+
+          {/* Fuel Level */}
+          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
+            <div style={{ fontSize: '10.5px', fontWeight: 600, color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <Fuel size={11} color="#F59E0B" />
+              <span>Fuel / Battery</span>
+            </div>
+            <div style={{ fontSize: '12.5px', fontWeight: 700, color: vehicle.fuel < 25 ? '#EF4444' : '#0F172A', marginTop: '2px' }}>
               {vehicle.fuel}%
             </div>
           </div>
-          <div>
-            <div className="vehicle-hud__metric-label">
-              <TrendingUp size={10} style={{ display: 'inline', marginRight: '3px', verticalAlign: 'middle' }} />
-              Trip
-            </div>
-            <div className="vehicle-hud__metric-value">{vehicle.tripProgress}%</div>
+        </div>
+
+        {/* Live Telemetry Bar + Action */}
+        <div style={{
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          paddingTop: '8px', borderTop: '1px solid #E2E8F0', fontSize: '11px', color: '#64748B'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+            <Radio size={11} color="#10B981" />
+            <span>Telemetry: <strong>Live 60Hz</strong></span>
           </div>
-          <div>
-            <div className="vehicle-hud__metric-label">
-              <Clock size={10} style={{ display: 'inline', marginRight: '3px', verticalAlign: 'middle' }} />
-              ETA
-            </div>
-            <div className="vehicle-hud__metric-value">{vehicle.eta}</div>
-          </div>
+
+          {onOpenDrawer ? (
+            <button
+              onClick={() => onOpenDrawer(vehicle.id)}
+              style={{
+                fontSize: '11.5px', fontWeight: 700, color: '#2563EB',
+                background: 'none', border: 'none', cursor: 'pointer',
+                display: 'flex', alignItems: 'center', gap: '3px'
+              }}
+            >
+              <span>Inspect Details</span>
+              <ArrowRight size={12} />
+            </button>
+          ) : (
+            <span style={{ fontSize: '10.5px', color: '#94A3B8' }}>
+              Updated: {vehicle.lastUpdate || 'Just now'}
+            </span>
+          )}
         </div>
       </motion.div>
     </AnimatePresence>
@@ -118,3 +208,4 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle }) => {
 };
 
 export default VehicleHUD;
+
