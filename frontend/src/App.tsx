@@ -1,11 +1,13 @@
 /**
- * App.tsx – Application Root & Routing Configuration for FleetDash
+ * App.tsx – Application Root & Nested Routing Configuration for FleetDash
+ * All protected routes share one persistent DashboardLayout (AppShell).
  */
 
 import React, { lazy, Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
+import DashboardLayout from './layout/DashboardLayout';
 
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -44,27 +46,27 @@ const App: React.FC = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
 
-            {/* Root Default Redirect to /login */}
+            {/* Root Default Redirect */}
             <Route path="/" element={<Navigate to="/login" replace />} />
 
-            {/* Protected Telemetry Dashboard Route */}
+            {/* Protected App Layout with Shared AppShell */}
             <Route
-              path="/dashboard"
               element={
                 <ProtectedRoute>
-                  <Dashboard />
+                  <DashboardLayout />
                 </ProtectedRoute>
               }
-            />
-
-            {/* Secondary Protected Sub-routes */}
-            <Route path="/live-map" element={<ProtectedRoute><LiveMapPage /></ProtectedRoute>} />
-            <Route path="/map" element={<Navigate to="/live-map" replace />} />
-            <Route path="/vehicles" element={<ProtectedRoute><VehiclesPage /></ProtectedRoute>} />
-            <Route path="/alerts" element={<ProtectedRoute><AlertsPage /></ProtectedRoute>} />
-            <Route path="/analytics" element={<ProtectedRoute><ReportsPage /></ProtectedRoute>} />
-            <Route path="/reports" element={<Navigate to="/analytics" replace />} />
-            <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+            >
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/live-map" element={<LiveMapPage />} />
+              <Route path="/map" element={<Navigate to="/live-map" replace />} />
+              <Route path="/vehicles" element={<VehiclesPage />} />
+              <Route path="/alerts" element={<AlertsPage />} />
+              <Route path="/activity" element={<AlertsPage />} />
+              <Route path="/analytics" element={<ReportsPage />} />
+              <Route path="/reports" element={<Navigate to="/analytics" replace />} />
+              <Route path="/settings" element={<SettingsPage />} />
+            </Route>
 
             {/* Catch-all redirect to /login */}
             <Route path="*" element={<Navigate to="/login" replace />} />

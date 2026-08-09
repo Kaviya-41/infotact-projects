@@ -1,10 +1,10 @@
 /**
  * ActiveTripsCard.tsx – Trips currently in progress
- * Positioned below the main Live Fleet Map.
+ * Positioned below the main Live Fleet Map beside Live Alerts (1fr 1fr grid).
  */
 
 import React, { memo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Route as RouteIcon, ArrowRight, ChevronRight, User, Clock, MapPin } from 'lucide-react';
 import '../../styles/dashboard.css';
 
@@ -45,101 +45,87 @@ const TRIPS: TripItem[] = [
   },
 ];
 
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: 'easeOut' },
+  },
+};
+
 export const ActiveTripsCard: React.FC = () => {
   return (
     <motion.div
-      className="fd-card fd-card--no-hover"
+      className="fd-card fd-card--no-hover active-trips-card"
       id="active-trips-card"
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.2, ease: [0.16, 1, 0.3, 1] }}
+      initial="hidden"
+      animate="visible"
+      variants={cardVariants}
     >
       <div className="fd-card__header">
         <div>
           <h3 className="fd-card__title">
-            <span style={{
-              width: '28px', height: '28px', borderRadius: '8px',
-              background: 'rgba(37, 99, 235, 0.08)', border: '1px solid rgba(37, 99, 235, 0.12)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#2563EB',
-            }}>
+            <span className="icon-badge-blue">
               <RouteIcon size={14} />
             </span>
-            Active Trips
+            <span>Active Trips</span>
           </h3>
-          <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '2px' }}>
+          <p className="fd-card__subtitle">
             Trips currently in progress
           </p>
         </div>
 
-        <span style={{
-          fontSize: '12px', fontWeight: 600, color: '#2563EB',
-          background: 'rgba(37, 99, 235, 0.08)', padding: '4px 10px',
-          borderRadius: '9999px', border: '1px solid rgba(37, 99, 235, 0.15)',
-        }}>
+        <span className="badge-pill-blue">
           18 Active
         </span>
       </div>
 
       {/* Trips list */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+      <div className="trips-stream">
         {TRIPS.map((trip) => (
-          <div
-            key={trip.id}
-            style={{
-              padding: '16px', borderRadius: '12px',
-              backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0',
-              display: 'flex', flexDirection: 'column', gap: '12px',
-            }}
-          >
+          <div key={trip.id} className="trip-card-item">
             {/* Header: ID + Route + Speed */}
-            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                <span style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A' }}>
-                  {trip.vehicleId}
-                </span>
-                <span style={{
-                  fontSize: '13px', fontWeight: 600, color: '#334155',
-                  display: 'flex', alignItems: 'center', gap: '6px',
-                }}>
-                  {trip.origin} <ArrowRight size={13} color="#2563EB" /> {trip.destination}
+            <div className="trip-item-top">
+              <div className="trip-route-info">
+                <span className="trip-vehicle-id">{trip.vehicleId}</span>
+                <span className="trip-route-text">
+                  <span>{trip.origin}</span>
+                  <ArrowRight size={12} color="#2563EB" />
+                  <span>{trip.destination}</span>
                 </span>
               </div>
 
-              <span style={{
-                fontSize: '12px', fontWeight: 700, color: '#2563EB',
-                fontFamily: 'var(--fd-font-mono)', backgroundColor: '#EFF6FF',
-                padding: '3px 8px', borderRadius: '6px', border: '1px solid #DBEAFE',
-              }}>
+              <span className="trip-speed-badge tabular-nums">
                 {trip.speed} km/h
               </span>
             </div>
 
-            {/* Sub-info: Driver */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '12px', color: '#64748B' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <User size={12} /> Driver: <strong style={{ color: '#0F172A' }}>{trip.driver}</strong>
+            {/* Sub-info: Driver, ETA, Remaining Distance */}
+            <div className="trip-item-meta">
+              <span className="trip-meta-item">
+                <User size={12} /> Driver: <strong>{trip.driver}</strong>
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-                <Clock size={12} /> ETA: <strong style={{ color: '#0F172A' }}>{trip.eta}</strong>
+              <span className="trip-meta-item">
+                <Clock size={12} /> ETA: <strong>{trip.eta}</strong>
               </span>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span className="trip-meta-item">
                 <MapPin size={12} /> {trip.remainingDistance}
               </span>
             </div>
 
             {/* Progress Bar */}
-            <div>
-              <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', fontWeight: 600, marginBottom: '4px' }}>
-                <span style={{ color: '#475569' }}>{trip.progress}% Complete</span>
-                <span style={{ color: '#2563EB', fontFamily: 'var(--fd-font-mono)' }}>{trip.progress}%</span>
+            <div className="trip-progress-container">
+              <div className="trip-progress-labels">
+                <span className="progress-label-text">{trip.progress}% complete</span>
+                <span className="progress-pct tabular-nums">{trip.progress}%</span>
               </div>
-              <div style={{ height: '7px', backgroundColor: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
+              <div className="progress-bar-track">
                 <motion.div
-                  style={{ height: '100%', backgroundColor: '#2563EB', borderRadius: '4px' }}
+                  className="progress-bar-fill progress-bar-fill--blue"
                   initial={{ width: 0 }}
                   animate={{ width: `${trip.progress}%` }}
-                  transition={{ duration: 1, ease: 'easeOut' }}
+                  transition={{ duration: 0.8, ease: 'easeOut' }}
                 />
               </div>
             </div>
@@ -148,12 +134,10 @@ export const ActiveTripsCard: React.FC = () => {
       </div>
 
       {/* Footer Link */}
-      <div style={{ textAlign: 'center', marginTop: '16px' }}>
-        <a href="#trips" onClick={(e) => e.preventDefault()} style={{
-          fontSize: '13px', fontWeight: 700, color: '#2563EB',
-          textDecoration: 'none', display: 'inline-flex', alignItems: 'center', gap: '4px',
-        }}>
-          View All Trips <ChevronRight size={14} />
+      <div className="card-footer-link">
+        <a href="#trips" onClick={(e) => e.preventDefault()} className="action-link">
+          <span>View All Trips</span>
+          <ChevronRight size={13} />
         </a>
       </div>
     </motion.div>

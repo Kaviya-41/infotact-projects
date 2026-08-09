@@ -1,110 +1,111 @@
 /**
  * LiveOperationsCard.tsx – Real-Time Operational Telemetry Metrics Panel
- * Positioned beside the main Live Fleet Map.
+ * Positioned beside the main Live Fleet Map (~32% width).
+ * Displays vehicle status breakdown, socket connection state, and network latency.
  */
 
 import React, { memo } from 'react';
-import { motion } from 'framer-motion';
+import { motion, type Variants } from 'framer-motion';
 import { Activity, Radio, Clock, Wifi } from 'lucide-react';
 import '../../styles/dashboard.css';
+
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: 'easeOut' },
+  },
+};
 
 export const LiveOperationsCard: React.FC = () => {
   return (
     <motion.div
-      className="fd-card fd-card--no-hover"
+      className="fd-card fd-card--no-hover live-ops-card"
       id="live-operations-card"
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.15, ease: [0.16, 1, 0.3, 1] }}
+      initial="hidden"
+      animate="visible"
+      variants={cardVariants}
     >
+      {/* Header */}
       <div className="fd-card__header">
         <h3 className="fd-card__title">
-          <span style={{
-            width: '28px', height: '28px', borderRadius: '8px',
-            background: 'rgba(37, 99, 235, 0.08)', border: '1px solid rgba(37, 99, 235, 0.12)',
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
-            color: '#2563EB',
-          }}>
+          <span className="icon-badge-blue">
             <Activity size={14} />
           </span>
-          Live Operations
+          <span>Live Operations</span>
         </h3>
-        <span style={{
-          fontSize: '11px', fontWeight: 600, color: '#10B981',
-          background: 'rgba(16, 185, 129, 0.08)', padding: '3px 10px',
-          borderRadius: '9999px', border: '1px solid rgba(16, 185, 129, 0.2)',
-          display: 'flex', alignItems: 'center', gap: '4px',
-        }}>
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: '#10B981' }} aria-hidden="true" />
-          Live 60Hz
+        <span className="badge-live-60hz">
+          <span className="live-dot" aria-hidden="true" />
+          <span>Live 60Hz</span>
         </span>
       </div>
 
       {/* Vehicle Operational Breakdown */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0' }}>
-          <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#10B981' }} aria-hidden="true" />
+      <div className="live-ops-breakdown">
+        <div className="live-ops-row">
+          <span className="live-ops-label">
+            <span className="ops-dot ops-dot--online" aria-hidden="true" />
             Online Vehicles
           </span>
-          <span style={{ fontSize: '14px', fontWeight: 700, color: '#0F172A', fontFamily: 'var(--fd-font-mono)' }}>35</span>
+          <span className="live-ops-value tabular-nums">35</span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0' }}>
-          <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#EF4444' }} aria-hidden="true" />
+        <div className="live-ops-row">
+          <span className="live-ops-label">
+            <span className="ops-dot ops-dot--offline" aria-hidden="true" />
             Offline Vehicles
           </span>
-          <span style={{ fontSize: '14px', fontWeight: 700, color: '#EF4444', fontFamily: 'var(--fd-font-mono)' }}>7</span>
+          <span className="live-ops-value live-ops-value--danger tabular-nums">7</span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0' }}>
-          <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#8B5CF6' }} aria-hidden="true" />
+        <div className="live-ops-row">
+          <span className="live-ops-label">
+            <span className="ops-dot ops-dot--active" aria-hidden="true" />
             Active Trips
           </span>
-          <span style={{ fontSize: '14px', fontWeight: 700, color: '#8B5CF6', fontFamily: 'var(--fd-font-mono)' }}>18</span>
+          <span className="live-ops-value live-ops-value--purple tabular-nums">18</span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '6px 0' }}>
-          <span style={{ fontSize: '13px', fontWeight: 500, color: '#475569', display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#F59E0B' }} aria-hidden="true" />
+        <div className="live-ops-row">
+          <span className="live-ops-label">
+            <span className="ops-dot ops-dot--idle" aria-hidden="true" />
             Idle Vehicles
           </span>
-          <span style={{ fontSize: '14px', fontWeight: 700, color: '#F59E0B', fontFamily: 'var(--fd-font-mono)' }}>5</span>
+          <span className="live-ops-value live-ops-value--warning tabular-nums">5</span>
         </div>
       </div>
 
-      <div style={{ height: '1px', background: '#E2E8F0', margin: '14px 0' }} />
+      <div className="live-ops-divider" />
 
       {/* Socket & Network Diagnostics */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <span style={{ fontSize: '12px', fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.3px' }}>
-            SOCKET CONNECTION
-          </span>
-          <span style={{ fontSize: '12px', fontWeight: 700, color: '#10B981', display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Radio size={12} /> ● Connected
+      <div className="live-ops-diagnostics">
+        <div className="diag-section-title">
+          SOCKET TELEMETRY STREAM
+        </div>
+
+        <div className="diag-row">
+          <span className="diag-label">Socket Status</span>
+          <span className="diag-status-connected">
+            <Radio size={12} />
+            <span>Connected</span>
           </span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
-          <span style={{ color: '#475569', fontWeight: 500 }}>Update Frequency</span>
-          <span style={{ fontWeight: 700, color: '#0F172A', fontFamily: 'var(--fd-font-mono)' }}>60 Hz</span>
+        <div className="diag-row">
+          <span className="diag-label">
+            <Wifi size={12} color="#2563EB" />
+            Network Latency
+          </span>
+          <span className="diag-value-green tabular-nums">14 ms</span>
         </div>
 
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
-          <span style={{ color: '#475569', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Wifi size={13} color="#2563EB" /> Network Latency
+        <div className="diag-row">
+          <span className="diag-label">
+            <Clock size={12} color="#94A3B8" />
+            Last Sync
           </span>
-          <span style={{ fontWeight: 700, color: '#10B981', fontFamily: 'var(--fd-font-mono)' }}>14 ms</span>
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
-          <span style={{ color: '#475569', fontWeight: 500, display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <Clock size={13} color="#94A3B8" /> Last Sync
-          </span>
-          <span style={{ fontWeight: 600, color: '#64748B' }}>Just now</span>
+          <span className="diag-value-muted">Just now</span>
         </div>
       </div>
     </motion.div>

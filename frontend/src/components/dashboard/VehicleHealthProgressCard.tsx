@@ -1,6 +1,6 @@
 /**
  * VehicleHealthProgressCard.tsx – Vehicle health breakdown card with progress bars
- * Shows Healthy, Attention Required, Maintenance, and Critical breakdowns.
+ * Shows Healthy (32), Attention Required (6), Maintenance (3), and Critical (1) breakdowns.
  */
 
 import React, { memo } from 'react';
@@ -26,7 +26,7 @@ const CATEGORIES: HealthCategory[] = [
     pct: 76,
     color: '#10B981',
     bgColor: 'rgba(16, 185, 129, 0.08)',
-    icon: <Shield size={14} />,
+    icon: <Shield size={13} />,
   },
   {
     id: 'attention',
@@ -35,16 +35,16 @@ const CATEGORIES: HealthCategory[] = [
     pct: 14,
     color: '#F59E0B',
     bgColor: 'rgba(245, 158, 11, 0.08)',
-    icon: <AlertCircle size={14} />,
+    icon: <AlertCircle size={13} />,
   },
   {
     id: 'maintenance',
     label: 'Maintenance',
     count: 3,
     pct: 7,
-    color: '#8B5CF6',
-    bgColor: 'rgba(139, 92, 246, 0.08)',
-    icon: <Wrench size={14} />,
+    color: '#7C3AED',
+    bgColor: 'rgba(124, 58, 237, 0.08)',
+    icon: <Wrench size={13} />,
   },
   {
     id: 'critical',
@@ -53,78 +53,70 @@ const CATEGORIES: HealthCategory[] = [
     pct: 3,
     color: '#EF4444',
     bgColor: 'rgba(239, 68, 68, 0.08)',
-    icon: <Siren size={14} />,
+    icon: <Siren size={13} />,
   },
 ];
 
 export const VehicleHealthProgressCard: React.FC = () => {
   return (
-    <motion.div
-      className="fd-card fd-card--no-hover"
-      id="vehicle-health-progress-card"
-      initial={{ opacity: 0, y: 15 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay: 0.25, ease: [0.16, 1, 0.3, 1] }}
-    >
+    <div className="fd-card fd-card--no-hover vehicle-health-card" id="vehicle-health-progress-card">
       <div className="fd-card__header">
         <div>
           <h3 className="fd-card__title">
-            <span style={{
-              width: '28px', height: '28px', borderRadius: '8px',
-              background: 'rgba(16, 185, 129, 0.08)', border: '1px solid rgba(16, 185, 129, 0.12)',
-              display: 'flex', alignItems: 'center', justifyContent: 'center',
-              color: '#10B981',
-            }}>
+            <span className="icon-badge-green">
               <Shield size={14} />
             </span>
-            Vehicle Health
+            <span>Vehicle Health</span>
           </h3>
-          <p style={{ fontSize: '12px', color: '#94A3B8', marginTop: '2px' }}>
+          <p className="fd-card__subtitle">
             Diagnostic status across fleet
           </p>
         </div>
 
-        <span style={{
-          fontSize: '12px', fontWeight: 600, color: '#10B981',
-          background: 'rgba(16, 185, 129, 0.08)', padding: '4px 10px',
-          borderRadius: '9999px', border: '1px solid rgba(16, 185, 129, 0.15)',
-        }}>
+        <span className="badge-pill-green">
           42 Total
         </span>
       </div>
 
       {/* Category breakdown rows */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', padding: '8px 0' }}>
+      <div className="health-categories-list">
         {CATEGORIES.map((cat) => (
-          <div key={cat.id} style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '13px' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '8px', fontWeight: 600, color: '#334155' }}>
-                <span style={{ color: cat.color, display: 'flex' }}>{cat.icon}</span>
-                {cat.label}
+          <div key={cat.id} className="health-category-row">
+            <div className="health-category-header">
+              <span className="health-category-title">
+                <span style={{ color: cat.color, display: 'flex', alignItems: 'center' }}>
+                  {cat.icon}
+                </span>
+                <span className="health-category-name">{cat.label}</span>
               </span>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span style={{ fontWeight: 600, color: '#64748B', fontSize: '12px' }}>
+
+              <div className="health-category-meta">
+                <span className="health-unit-count">
                   {cat.count} {cat.count === 1 ? 'vehicle' : 'vehicles'}
                 </span>
-                <span style={{ fontWeight: 700, color: cat.color, fontFamily: 'var(--fd-font-mono)', minWidth: '32px', textAlign: 'right' }}>
+                <span
+                  className="health-pct tabular-nums"
+                  style={{ color: cat.color }}
+                >
                   {cat.pct}%
                 </span>
               </div>
             </div>
 
-            {/* Bar */}
-            <div style={{ height: '7px', backgroundColor: '#F1F5F9', borderRadius: '4px', overflow: 'hidden' }}>
+            {/* Progress Bar Track */}
+            <div className="health-progress-track">
               <motion.div
-                style={{ height: '100%', backgroundColor: cat.color, borderRadius: '4px' }}
+                className="health-progress-fill"
+                style={{ backgroundColor: cat.color }}
                 initial={{ width: 0 }}
                 animate={{ width: `${cat.pct}%` }}
-                transition={{ duration: 1, ease: 'easeOut' }}
+                transition={{ duration: 0.8, ease: 'easeOut' }}
               />
             </div>
           </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 };
 

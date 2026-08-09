@@ -3,22 +3,20 @@
    Clean, high-contrast, automotive-inspired light theme
    ============================================================ */
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
-
 :root {
   /* ── Core Light Theme Surfaces ── */
-  --fd-bg-page:         #F5F7FB;
+  --fd-bg-page:         #F6F8FC;
   --fd-bg-card:         #FFFFFF;
   --fd-bg-surface:      #F8FAFC;
   --fd-bg-elevated:     #FFFFFF;
   --fd-bg-sidebar:      #FFFFFF;
-  --fd-bg-header:       rgba(255, 255, 255, 0.85);
+  --fd-bg-header:       #FFFFFF;
   --fd-bg-input:        #FFFFFF;
   --fd-bg-hover:        #F1F5F9;
 
   /* ── Typography Colors ── */
   --fd-text-primary:    #0F172A;
-  --fd-text-secondary:  #475569;
+  --fd-text-secondary:  #64748B;
   --fd-text-muted:      #94A3B8;
   --fd-text-inverse:    #FFFFFF;
 
@@ -27,6 +25,11 @@
   --fd-color-primary-hover:  #1D4ED8;
   --fd-color-primary-light:  rgba(37, 99, 235, 0.08);
   --fd-color-primary-glow:   rgba(37, 99, 235, 0.15);
+
+  /* ── Purple Accents ── */
+  --fd-color-purple:        #7C3AED;
+  --fd-color-purple-soft:   #F3E8FF;
+  --fd-color-purple-border: rgba(124, 58, 237, 0.2);
 
   /* ── Electric / Accent Blues ── */
   --fd-color-electric:  #0EA5E9;
@@ -45,9 +48,9 @@
   --fd-color-danger-bg:   rgba(239, 68, 68, 0.08);
   --fd-color-danger-border: rgba(239, 68, 68, 0.2);
 
-  --fd-color-maintenance: #8B5CF6;
-  --fd-color-maintenance-bg: rgba(139, 92, 246, 0.08);
-  --fd-color-maintenance-border: rgba(139, 92, 246, 0.2);
+  --fd-color-maintenance: #7C3AED;
+  --fd-color-maintenance-bg: #F3E8FF;
+  --fd-color-maintenance-border: rgba(124, 58, 237, 0.2);
 
   --fd-color-info:        #0EA5E9;
   --fd-color-info-bg:     rgba(14, 165, 233, 0.08);
@@ -55,21 +58,21 @@
 
   /* ── Borders & Shadows ── */
   --fd-border-color:     #E2E8F0;
-  --fd-border-subtle:    rgba(226, 232, 240, 0.7);
-  --fd-border-card:      1px solid var(--fd-border-subtle);
+  --fd-border-subtle:    rgba(226, 232, 240, 0.8);
+  --fd-border-card:      1px solid var(--fd-border-color);
   --fd-border-strong:    1px solid var(--fd-border-color);
 
   --fd-shadow-xs:   0 1px 2px rgba(15, 23, 42, 0.04);
-  --fd-shadow-sm:   0 1px 3px rgba(15, 23, 42, 0.06), 0 1px 2px rgba(15, 23, 42, 0.04);
-  --fd-shadow-md:   0 4px 12px rgba(15, 23, 42, 0.07);
-  --fd-shadow-lg:   0 10px 30px rgba(15, 23, 42, 0.08), 0 4px 8px rgba(15, 23, 42, 0.04);
-  --fd-shadow-xl:   0 20px 50px rgba(15, 23, 42, 0.1), 0 8px 16px rgba(15, 23, 42, 0.06);
+  --fd-shadow-sm:   0 1px 3px rgba(15, 23, 42, 0.05), 0 1px 2px rgba(15, 23, 42, 0.03);
+  --fd-shadow-md:   0 4px 12px rgba(15, 23, 42, 0.06);
+  --fd-shadow-lg:   0 10px 24px rgba(15, 23, 42, 0.07), 0 2px 6px rgba(15, 23, 42, 0.03);
+  --fd-shadow-xl:   0 20px 40px rgba(15, 23, 42, 0.08), 0 8px 16px rgba(15, 23, 42, 0.04);
   --fd-shadow-glow-blue: 0 0 0 3px var(--fd-color-primary-glow);
 
   /* ── Glass / Backdrop ── */
-  --fd-glass-bg:        rgba(255, 255, 255, 0.85);
-  --fd-glass-backdrop:   blur(16px);
-  --fd-glass-border:     1px solid rgba(255, 255, 255, 0.6);
+  --fd-glass-bg:        rgba(255, 255, 255, 0.95);
+  --fd-glass-backdrop:   blur(12px);
+  --fd-glass-border:     1px solid rgba(226, 232, 240, 0.8);
 
   /* ── Fonts ── */
   --fd-font-family:  'Inter', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
@@ -89,32 +92,32 @@
   /* ── Radii ── */
   --fd-radius-sm:   8px;
   --fd-radius-md:   12px;
-  --fd-radius-lg:   16px;    /* rounded-2xl */
-  --fd-radius-xl:   20px;
-  --fd-radius-2xl:  24px;    /* rounded-3xl */
+  --fd-radius-lg:   14px;
+  --fd-radius-xl:   16px;
+  --fd-radius-2xl:  20px;
   --fd-radius-full: 9999px;
 
   /* ── Transitions ── */
   --fd-ease-out:    cubic-bezier(0.16, 1, 0.3, 1);
   --fd-ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   --fd-duration-fast:   150ms;
-  --fd-duration-normal: 300ms;
-  --fd-duration-slow:   500ms;
+  --fd-duration-normal: 250ms;
+  --fd-duration-slow:   400ms;
 
   /* ── Sidebar ── */
   --fd-sidebar-width:      260px;
   --fd-sidebar-collapsed:  72px;
 
   /* ── Header ── */
-  --fd-header-height: 64px;
+  --fd-header-height: 74px;
 
   /* ── Z-index Scale ── */
   --fd-z-base:     1;
   --fd-z-overlay:  10;
-  --fd-z-dropdown: 20;
-  --fd-z-header:   30;
-  --fd-z-sidebar:  40;
-  --fd-z-modal:    50;
+  --fd-z-dropdown: 30;
+  --fd-z-header:   40;
+  --fd-z-sidebar:  50;
+  --fd-z-modal:    100;
 }
 
 /* ── Utility Classes ── */

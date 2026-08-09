@@ -1,11 +1,11 @@
 /**
  * main.tsx – Vite React entry point
- * Week 1: Standard React 18 root render.
  */
 
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
+import './index.css';
 
 const rootEl = document.getElementById('root');
 if (!rootEl) {

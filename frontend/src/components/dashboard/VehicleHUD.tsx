@@ -13,7 +13,7 @@ interface VehicleData {
   id: string;
   name: string;
   driver: string;
-  status: 'Moving' | 'Stopped' | 'Offline';
+  status: 'Online' | 'Moving' | 'Idle' | 'Offline' | 'Maintenance' | 'Stopped';
   speed: number;
   fuel: number;
   tripProgress: number;
@@ -27,11 +27,16 @@ interface VehicleHUDProps {
 
 const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle }) => {
   const statusLabel = vehicle.status.toUpperCase();
-  const statusColor = vehicle.status === 'Moving'
-    ? '#10B981'
-    : vehicle.status === 'Stopped'
-      ? '#F59E0B'
-      : '#EF4444';
+  const statusColor =
+    vehicle.status === 'Moving'
+      ? '#2563EB'
+      : vehicle.status === 'Online'
+        ? '#10B981'
+        : vehicle.status === 'Idle'
+          ? '#F59E0B'
+          : vehicle.status === 'Maintenance'
+            ? '#7C3AED'
+            : '#EF4444';
 
   return (
     <AnimatePresence mode="wait">

@@ -1,10 +1,14 @@
 /**
- * DashboardCards.tsx – Premium Light KPI Statistics Cards with Sparklines
- * Shows Total Vehicles, Online Vehicles, Active Trips, and Active Alerts.
+ * DashboardCards.tsx – Compact Light KPI Statistics Cards
+ * 4 concise cards (120-130px height) with sparklines:
+ * 1. Total Vehicles: 42 (+8.4% from last month)
+ * 2. Online Vehicles: 35 (83.3% operational)
+ * 3. Active Trips: 18 (+12% today)
+ * 4. Active Alerts: 3 (1 Critical)
  */
 
-import React from 'react';
-import { motion } from 'framer-motion';
+import React, { memo } from 'react';
+import { motion, type Variants } from 'framer-motion';
 import { Truck, Navigation, Route, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
 import '../styles/dashboard.css';
 
@@ -24,88 +28,86 @@ interface KPIData {
 const KPI_DATA: KPIData[] = [
   {
     id: 'total-vehicles',
-    label: 'Total Vehicles',
+    label: 'TOTAL VEHICLES',
     value: 42,
-    icon: <Truck size={18} />,
+    icon: <Truck size={17} />,
     iconVariant: 'blue',
-    trend: { direction: 'up', value: '↑ 8.4% from last month' },
-    subtitle: 'All registered fleet vehicles',
+    trend: { direction: 'up', value: '+8.4% from last month' },
+    subtitle: 'Registered fleet units',
     sparklinePoints: '0,25 20,20 40,22 60,14 80,18 100,8 120,12',
     sparklineColor: '#2563EB',
   },
   {
     id: 'online-vehicles',
-    label: 'Online Vehicles',
+    label: 'ONLINE VEHICLES',
     value: 35,
-    icon: <Navigation size={18} />,
+    icon: <Navigation size={17} />,
     iconVariant: 'green',
     trend: { direction: 'up', value: '83.3% operational' },
-    subtitle: 'Currently transmitting telemetry',
+    subtitle: 'Actively transmitting',
     valueColor: '#10B981',
     sparklinePoints: '0,28 20,24 40,18 60,20 80,12 100,10 120,6',
     sparklineColor: '#10B981',
   },
   {
     id: 'active-trips',
-    label: 'Active Trips',
+    label: 'ACTIVE TRIPS',
     value: 18,
-    icon: <Route size={18} />,
+    icon: <Route size={17} />,
     iconVariant: 'purple',
-    trend: { direction: 'up', value: '↑ 12% today' },
-    subtitle: 'Trips currently in progress',
-    valueColor: '#8B5CF6',
+    trend: { direction: 'up', value: '+12% today' },
+    subtitle: 'Dispatches in progress',
+    valueColor: '#7C3AED',
     sparklinePoints: '0,30 20,28 40,22 60,24 80,16 100,14 120,10',
-    sparklineColor: '#8B5CF6',
+    sparklineColor: '#7C3AED',
   },
   {
     id: 'active-alerts',
-    label: 'Active Alerts',
+    label: 'ACTIVE ALERTS',
     value: 3,
-    icon: <AlertTriangle size={18} />,
+    icon: <AlertTriangle size={17} />,
     iconVariant: 'amber',
     trend: { direction: 'down', value: '1 Critical' },
-    subtitle: 'Requires attention',
+    subtitle: 'Requires dispatcher review',
     valueColor: '#EF4444',
   },
 ];
 
-const cardVariants = {
-  hidden: { opacity: 0, y: 15 },
-  visible: (i: number) => ({
+const cardVariants: Variants = {
+  hidden: { opacity: 0, y: 10 },
+  visible: {
     opacity: 1,
     y: 0,
     transition: {
-      delay: i * 0.08,
-      duration: 0.4,
-      ease: [0.16, 1, 0.3, 1],
+      duration: 0.3,
+      ease: 'easeOut',
     },
-  }),
+  },
 };
 
-const DashboardCards: React.FC = () => {
+export const DashboardCards: React.FC = () => {
   return (
-    <div className="stats-grid">
-      {KPI_DATA.map((kpi, index) => (
+    <div className="stats-grid" id="kpi-overview-row">
+      {KPI_DATA.map((kpi) => (
         <motion.div
           key={kpi.id}
           className="stat-card"
-          custom={index}
           initial="hidden"
           animate="visible"
           variants={cardVariants}
-          whileHover={{ y: -3, scale: 1.015 }}
-          transition={{ duration: 0.2 }}
         >
+          {/* Top Row: Icon + Trend Badge */}
           <div className="stat-card__top">
             <div className={`stat-card__icon-box stat-card__icon-box--${kpi.iconVariant}`}>
               {kpi.icon}
             </div>
             <span className={`stat-card__trend stat-card__trend--${kpi.trend.direction}`}>
-              {kpi.trend.direction === 'up' ? <TrendingUp size={13} /> : <TrendingDown size={13} />}
-              {kpi.trend.value}
+              {kpi.trend.direction === 'up' ? <TrendingUp size={12} /> : <TrendingDown size={12} />}
+              <span>{kpi.trend.value}</span>
             </span>
           </div>
 
+          {/* Center: Large KPI Number */}
           <div
             className="stat-card__value tabular-nums"
             style={kpi.valueColor ? { color: kpi.valueColor } : undefined}
@@ -113,15 +115,16 @@ const DashboardCards: React.FC = () => {
             {kpi.value}
           </div>
 
+          {/* Bottom Row: Label & Sparkline */}
           <div className="stat-card__bottom">
             <div>
               <div className="stat-card__label">{kpi.label}</div>
-              <div style={{ fontSize: '11px', color: '#94A3B8', marginTop: '2px' }}>{kpi.subtitle}</div>
+              <div className="stat-card__sub">{kpi.subtitle}</div>
             </div>
 
-            {/* Sparkline chart */}
+            {/* Sparkline Graphic */}
             {kpi.sparklinePoints && (
-              <svg width="60" height="24" viewBox="0 0 120 32" style={{ overflow: 'visible', flexShrink: 0 }}>
+              <svg width="56" height="22" viewBox="0 0 120 32" style={{ overflow: 'visible', flexShrink: 0 }}>
                 <polyline
                   fill="none"
                   stroke={kpi.sparklineColor}
@@ -139,4 +142,4 @@ const DashboardCards: React.FC = () => {
   );
 };
 
-export default DashboardCards;
+export default memo(DashboardCards);

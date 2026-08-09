@@ -1,13 +1,12 @@
 /**
  * Sidebar.tsx – FleetDash Premium Light Navigation Sidebar
- * Structured into NAVIGATION, MANAGEMENT, and SYSTEM sections.
+ * Persistent AppShell sidebar with NavLink active states and Lucide icons.
  */
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
 import {
-  LayoutGrid, Map, Truck, Navigation as RouteIcon, BarChart3, Bell,
-  Users, FileText, Settings, LogOut
+  LayoutGrid, Map, Truck, BarChart3, Bell, Settings, LogOut
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/dashboard.css';
@@ -20,25 +19,24 @@ interface NavItem {
   badge?: number;
 }
 
-const NAVIGATION_ITEMS: NavItem[] = [
-  { id: 'dashboard', label: 'Dashboard', icon: <LayoutGrid size={18} />, path: '/dashboard' },
-  { id: 'live-map',  label: 'Live Map',  icon: <Map size={18} />, path: '/live-map' },
-  { id: 'vehicles',  label: 'Vehicles',  icon: <Truck size={18} />, path: '/vehicles' },
-  { id: 'trips',     label: 'Trips',     icon: <RouteIcon size={18} />, path: '/vehicles' },
-  { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={18} />, path: '/analytics' },
-  { id: 'alerts',    label: 'Alerts',    icon: <Bell size={18} />, path: '/alerts', badge: 3 },
+const PRIMARY_NAV: NavItem[] = [
+  { id: 'dashboard', label: 'Dashboard', icon: <LayoutGrid size={20} strokeWidth={2} />, path: '/dashboard' },
+  { id: 'live-map',  label: 'Live Map',  icon: <Map size={20} strokeWidth={2} />, path: '/live-map' },
+  { id: 'vehicles',  label: 'Vehicles',  icon: <Truck size={20} strokeWidth={2} />, path: '/vehicles' },
+  { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={20} strokeWidth={2} />, path: '/analytics' },
+  { id: 'alerts',    label: 'Alerts',    icon: <Bell size={20} strokeWidth={2} />, path: '/alerts', badge: 3 },
 ];
 
-const MANAGEMENT_ITEMS: NavItem[] = [
-  { id: 'drivers', label: 'Drivers', icon: <Users size={18} />, path: '/vehicles' },
-  { id: 'reports', label: 'Reports', icon: <FileText size={18} />, path: '/analytics' },
+const SECONDARY_NAV: NavItem[] = [
+  { id: 'settings', label: 'Settings', icon: <Settings size={20} strokeWidth={2} />, path: '/settings' },
 ];
 
-const SYSTEM_ITEMS: NavItem[] = [
-  { id: 'settings', label: 'Settings', icon: <Settings size={18} />, path: '/settings' },
-];
+interface SidebarProps {
+  isOpen?: boolean;
+  onClose?: () => void;
+}
 
-const Sidebar: React.FC = () => {
+const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
   const { user, logout } = useAuth();
 
   const renderNavItem = (item: NavItem) => (
@@ -47,6 +45,7 @@ const Sidebar: React.FC = () => {
       to={item.path}
       end={item.path === '/dashboard'}
       id={`sidebar-nav-${item.id}`}
+      onClick={onClose}
       className={({ isActive }) => `sidebar__nav-item${isActive ? ' active' : ''}`}
     >
       <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
@@ -60,54 +59,63 @@ const Sidebar: React.FC = () => {
   );
 
   return (
-    <aside className="sidebar" aria-label="Main navigation">
-      {/* Brand Header */}
-      <div className="sidebar__header">
-        <div className="sidebar__logo-icon">
-          <Truck size={20} />
-        </div>
-        <span className="sidebar__logo-text">Fleet<span>Dash</span></span>
-      </div>
+    <>
+      {/* Mobile Drawer Overlay Backdrop */}
+      {isOpen && (
+        <div
+          className="sidebar-backdrop"
+          onClick={onClose}
+          aria-hidden="true"
+        />
+      )}
 
-      {/* Nav Sections */}
-      <nav className="sidebar__nav">
-        <span className="sidebar__section-title">NAVIGATION</span>
-        {NAVIGATION_ITEMS.map(renderNavItem)}
-
-        <span className="sidebar__section-title" style={{ marginTop: '16px' }}>MANAGEMENT</span>
-        {MANAGEMENT_ITEMS.map(renderNavItem)}
-
-        <span className="sidebar__section-title" style={{ marginTop: '16px' }}>SYSTEM</span>
-        {SYSTEM_ITEMS.map(renderNavItem)}
-      </nav>
-
-      {/* User Footer */}
-      <div className="sidebar__footer">
-        <div className="sidebar__user">
-          <div className="sidebar__avatar">
-            {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 'AD'}
+      <aside className={`sidebar ${isOpen ? 'sidebar--open' : ''}`} aria-label="Main navigation">
+        {/* Brand Header */}
+        <div className="sidebar__header">
+          <div className="sidebar__logo-icon">
+            <Truck size={20} />
           </div>
-          <div style={{ overflow: 'hidden', flex: 1 }}>
-            <div className="sidebar__user-name">{user?.name || 'Admin'}</div>
-            <div className="sidebar__user-role">{user?.company || 'LogiTech Logistics'}</div>
-          </div>
+          <span className="sidebar__logo-text">Fleet<span>Dash</span></span>
         </div>
 
-        <button
-          onClick={logout}
-          className="sidebar__nav-item"
-          style={{ width: '100%', marginTop: '6px', color: '#EF4444', fontFamily: 'inherit', fontSize: '13px', fontWeight: 600 }}
-          title="Sign Out"
-          aria-label="Sign out of FleetDash"
-        >
-          <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <LogOut size={16} />
-          </span>
-          <span>Sign Out</span>
-        </button>
-      </div>
-    </aside>
+        {/* Primary Nav */}
+        <nav className="sidebar__nav">
+          <span className="sidebar__section-title">NAVIGATION</span>
+          {PRIMARY_NAV.map(renderNavItem)}
+
+          <span className="sidebar__section-title" style={{ marginTop: '16px' }}>SYSTEM</span>
+          {SECONDARY_NAV.map(renderNavItem)}
+        </nav>
+
+        {/* User Footer & Logout */}
+        <div className="sidebar__footer">
+          <div className="sidebar__user">
+            <div className="sidebar__avatar">
+              {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 'AD'}
+            </div>
+            <div style={{ overflow: 'hidden', flex: 1 }}>
+              <div className="sidebar__user-name">{user?.name || 'Admin'}</div>
+              <div className="sidebar__user-role">{user?.company || 'LogiTech Logistics'}</div>
+            </div>
+          </div>
+
+          <button
+            onClick={() => { onClose?.(); logout(); }}
+            className="sidebar__nav-item"
+            style={{ width: '100%', marginTop: '6px', color: '#EF4444', fontFamily: 'inherit', fontSize: '13px', fontWeight: 600 }}
+            title="Sign Out"
+            aria-label="Sign out of FleetDash"
+          >
+            <span style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <LogOut size={18} strokeWidth={2} />
+            </span>
+            <span>Sign Out</span>
+          </button>
+        </div>
+      </aside>
+    </>
   );
 };
+
 
 export default Sidebar;

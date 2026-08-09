@@ -1,18 +1,16 @@
 /**
  * Dashboard.tsx – FleetDash Enterprise Fleet Operations Center Page
- * Complete hierarchy:
- * 1. Top Header & Action Controls
- * 2. 4 KPI Overview Cards (with Sparklines)
- * 3. Live Fleet Map (Hero) + Live Operations Card
- * 4. Active Trips + Live Alerts
- * 5. Fleet Performance (Analytics) + Vehicle Health
- * 6. Recent Activity Stream
- * 7. Selected Vehicle Slide-in Drawer (Framer Motion)
+ * Reorganized, compact, and calm information hierarchy:
+ * 1. 4 Compact KPI Overview Cards (with Sparklines) (~120-130px height)
+ * 2. Hero Section: Live Fleet Map (~68%) + Live Operations Panel (~32%)
+ * 3. Mid Section: Active Trips + Live Alerts (1fr 1fr)
+ * 4. Analytics Section: Fleet Performance (7-day chart) + Vehicle Health Diagnostics
+ * 5. Timeline: Recent Activity Stream
+ * 6. Slide-in Vehicle Telemetry Drawer
  */
 
 import React, { useState, useCallback, memo } from 'react';
-import { motion } from 'framer-motion';
-import DashboardLayout from '../layout/DashboardLayout';
+import { motion, type Variants } from 'framer-motion';
 import DashboardCards from '../components/DashboardCards';
 import MapPlaceholder from '../components/MapPlaceholder';
 import LiveOperationsCard from '../components/dashboard/LiveOperationsCard';
@@ -24,13 +22,13 @@ import RecentActivityCard from '../components/dashboard/RecentActivityCard';
 import VehicleDrawer from '../components/dashboard/VehicleDrawer';
 import '../styles/dashboard.css';
 
-const fadeIn = {
-  hidden: { opacity: 0, y: 15 },
-  visible: (delay: number) => ({
+const fadeInVariants: Variants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, delay, ease: [0.16, 1, 0.3, 1] },
-  }),
+    transition: { duration: 0.35, ease: 'easeOut' },
+  },
 };
 
 const Dashboard: React.FC = () => {
@@ -45,72 +43,66 @@ const Dashboard: React.FC = () => {
   }, []);
 
   return (
-    <DashboardLayout>
-      <div className="dashboard">
-        {/* KPI Overview (4 Cards with Sparklines) */}
-        <DashboardCards />
+    <div className="dashboard" id="fleet-operations-dashboard">
+      {/* Row 1: 4 Compact KPI Overview Cards */}
+      <DashboardCards />
 
-        {/* Live Fleet Map (Hero Element) + Live Operations Card */}
-        <motion.div
-          className="command-center"
-          initial="hidden"
-          animate="visible"
-          custom={0.1}
-          variants={fadeIn}
-        >
-          {/* Main Map Visualizer */}
-          <MapPlaceholder
-            selectedVehicleId={selectedVehicleId}
-            onSelectVehicle={handleSelectVehicle}
-          />
-
-          {/* Live Operations Panel */}
-          <div className="command-center__right">
-            <LiveOperationsCard />
-          </div>
-        </motion.div>
-
-        {/* Row 2: Active Trips + Live Alerts */}
-        <motion.div
-          style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}
-          initial="hidden"
-          animate="visible"
-          custom={0.15}
-          variants={fadeIn}
-        >
-          <ActiveTripsCard />
-          <RecentAlerts onSelectVehicle={handleSelectVehicle} />
-        </motion.div>
-
-        {/* Row 3: Fleet Performance Analytics + Vehicle Health Breakdown */}
-        <motion.div
-          style={{ display: 'grid', gridTemplateColumns: '1fr 340px', gap: '24px' }}
-          initial="hidden"
-          animate="visible"
-          custom={0.2}
-          variants={fadeIn}
-        >
-          <FleetAnalytics />
-          <VehicleHealthProgressCard />
-        </motion.div>
-
-        {/* Row 4: Recent Activity Stream */}
-        <motion.div
-          initial="hidden"
-          animate="visible"
-          custom={0.25}
-          variants={fadeIn}
-        >
-          <RecentActivityCard />
-        </motion.div>
-
-        {/* Selected Vehicle Slide-in Drawer */}
-        <VehicleDrawer
-          vehicleId={selectedVehicleId}
-          onClose={handleCloseDrawer}
+      {/* Row 2: Live Fleet Map (Hero Element ~68%) + Live Operations Panel (~32%) */}
+      <motion.div
+        className="command-center"
+        initial="hidden"
+        animate="visible"
+        variants={fadeInVariants}
+      >
+        {/* Main Vector / Canvas Map Visualizer */}
+        <MapPlaceholder
+          selectedVehicleId={selectedVehicleId}
+          onSelectVehicle={handleSelectVehicle}
         />
-      </div>
-    </DashboardLayout>
+
+        {/* Live Operations Panel beside the Map */}
+        <div className="command-center__right">
+          <LiveOperationsCard />
+        </div>
+      </motion.div>
+
+      {/* Row 3: Active Trips + Live Alerts (1fr 1fr grid) */}
+      <motion.div
+        className="dashboard-two-col"
+        initial="hidden"
+        animate="visible"
+        variants={fadeInVariants}
+      >
+        <ActiveTripsCard />
+        <RecentAlerts onSelectVehicle={handleSelectVehicle} />
+      </motion.div>
+
+      {/* Row 4: Fleet Performance Analytics (7-day chart) + Vehicle Health Diagnostics */}
+      <motion.div
+        className="dashboard-analytics-grid"
+        initial="hidden"
+        animate="visible"
+        variants={fadeInVariants}
+      >
+        <FleetAnalytics />
+        <VehicleHealthProgressCard />
+      </motion.div>
+
+      {/* Row 5: Real-Time Activity Stream */}
+      <motion.div
+        initial="hidden"
+        animate="visible"
+        variants={fadeInVariants}
+      >
+        <RecentActivityCard />
+      </motion.div>
+
+      {/* Slide-in Vehicle Telemetry Drawer (Framer Motion) */}
+      <VehicleDrawer
+        vehicleId={selectedVehicleId}
+        onClose={handleCloseDrawer}
+      />
+    </div>
   );
 };
 
