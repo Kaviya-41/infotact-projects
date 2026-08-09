@@ -8,7 +8,8 @@
  * 5. Slide-in Vehicle Telemetry Drawer
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { motion, type Variants } from 'framer-motion';
 import { Radio, Truck } from 'lucide-react';
 import MapPlaceholder from '../components/MapPlaceholder';
@@ -29,8 +30,17 @@ const fadeInVariants: Variants = {
 };
 
 const LiveMapPage: React.FC = () => {
-  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>('FLT-004');
+  const location = useLocation();
+  const stateVehicleId = (location.state as { selectedVehicleId?: string })?.selectedVehicleId;
+
+  const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(stateVehicleId || 'FLT-004');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+
+  useEffect(() => {
+    if (stateVehicleId) {
+      setSelectedVehicleId(stateVehicleId);
+    }
+  }, [stateVehicleId]);
 
   const handleSelectVehicle = useCallback((id: string) => {
     setSelectedVehicleId(id);
@@ -53,10 +63,10 @@ const LiveMapPage: React.FC = () => {
         flexWrap: 'wrap', gap: '12px', paddingBottom: '4px'
       }}>
         <div>
-          <h2 className="dashboard__hero-title" style={{ fontSize: '26px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.4px', lineHeight: 1.2 }}>
+          <h2 className="dashboard__hero-title" style={{ fontSize: '26px', fontWeight: 800, color: 'var(--fd-text-primary)', letterSpacing: '-0.4px', lineHeight: 1.2 }}>
             Live Fleet Map
           </h2>
-          <p className="dashboard__hero-subtitle" style={{ fontSize: '13.5px', color: '#64748B', marginTop: '3px' }}>
+          <p className="dashboard__hero-subtitle" style={{ fontSize: '13.5px', color: 'var(--fd-text-secondary)', marginTop: '3px' }}>
             Real-time vehicle positions, routes and operational alerts
           </p>
         </div>
@@ -66,9 +76,9 @@ const LiveMapPage: React.FC = () => {
           <div style={{
             display: 'flex', alignItems: 'center', gap: '6px',
             padding: '5px 12px', borderRadius: '20px',
-            backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0',
+            backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-color)',
             boxShadow: '0 1px 2px rgba(15, 23, 42, 0.04)',
-            fontSize: '12px', fontWeight: 600, color: '#0F172A'
+            fontSize: '12px', fontWeight: 600, color: 'var(--fd-text-primary)'
           }}>
             <span style={{
               width: '7px', height: '7px', borderRadius: '50%',
@@ -76,18 +86,18 @@ const LiveMapPage: React.FC = () => {
               boxShadow: '0 0 0 2px rgba(16, 185, 129, 0.25)',
               animation: 'header-pulse 2s ease-in-out infinite'
             }} />
-            <Truck size={13} color="#2563EB" />
+            <Truck size={13} color="var(--fd-color-primary)" />
             <span>42 Vehicles Tracked</span>
           </div>
 
           <div style={{
             display: 'flex', alignItems: 'center', gap: '6px',
             padding: '5px 12px', borderRadius: '20px',
-            backgroundColor: 'rgba(37, 99, 235, 0.08)',
-            border: '1px solid rgba(37, 99, 235, 0.2)',
-            fontSize: '12px', fontWeight: 700, color: '#2563EB'
+            backgroundColor: 'var(--fd-color-primary-light)',
+            border: '1px solid var(--fd-border-color)',
+            fontSize: '12px', fontWeight: 700, color: 'var(--fd-color-primary)'
           }}>
-            <Radio size={13} color="#2563EB" />
+            <Radio size={13} color="var(--fd-color-primary)" />
             <span>Live Telemetry Active</span>
           </div>
         </div>
