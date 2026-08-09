@@ -17,6 +17,7 @@ import {
   RotateCcw, Radio, Shield, MapPin
 } from 'lucide-react';
 import VehicleHUD from './dashboard/VehicleHUD';
+import { useTheme } from '../context/ThemeContext';
 import '../styles/dashboard.css';
 
 export interface VehicleMarker {
@@ -103,6 +104,9 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
     }
   };
 
+  const { theme } = useTheme();
+  const isDark = theme === 'dark' || mapMode === 'Satellite';
+
   return (
     <div
       className="map-container-card"
@@ -116,10 +120,10 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
             <Navigation size={16} color="#2563EB" />
           </div>
           <div>
-            <div style={{ fontSize: '15px', fontWeight: 700, color: '#0F172A', lineHeight: 1.2 }}>
+            <div style={{ fontSize: '15px', fontWeight: 700, color: 'var(--fd-text-primary)', lineHeight: 1.2 }}>
               Live Fleet Map
             </div>
-            <div style={{ fontSize: '11.5px', color: '#64748B', fontWeight: 400 }}>
+            <div style={{ fontSize: '11.5px', color: 'var(--fd-text-secondary)', fontWeight: 400 }}>
               Real-time vehicle positions and operational status
             </div>
           </div>
@@ -143,8 +147,8 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
           <div style={{
             display: 'flex', alignItems: 'center', gap: '5px',
             padding: '4px 10px', borderRadius: '20px',
-            backgroundColor: '#F1F5F9', border: '1px solid #E2E8F0',
-            fontSize: '11px', fontWeight: 600, color: '#0F172A'
+            backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-color)',
+            fontSize: '11px', fontWeight: 600, color: 'var(--fd-text-primary)'
           }}>
             <Truck size={12} color="#2563EB" />
             <span>42 Vehicles Tracked</span>
@@ -172,9 +176,9 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
               onClick={() => setLayerVehicles(prev => !prev)}
               style={{
                 fontSize: '11px', fontWeight: 600, padding: '4px 8px', borderRadius: '6px',
-                border: '1px solid #E2E8F0',
-                backgroundColor: layerVehicles ? '#EFF6FF' : '#FFFFFF',
-                color: layerVehicles ? '#2563EB' : '#64748B',
+                border: '1px solid var(--fd-border-color)',
+                backgroundColor: layerVehicles ? 'var(--fd-color-primary-light)' : 'var(--fd-bg-surface)',
+                color: layerVehicles ? 'var(--fd-color-primary)' : 'var(--fd-text-secondary)',
                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '3px'
               }}
               title="Toggle Vehicles Layer"
@@ -187,9 +191,9 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
               onClick={() => setLayerRoutes(prev => !prev)}
               style={{
                 fontSize: '11px', fontWeight: 600, padding: '4px 8px', borderRadius: '6px',
-                border: '1px solid #E2E8F0',
-                backgroundColor: layerRoutes ? '#EFF6FF' : '#FFFFFF',
-                color: layerRoutes ? '#2563EB' : '#64748B',
+                border: '1px solid var(--fd-border-color)',
+                backgroundColor: layerRoutes ? 'var(--fd-color-primary-light)' : 'var(--fd-bg-surface)',
+                color: layerRoutes ? 'var(--fd-color-primary)' : 'var(--fd-text-secondary)',
                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '3px'
               }}
               title="Toggle Routes Layer"
@@ -202,9 +206,9 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
               onClick={() => setLayerGeofence(prev => !prev)}
               style={{
                 fontSize: '11px', fontWeight: 600, padding: '4px 8px', borderRadius: '6px',
-                border: '1px solid #E2E8F0',
-                backgroundColor: layerGeofence ? '#EFF6FF' : '#FFFFFF',
-                color: layerGeofence ? '#2563EB' : '#64748B',
+                border: '1px solid var(--fd-border-color)',
+                backgroundColor: layerGeofence ? 'var(--fd-color-primary-light)' : 'var(--fd-bg-surface)',
+                color: layerGeofence ? 'var(--fd-color-primary)' : 'var(--fd-text-secondary)',
                 cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '3px'
               }}
               title="Toggle Geofences Layer"
@@ -232,14 +236,14 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
           width="100%" height="100%"
           style={{
             position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
-            backgroundColor: mapMode === 'Satellite' ? '#0F172A' : '#F8FAFC',
+            backgroundColor: isDark ? '#0B0F19' : '#F8FAFC',
             transition: 'background-color 0.3s ease'
           }}
         >
           {/* Grid Pattern */}
           <defs>
             <pattern id="light-map-grid" width="40" height="40" patternUnits="userSpaceOnUse">
-              <path d="M 40 0 L 0 0 0 40" fill="none" stroke={mapMode === 'Satellite' ? '#1E293B' : '#E2E8F0'} strokeWidth="0.5" />
+              <path d="M 40 0 L 0 0 0 40" fill="none" stroke={isDark ? '#1E293B' : '#E2E8F0'} strokeWidth="0.5" />
             </pattern>
             <linearGradient id="routeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
               <stop offset="0%" stopColor="#2563EB" />
@@ -250,42 +254,42 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
           <rect width="100%" height="100%" fill="url(#light-map-grid)" />
 
           {/* Primary Arterial Road Lines */}
-          <path d="M -50 180 Q 300 220 600 150 T 1400 300" fill="none" stroke={mapMode === 'Satellite' ? '#334155' : mapMode === 'Traffic' ? '#10B981' : '#CBD5E1'} strokeWidth={mapMode === 'Traffic' ? '7' : '6'} strokeLinecap="round" opacity={mapMode === 'Traffic' ? '0.7' : '1'} />
-          <path d="M 220 -50 Q 250 250 400 700" fill="none" stroke={mapMode === 'Satellite' ? '#334155' : mapMode === 'Traffic' ? '#F59E0B' : '#CBD5E1'} strokeWidth={mapMode === 'Traffic' ? '7' : '6'} strokeLinecap="round" opacity={mapMode === 'Traffic' ? '0.7' : '1'} />
-          <path d="M -50 420 Q 500 380 1400 480" fill="none" stroke={mapMode === 'Satellite' ? '#1E293B' : mapMode === 'Traffic' ? '#10B981' : '#E2E8F0'} strokeWidth="4" />
-          <path d="M 500 -50 Q 600 300 850 700" fill="none" stroke={mapMode === 'Satellite' ? '#1E293B' : mapMode === 'Traffic' ? '#EF4444' : '#E2E8F0'} strokeWidth="4" />
+          <path d="M -50 180 Q 300 220 600 150 T 1400 300" fill="none" stroke={isDark ? '#334155' : mapMode === 'Traffic' ? '#10B981' : '#CBD5E1'} strokeWidth={mapMode === 'Traffic' ? '7' : '6'} strokeLinecap="round" opacity={mapMode === 'Traffic' ? '0.7' : '1'} />
+          <path d="M 220 -50 Q 250 250 400 700" fill="none" stroke={isDark ? '#334155' : mapMode === 'Traffic' ? '#F59E0B' : '#CBD5E1'} strokeWidth={mapMode === 'Traffic' ? '7' : '6'} strokeLinecap="round" opacity={mapMode === 'Traffic' ? '0.7' : '1'} />
+          <path d="M -50 420 Q 500 380 1400 480" fill="none" stroke={isDark ? '#1E293B' : mapMode === 'Traffic' ? '#10B981' : '#E2E8F0'} strokeWidth="4" />
+          <path d="M 500 -50 Q 600 300 850 700" fill="none" stroke={isDark ? '#1E293B' : mapMode === 'Traffic' ? '#EF4444' : '#E2E8F0'} strokeWidth="4" />
 
           {/* Secondary Feeder Roads */}
-          <path d="M 100 100 L 300 220 L 450 180" fill="none" stroke={mapMode === 'Satellite' ? '#1E293B' : '#E2E8F0'} strokeWidth="2.5" />
-          <path d="M 350 450 L 550 500 L 750 400" fill="none" stroke={mapMode === 'Satellite' ? '#1E293B' : '#E2E8F0'} strokeWidth="2.5" />
+          <path d="M 100 100 L 300 220 L 450 180" fill="none" stroke={isDark ? '#1E293B' : '#E2E8F0'} strokeWidth="2.5" />
+          <path d="M 350 450 L 550 500 L 750 400" fill="none" stroke={isDark ? '#1E293B' : '#E2E8F0'} strokeWidth="2.5" />
 
           {/* Active Fleet Primary Route Corridor (Bengaluru → Chennai) */}
           {layerRoutes && (
             <g id="route-corridor">
               {/* Route Glow */}
-              <path d="M 180 450 Q 280 620 420 380 T 780 250" fill="none" stroke="rgba(37, 99, 235, 0.15)" strokeWidth="12" strokeLinecap="round" />
+              <path d="M 180 450 Q 280 620 420 380 T 780 250" fill="none" stroke="rgba(37, 99, 235, 0.25)" strokeWidth="12" strokeLinecap="round" />
               {/* Route Main Line */}
               <path d="M 180 450 Q 280 620 420 380 T 780 250" fill="none" stroke="url(#routeGrad)" strokeWidth="4" strokeDasharray="8 5" strokeLinecap="round" />
 
               {/* Waypoint 1: Bengaluru Origin */}
               <circle cx="180" cy="450" r="7" fill="#2563EB" stroke="#FFFFFF" strokeWidth="2" />
-              <text x="140" y="475" fill="#0F172A" fontSize="10.5" fontWeight="700">Bengaluru Depot</text>
+              <text x="140" y="475" fill={isDark ? '#F8FAFC' : '#0F172A'} fontSize="10.5" fontWeight="700">Bengaluru Depot</text>
 
               {/* Waypoint 2: Hosur Toll */}
               <circle cx="340" cy="510" r="5" fill="#10B981" stroke="#FFFFFF" strokeWidth="2" />
-              <text x="350" y="525" fill="#64748B" fontSize="9.5" fontWeight="600">Hosur Toll (KM 42)</text>
+              <text x="350" y="525" fill={isDark ? '#94A3B8' : '#64748B'} fontSize="9.5" fontWeight="600">Hosur Toll (KM 42)</text>
 
               {/* Waypoint 3: Vellore Hub */}
               <circle cx="560" cy="310" r="5" fill="#2563EB" stroke="#FFFFFF" strokeWidth="2" />
-              <text x="570" y="325" fill="#64748B" fontSize="9.5" fontWeight="600">Vellore Hub (KM 148)</text>
+              <text x="570" y="325" fill={isDark ? '#94A3B8' : '#64748B'} fontSize="9.5" fontWeight="600">Vellore Hub (KM 148)</text>
 
               {/* Waypoint 4: Chennai Destination */}
               <circle cx="780" cy="250" r="7" fill="#10B981" stroke="#FFFFFF" strokeWidth="2" />
-              <text x="740" y="275" fill="#0F172A" fontSize="10.5" fontWeight="700">Chennai Port Terminal</text>
+              <text x="740" y="275" fill={isDark ? '#F8FAFC' : '#0F172A'} fontSize="10.5" fontWeight="700">Chennai Port Terminal</text>
 
               {/* Corridor Route Label */}
-              <rect x="330" y="390" width="190" height="22" rx="6" fill="#FFFFFF" stroke="#DBEAFE" />
-              <text x="340" y="405" fill="#2563EB" fontSize="10" fontWeight="700" letterSpacing="0.4">
+              <rect x="330" y="390" width="190" height="22" rx="6" fill={isDark ? '#111827' : '#FFFFFF'} stroke={isDark ? '#1E293B' : '#DBEAFE'} />
+              <text x="340" y="405" fill="#3B82F6" fontSize="10" fontWeight="700" letterSpacing="0.4">
                 Bengaluru ──→ Chennai Corridor
               </text>
             </g>

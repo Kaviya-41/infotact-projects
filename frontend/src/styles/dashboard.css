@@ -2636,3 +2636,176 @@ body {
     transform: translateX(0) !important;
   }
 }
+
+/* ============================================================
+   GLOBAL DARK THEME COMPONENT SPECIFIC OVERRIDES
+   ============================================================ */
+html.dark .header,
+.dark .header {
+  background: var(--fd-bg-header);
+  border-bottom-color: var(--fd-border-color);
+}
+
+html.dark .sidebar,
+.dark .sidebar {
+  background: var(--fd-bg-sidebar);
+  border-right-color: var(--fd-border-color);
+}
+
+html.dark .sidebar__header,
+.dark .sidebar__header {
+  border-bottom-color: var(--fd-border-color);
+}
+
+html.dark .sidebar__footer,
+.dark .sidebar__footer {
+  background: var(--fd-bg-sidebar);
+  border-top-color: var(--fd-border-color);
+}
+
+html.dark .header__search,
+.dark .header__search {
+  background: var(--fd-bg-input);
+  border-color: var(--fd-border-color);
+}
+
+html.dark .header__search:focus-within,
+.dark .header__search:focus-within {
+  background: var(--fd-bg-input);
+  border-color: var(--fd-color-primary);
+}
+
+html.dark .header__search-input,
+.dark .header__search-input {
+  color: var(--fd-text-primary);
+}
+
+html.dark .header__icon-btn,
+.dark .header__icon-btn {
+  background: var(--fd-bg-card);
+  border-color: var(--fd-border-color);
+  color: var(--fd-text-secondary);
+}
+
+html.dark .header__profile-btn,
+.dark .header__profile-btn {
+  background: var(--fd-bg-card);
+  border-color: var(--fd-border-color);
+}
+
+html.dark .btn-header-secondary,
+.dark .btn-header-secondary {
+  background: var(--fd-bg-card);
+  border-color: var(--fd-border-color);
+  color: var(--fd-text-primary);
+}
+
+html.dark .popover-panel,
+.dark .popover-panel {
+  background: var(--fd-bg-card);
+  border-color: var(--fd-border-color);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+html.dark .popover-header,
+.dark .popover-header {
+  background: var(--fd-bg-surface);
+  border-bottom-color: var(--fd-border-color);
+}
+
+html.dark .help-tip-item,
+.dark .help-tip-item {
+  background: var(--fd-bg-surface);
+  border-color: var(--fd-border-color);
+}
+
+html.dark .help-tip-icon,
+.dark .help-tip-icon {
+  background: var(--fd-bg-card);
+  border-color: var(--fd-border-color);
+}
+
+html.dark .fd-card,
+.dark .fd-card {
+  background: var(--fd-bg-card);
+  border-color: var(--fd-border-color);
+}
+
+html.dark .stat-card,
+.dark .stat-card {
+  background: var(--fd-bg-card);
+  border-color: var(--fd-border-color);
+}
+
+html.dark .modal-dialog,
+.dark .modal-dialog {
+  background: var(--fd-bg-card);
+  border-color: var(--fd-border-color);
+}
+
+html.dark .modal-header,
+.dark .modal-header {
+  background: var(--fd-bg-surface);
+  border-bottom-color: var(--fd-border-color);
+}
+
+html.dark .modal-footer,
+.dark .modal-footer {
+  background: var(--fd-bg-surface);
+  border-top-color: var(--fd-border-color);
+}
+
+html.dark .modal-close-btn,
+.dark .modal-close-btn {
+  background: var(--fd-bg-surface);
+  border-color: var(--fd-border-color);
+  color: var(--fd-text-secondary);
+}
+
+html.dark .form-input,
+html.dark .form-select,
+.dark .form-input,
+.dark .form-select {
+  background: var(--fd-bg-input);
+  border-color: var(--fd-border-color);
+  color: var(--fd-text-primary);
+}
+
+html.dark .btn-modal-cancel,
+.dark .btn-modal-cancel {
+  background: var(--fd-bg-surface);
+  border-color: var(--fd-border-color);
+  color: var(--fd-text-secondary);
+}
+
+html.dark .map-control-btn-stacked,
+.dark .map-control-btn-stacked {
+  background: var(--fd-bg-card);
+  border-color: var(--fd-border-color);
+  color: var(--fd-text-primary);
+}
+
+html.dark .map-control-btn-stacked:hover,
+.dark .map-control-btn-stacked:hover {
+  background: var(--fd-bg-surface);
+}
+
+/* Universal Smooth Transitions for Theme Switch */
+.header,
+.sidebar,
+.fd-card,
+.stat-card,
+.app-shell,
+.app-shell__main,
+.app-shell__content,
+.dashboard,
+.popover-panel,
+.modal-dialog,
+.sidebar__footer,
+.sidebar__header {
+  transition: background-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+

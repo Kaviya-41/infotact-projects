@@ -5,12 +5,14 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { User, Bell, Sliders, Map, Save, Check, AlertCircle, Loader2 } from 'lucide-react';
+import { User, Bell, Sliders, Map, Save, Check, AlertCircle, Loader2, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { useTheme } from '../context/ThemeContext';
 import '../styles/dashboard.css';
 
 const SettingsPage: React.FC = () => {
   const { user, updateProfile } = useAuth();
+  const { theme, setTheme } = useTheme();
   const [saved, setSaved] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
@@ -229,7 +231,134 @@ const SettingsPage: React.FC = () => {
           </form>
         </motion.div>
 
-        {/* Section 2: Fleet Telemetry Thresholds */}
+        {/* Section 2: Theme Preferences (Appearance) */}
+        <motion.div
+          className="fd-card fd-card--no-hover"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.05 }}
+          id="theme-preferences-card"
+        >
+          <div className="fd-card__header">
+            <h3 className="fd-card__title">
+              <span style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(37, 99, 235, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}>
+                <Sun size={14} />
+              </span>
+              Theme Preferences
+            </h3>
+          </div>
+
+          <div>
+            <div style={{ marginBottom: '14px' }}>
+              <div style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>
+                Appearance
+              </div>
+              <p style={{ fontSize: '12.5px', color: 'var(--fd-text-secondary)', marginTop: '2px' }}>
+                Choose how FleetDash looks across the application.
+              </p>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '16px' }} role="radiogroup" aria-label="Appearance Theme Selection">
+              {/* Light Theme Selectable Card */}
+              <button
+                type="button"
+                role="radio"
+                id="theme-option-light"
+                aria-checked={theme === 'light'}
+                aria-label="Select Light Theme"
+                onClick={() => setTheme('light')}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '16px 20px', borderRadius: '12px',
+                  backgroundColor: theme === 'light' ? 'rgba(37, 99, 235, 0.08)' : 'var(--fd-bg-surface)',
+                  border: theme === 'light' ? '2px solid #2563EB' : '1px solid var(--fd-border-color)',
+                  cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'left',
+                  boxShadow: theme === 'light' ? '0 0 0 3px rgba(37, 99, 235, 0.15)' : 'none'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{
+                    width: '38px', height: '38px', borderRadius: '10px',
+                    backgroundColor: theme === 'light' ? '#FFFFFF' : 'var(--fd-bg-card)',
+                    border: '1px solid var(--fd-border-color)',
+                    color: '#F59E0B', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 1px 3px rgba(15, 23, 42, 0.06)'
+                  }}>
+                    <Sun size={20} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>
+                      Light
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--fd-text-secondary)', marginTop: '2px' }}>
+                      Clean high-contrast daytime interface
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{
+                  width: '22px', height: '22px', borderRadius: '50%',
+                  border: theme === 'light' ? '2px solid #2563EB' : '1.5px solid var(--fd-border-color)',
+                  backgroundColor: theme === 'light' ? '#2563EB' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#FFFFFF'
+                }}>
+                  {theme === 'light' && <Check size={13} strokeWidth={3} />}
+                </div>
+              </button>
+
+              {/* Dark Theme Selectable Card */}
+              <button
+                type="button"
+                role="radio"
+                id="theme-option-dark"
+                aria-checked={theme === 'dark'}
+                aria-label="Select Dark Theme"
+                onClick={() => setTheme('dark')}
+                style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '16px 20px', borderRadius: '12px',
+                  backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.16)' : 'var(--fd-bg-surface)',
+                  border: theme === 'dark' ? '2px solid #3B82F6' : '1px solid var(--fd-border-color)',
+                  cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'left',
+                  boxShadow: theme === 'dark' ? '0 0 0 3px rgba(59, 130, 246, 0.25)' : 'none'
+                }}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+                  <div style={{
+                    width: '38px', height: '38px', borderRadius: '10px',
+                    backgroundColor: theme === 'dark' ? '#1E293B' : 'var(--fd-bg-card)',
+                    border: '1px solid var(--fd-border-color)',
+                    color: '#60A5FA', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)'
+                  }}>
+                    <Moon size={20} />
+                  </div>
+                  <div>
+                    <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>
+                      Dark
+                    </div>
+                    <div style={{ fontSize: '12px', color: 'var(--fd-text-secondary)', marginTop: '2px' }}>
+                      Deep navy command center night view
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{
+                  width: '22px', height: '22px', borderRadius: '50%',
+                  border: theme === 'dark' ? '2px solid #3B82F6' : '1.5px solid var(--fd-border-color)',
+                  backgroundColor: theme === 'dark' ? '#3B82F6' : 'transparent',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#FFFFFF'
+                }}>
+                  {theme === 'dark' && <Check size={13} strokeWidth={3} />}
+                </div>
+              </button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Section 3: Fleet Telemetry Thresholds */}
         <motion.div
           className="fd-card fd-card--no-hover"
           initial={{ opacity: 0, y: 10 }}
