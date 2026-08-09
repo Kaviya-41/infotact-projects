@@ -6,7 +6,7 @@
  * - Right: "Create Trip", "+ Add Vehicle", Notifications (3), Help, Profile Menu
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Search, Bell, Plus, Route as RouteIcon, Wifi, Server, Radio,
@@ -14,6 +14,7 @@ import {
   User as UserIcon, Settings, LogOut, Shield, CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { SAMPLE_MARKERS, type VehicleMarker } from './MapPlaceholder';
 import '../styles/dashboard.css';
 
 interface HeaderProps {
@@ -85,13 +86,29 @@ const Header: React.FC<HeaderProps> = ({
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
-  // Search input state
+  // Search input & focus state
   const [searchQuery, setSearchQuery] = useState('');
+  const [isSearchFocused, setIsSearchFocused] = useState(false);
 
-  // Refs for clicking outside popovers
+  // Refs for clicking outside popovers & search
   const notificationRef = useRef<HTMLDivElement>(null);
   const helpRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
+  const searchRef = useRef<HTMLDivElement>(null);
+
+  // Search results filtered from existing FleetDash sample vehicles & telemetry
+  const searchResults = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return [];
+    return SAMPLE_MARKERS.filter((v) =>
+      v.id.toLowerCase().includes(q) ||
+      v.name.toLowerCase().includes(q) ||
+      v.driver.toLowerCase().includes(q) ||
+      v.status.toLowerCase().includes(q) ||
+      v.route.origin.toLowerCase().includes(q) ||
+      v.route.destination.toLowerCase().includes(q)
+    );
+  }, [searchQuery]);
 
   // Add Vehicle form state
   const [vehicleId, setVehicleId] = useState('FLT-015');
@@ -145,7 +162,7 @@ const Header: React.FC<HeaderProps> = ({
     },
   ]);
 
-  // Click outside listener for dropdowns
+  // Click outside listener for dropdowns & search
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
@@ -157,10 +174,41 @@ const Header: React.FC<HeaderProps> = ({
       if (profileRef.current && !profileRef.current.contains(event.target as Node)) {
         setIsProfileOpen(false);
       }
+      if (searchRef.current && !searchRef.current.contains(event.target as Node)) {
+        setIsSearchFocused(false);
+      }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Keyboard Escape key handler to dismiss open overlays/modals
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setIsNotificationsOpen(false);
+        setIsHelpOpen(false);
+        setIsProfileOpen(false);
+        setIsSearchFocused(false);
+        setIsAddVehicleOpen(false);
+        setIsCreateTripOpen(false);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
+  // Body scroll lock management when modals are open
+  useEffect(() => {
+    if (isAddVehicleOpen || isCreateTripOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [isAddVehicleOpen, isCreateTripOpen]);
 
   const triggerToast = (msg: string) => {
     setToastMessage(msg);
@@ -180,8 +228,15 @@ const Header: React.FC<HeaderProps> = ({
   };
 
   const handleSignOut = () => {
+    setIsProfileOpen(false);
     logout();
     navigate('/login');
+  };
+
+  const handleSelectSearchResult = (v: VehicleMarker) => {
+    setIsSearchFocused(false);
+    setSearchQuery('');
+    navigate('/live-map', { state: { selectedVehicleId: v.id } });
   };
 
   return (
@@ -431,16 +486,106 @@ const Header: React.FC<HeaderProps> = ({
 
         {/* ROW 2: Search (Left) | Create Trip & Add Vehicle (Right) */}
         <div className="header__action-row">
-          <div className="header__search">
+          <div className="header__search" ref={searchRef}>
             <Search size={13} className="header__search-icon" />
             <input
               type="search"
               className="header__search-input"
-              placeholder="Search vehicles, routes..."
+              placeholder="Search vehicles, routes, drivers..."
               aria-label="Search vehicles, drivers, routes or trips"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setIsSearchFocused(true);
+              }}
+              onFocus={() => setIsSearchFocused(true)}
             />
+            {searchQuery.trim().length > 0 && (
+              <button
+                type="button"
+                className="header__search-clear-btn"
+                onClick={() => {
+                  setSearchQuery('');
+                  setIsSearchFocused(false);
+                }}
+                aria-label="Clear search"
+                title="Clear search"
+              >
+                <X size={13} />
+              </button>
+            )}
+
+            {/* Search Results Popover */}
+            {isSearchFocused && searchQuery.trim().length > 0 && (
+              <div className="popover-panel popover-panel--search" role="listbox" aria-label="Search Results">
+                <div className="popover-header">
+                  <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>
+                    Matching Telemetry Units ({searchResults.length})
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setIsSearchFocused(false)}
+                    style={{ fontSize: '11px', color: 'var(--fd-text-muted)', background: 'none', border: 'none', cursor: 'pointer' }}
+                  >
+                    Close
+                  </button>
+                </div>
+
+                <div className="popover-body" style={{ maxHeight: '280px' }}>
+                  {searchResults.length === 0 ? (
+                    <div style={{ padding: '20px 16px', textAlign: 'center', color: 'var(--fd-text-muted)', fontSize: '12.5px' }}>
+                      <AlertCircle size={20} style={{ margin: '0 auto 6px', color: 'var(--fd-text-muted)' }} />
+                      <div>No vehicles or routes matching "{searchQuery}"</div>
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery('')}
+                        style={{ marginTop: '8px', fontSize: '11.5px', color: 'var(--fd-color-primary)', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 600 }}
+                      >
+                        Clear Search
+                      </button>
+                    </div>
+                  ) : (
+                    searchResults.map((v) => (
+                      <button
+                        key={v.id}
+                        type="button"
+                        className="search-result-item"
+                        onClick={() => handleSelectSearchResult(v)}
+                      >
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', minWidth: 0 }}>
+                          <span style={{
+                            padding: '2px 6px', borderRadius: '4px', fontSize: '10.5px', fontWeight: 700,
+                            backgroundColor: 'var(--fd-color-primary-light)', color: 'var(--fd-color-primary)',
+                            border: '1px solid var(--fd-border-color)', flexShrink: 0
+                          }}>
+                            {v.id}
+                          </span>
+                          <div style={{ minWidth: 0 }}>
+                            <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--fd-text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {v.name}
+                            </div>
+                            <div style={{ fontSize: '11px', color: 'var(--fd-text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                              {v.driver} • {v.route.origin} → {v.route.destination}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
+                          <span style={{
+                            fontSize: '10px', fontWeight: 700, padding: '1px 6px', borderRadius: '4px',
+                            backgroundColor: v.status === 'Moving' || v.status === 'Online' ? 'var(--fd-color-success-bg)' : v.status === 'Idle' ? 'rgba(245,158,11,0.08)' : 'rgba(239,68,68,0.08)',
+                            color: v.status === 'Moving' || v.status === 'Online' ? 'var(--fd-color-success)' : v.status === 'Idle' ? '#F59E0B' : '#EF4444',
+                            border: `1px solid ${v.status === 'Moving' || v.status === 'Online' ? 'var(--fd-color-success-border)' : 'rgba(245,158,11,0.25)'}`
+                          }}>
+                            {v.status}
+                          </span>
+                        </div>
+                      </button>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
 
           <div className="header__action-btns">
@@ -602,10 +747,10 @@ const Header: React.FC<HeaderProps> = ({
           >
             <div className="modal-header">
               <div>
-                <h3 id="create-trip-title" style={{ fontSize: '16px', fontWeight: 700, color: '#0F172A' }}>
+                <h3 id="create-trip-title" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>
                   Create New Trip
                 </h3>
-                <p style={{ fontSize: '11.5px', color: '#64748B', marginTop: '1px' }}>
+                <p style={{ fontSize: '11.5px', color: 'var(--fd-text-secondary)', marginTop: '1px' }}>
                   Dispatch an active route to a fleet vehicle
                 </p>
               </div>
