@@ -30,17 +30,17 @@ export const FleetStatusSummaryCard: React.FC<FleetStatusSummaryCardProps> = ({
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{
               width: '32px', height: '32px', borderRadius: '8px',
-              backgroundColor: 'rgba(16, 185, 129, 0.08)',
-              border: '1px solid rgba(16, 185, 129, 0.2)',
-              color: '#10B981', display: 'flex', alignItems: 'center', justifyContent: 'center'
+              backgroundColor: 'var(--fd-color-success-bg)',
+              border: '1px solid var(--fd-color-success-border)',
+              color: 'var(--fd-color-success)', display: 'flex', alignItems: 'center', justifyContent: 'center'
             }}>
               <Truck size={16} />
             </div>
             <div>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--fd-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Fleet Operations Status
               </div>
-              <div style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A' }}>
+              <div style={{ fontSize: '15px', fontWeight: 800, color: 'var(--fd-text-primary)' }}>
                 {selectedVehicleId ? `Selected: ${selectedVehicle.id}` : 'Fleet Status Summary'}
               </div>
             </div>
@@ -48,8 +48,8 @@ export const FleetStatusSummaryCard: React.FC<FleetStatusSummaryCardProps> = ({
 
           <span style={{
             padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
-            backgroundColor: 'rgba(37, 99, 235, 0.08)', color: '#2563EB',
-            border: '1px solid rgba(37, 99, 235, 0.2)'
+            backgroundColor: 'var(--fd-color-primary-light)', color: 'var(--fd-color-primary)',
+            border: '1px solid var(--fd-border-color)'
           }}>
             42 Total Units
           </span>
@@ -57,36 +57,36 @@ export const FleetStatusSummaryCard: React.FC<FleetStatusSummaryCardProps> = ({
 
         {/* Selected Vehicle Quick Telemetry Bar */}
         <div style={{
-          padding: '12px 14px', borderRadius: '10px', backgroundColor: '#F8FAFC',
-          border: '1px solid #E2E8F0', marginBottom: '14px'
+          padding: '12px 14px', borderRadius: '10px', backgroundColor: 'var(--fd-bg-surface)',
+          border: '1px solid var(--fd-border-subtle)', marginBottom: '14px'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
               <span style={{
                 padding: '2px 8px', borderRadius: '6px', fontSize: '11px', fontWeight: 800,
-                backgroundColor: '#0F172A', color: '#FFFFFF'
+                backgroundColor: 'var(--fd-color-primary)', color: '#FFFFFF'
               }}>
                 {selectedVehicle.id}
               </span>
-              <span style={{ fontSize: '12px', fontWeight: 600, color: '#0F172A' }}>
+              <span style={{ fontSize: '12px', fontWeight: 600, color: 'var(--fd-text-primary)' }}>
                 {selectedVehicle.driver}
               </span>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700, color: '#2563EB' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: 700, color: 'var(--fd-color-primary)' }}>
               <Gauge size={13} />
               <span>{selectedVehicle.speed} km/h</span>
             </div>
           </div>
 
           {/* Route & Progress */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11.5px', color: '#64748B', marginBottom: '6px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: '11.5px', color: 'var(--fd-text-secondary)', marginBottom: '6px' }}>
             <span>{selectedVehicle.route.origin} → {selectedVehicle.route.destination}</span>
-            <span style={{ fontWeight: 600, color: '#0F172A' }}>Trip: {selectedVehicle.tripProgress}%</span>
+            <span style={{ fontWeight: 600, color: 'var(--fd-text-primary)' }}>Trip: {selectedVehicle.tripProgress}%</span>
           </div>
 
           {/* Trip Progress Bar */}
-          <div style={{ height: '6px', width: '100%', backgroundColor: '#E2E8F0', borderRadius: '9999px', overflow: 'hidden' }}>
-            <div style={{ height: '100%', width: `${selectedVehicle.tripProgress}%`, backgroundColor: '#2563EB', borderRadius: '9999px' }} />
+          <div style={{ height: '6px', width: '100%', backgroundColor: 'var(--fd-border-subtle)', borderRadius: '9999px', overflow: 'hidden' }}>
+            <div style={{ height: '100%', width: `${selectedVehicle.tripProgress}%`, backgroundColor: 'var(--fd-color-primary)', borderRadius: '9999px' }} />
           </div>
         </div>
 
@@ -95,13 +95,13 @@ export const FleetStatusSummaryCard: React.FC<FleetStatusSummaryCardProps> = ({
           {/* Online */}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 600, marginBottom: '3px' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#0F172A' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--fd-text-primary)' }}>
                 <CheckCircle2 size={12} color="#10B981" />
                 <span>Online Vehicles</span>
               </span>
               <span style={{ color: '#10B981', fontWeight: 700 }}>35 Units (83%)</span>
             </div>
-            <div style={{ height: '6px', width: '100%', backgroundColor: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
+            <div style={{ height: '6px', width: '100%', backgroundColor: 'var(--fd-border-subtle)', borderRadius: '9999px', overflow: 'hidden' }}>
               <div style={{ height: '100%', width: '83%', backgroundColor: '#10B981', borderRadius: '9999px' }} />
             </div>
           </div>
@@ -109,27 +109,27 @@ export const FleetStatusSummaryCard: React.FC<FleetStatusSummaryCardProps> = ({
           {/* Active Trips */}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 600, marginBottom: '3px' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#0F172A' }}>
-                <PlayCircle size={12} color="#2563EB" />
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--fd-text-primary)' }}>
+                <PlayCircle size={12} color="var(--fd-color-primary)" />
                 <span>Active Trips Dispatched</span>
               </span>
-              <span style={{ color: '#2563EB', fontWeight: 700 }}>18 Units (43%)</span>
+              <span style={{ color: 'var(--fd-color-primary)', fontWeight: 700 }}>18 Units (43%)</span>
             </div>
-            <div style={{ height: '6px', width: '100%', backgroundColor: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
-              <div style={{ height: '100%', width: '43%', backgroundColor: '#2563EB', borderRadius: '9999px' }} />
+            <div style={{ height: '6px', width: '100%', backgroundColor: 'var(--fd-border-subtle)', borderRadius: '9999px', overflow: 'hidden' }}>
+              <div style={{ height: '100%', width: '43%', backgroundColor: 'var(--fd-color-primary)', borderRadius: '9999px' }} />
             </div>
           </div>
 
           {/* Idle */}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 600, marginBottom: '3px' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#0F172A' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--fd-text-primary)' }}>
                 <AlertTriangle size={12} color="#F59E0B" />
                 <span>Idle / Standby</span>
               </span>
               <span style={{ color: '#F59E0B', fontWeight: 700 }}>5 Units (12%)</span>
             </div>
-            <div style={{ height: '6px', width: '100%', backgroundColor: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
+            <div style={{ height: '6px', width: '100%', backgroundColor: 'var(--fd-border-subtle)', borderRadius: '9999px', overflow: 'hidden' }}>
               <div style={{ height: '100%', width: '12%', backgroundColor: '#F59E0B', borderRadius: '9999px' }} />
             </div>
           </div>
@@ -137,13 +137,13 @@ export const FleetStatusSummaryCard: React.FC<FleetStatusSummaryCardProps> = ({
           {/* Offline */}
           <div>
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11.5px', fontWeight: 600, marginBottom: '3px' }}>
-              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: '#0F172A' }}>
+              <span style={{ display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--fd-text-primary)' }}>
                 <WifiOff size={12} color="#EF4444" />
                 <span>Offline / Maintenance</span>
               </span>
               <span style={{ color: '#EF4444', fontWeight: 700 }}>7 Units (17%)</span>
             </div>
-            <div style={{ height: '6px', width: '100%', backgroundColor: '#F1F5F9', borderRadius: '9999px', overflow: 'hidden' }}>
+            <div style={{ height: '6px', width: '100%', backgroundColor: 'var(--fd-border-subtle)', borderRadius: '9999px', overflow: 'hidden' }}>
               <div style={{ height: '100%', width: '17%', backgroundColor: '#EF4444', borderRadius: '9999px' }} />
             </div>
           </div>
@@ -152,12 +152,12 @@ export const FleetStatusSummaryCard: React.FC<FleetStatusSummaryCardProps> = ({
 
       {/* Footer Action */}
       {onOpenDrawer && (
-        <div style={{ borderTop: '1px solid #E2E8F0', paddingTop: '10px', marginTop: '12px', display: 'flex', justifyContent: 'flex-end' }}>
+        <div style={{ borderTop: '1px solid var(--fd-border-subtle)', paddingTop: '10px', marginTop: '12px', display: 'flex', justifyContent: 'flex-end' }}>
           <button
             onClick={() => onOpenDrawer(selectedVehicle.id)}
             style={{
               display: 'flex', alignItems: 'center', gap: '4px',
-              fontSize: '12px', fontWeight: 700, color: '#2563EB',
+              fontSize: '12px', fontWeight: 700, color: 'var(--fd-color-primary)',
               background: 'none', border: 'none', cursor: 'pointer'
             }}
           >

@@ -116,19 +116,19 @@ const AlertsPage: React.FC = () => {
       </div>
 
       {/* Filter Tabs & Toolbar */}
-      <div className="fd-card fd-card--compact" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Filter size={15} color="#64748B" />
-          <span style={{ fontSize: '13px', fontWeight: 600, color: '#475569', marginRight: '8px' }}>Filter Severity:</span>
+      <div className="fd-card fd-card--compact" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', flexWrap: 'wrap' }}>
+          <Filter size={15} color="var(--fd-text-secondary)" />
+          <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-secondary)', marginRight: '8px' }}>Filter Severity:</span>
           {(['All', 'Critical', 'Warning', 'Info', 'Resolved'] as const).map((tab) => (
             <button
               key={tab}
               onClick={() => setFilter(tab)}
               style={{
                 padding: '6px 14px', borderRadius: '8px', fontSize: '12px', fontWeight: 600,
-                border: filter === tab ? '1px solid #2563EB' : '1px solid #E2E8F0',
-                backgroundColor: filter === tab ? '#2563EB' : '#FFFFFF',
-                color: filter === tab ? '#FFFFFF' : '#475569',
+                border: filter === tab ? '1px solid var(--fd-color-primary)' : '1px solid var(--fd-border-color)',
+                backgroundColor: filter === tab ? 'var(--fd-color-primary)' : 'var(--fd-bg-surface)',
+                color: filter === tab ? '#FFFFFF' : 'var(--fd-text-secondary)',
                 cursor: 'pointer', transition: 'all 0.15s ease',
               }}
             >
@@ -137,7 +137,7 @@ const AlertsPage: React.FC = () => {
           ))}
         </div>
 
-        <span style={{ fontSize: '12px', color: '#64748B', fontWeight: 500 }}>
+        <span style={{ fontSize: '12px', color: 'var(--fd-text-muted)', fontWeight: 500 }}>
           Showing {filteredAlerts.length} of {alertsList.length} alerts
         </span>
       </div>
@@ -148,10 +148,10 @@ const AlertsPage: React.FC = () => {
           {filteredAlerts.map((alt) => {
             const isCritical = alt.severity === 'Critical';
             const isWarning = alt.severity === 'Warning';
-            const borderColor = isCritical ? 'rgba(239, 68, 68, 0.2)' : isWarning ? 'rgba(245, 158, 11, 0.2)' : 'rgba(14, 165, 233, 0.2)';
-            const badgeBg = isCritical ? '#FEF2F2' : isWarning ? '#FFFBEB' : '#F0F9FF';
-            const badgeColor = isCritical ? '#DC2626' : isWarning ? '#D97706' : '#0284C7';
-            const badgeBorder = isCritical ? '#FCA5A5' : isWarning ? '#FDE68A' : '#BAE6FD';
+            const borderColor = isCritical ? 'rgba(239, 68, 68, 0.25)' : isWarning ? 'rgba(245, 158, 11, 0.25)' : 'rgba(6, 182, 212, 0.25)';
+            const badgeBg = isCritical ? 'rgba(239, 68, 68, 0.08)' : isWarning ? 'rgba(245, 158, 11, 0.08)' : 'rgba(6, 182, 212, 0.08)';
+            const badgeColor = isCritical ? '#EF4444' : isWarning ? '#F59E0B' : '#06B6D4';
+            const badgeBorder = isCritical ? 'rgba(239, 68, 68, 0.25)' : isWarning ? 'rgba(245, 158, 11, 0.25)' : 'rgba(6, 182, 212, 0.25)';
 
             return (
               <motion.div
@@ -167,7 +167,7 @@ const AlertsPage: React.FC = () => {
                   display: 'flex', flexDirection: 'column', gap: '12px', padding: '20px',
                 }}
               >
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <span style={{
                       display: 'inline-flex', alignItems: 'center', gap: '4px',
@@ -178,57 +178,57 @@ const AlertsPage: React.FC = () => {
                       {alt.severity.toUpperCase()}
                     </span>
 
-                    <span style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A' }}>
+                    <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--fd-text-primary)' }}>
                       {alt.vehicleId}
                     </span>
-                    <span style={{ fontSize: '13px', color: '#64748B' }}>({alt.vehicleName})</span>
+                    <span style={{ fontSize: '13px', color: 'var(--fd-text-muted)' }}>({alt.vehicleName})</span>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                     {alt.status === 'Acknowledged' && (
-                      <span style={{ fontSize: '11px', fontWeight: 600, color: '#0EA5E9', backgroundColor: '#F0F9FF', padding: '2px 8px', borderRadius: '4px', border: '1px solid #BAE6FD' }}>
+                      <span style={{ fontSize: '11px', fontWeight: 600, color: '#06B6D4', backgroundColor: 'rgba(6, 182, 212, 0.08)', padding: '2px 8px', borderRadius: '4px', border: '1px solid rgba(6, 182, 212, 0.25)' }}>
                         ● Acknowledged
                       </span>
                     )}
-                    <span className="tabular-nums" style={{ fontSize: '12px', color: '#94A3B8', fontWeight: 500 }}>
+                    <span className="tabular-nums" style={{ fontSize: '12px', color: 'var(--fd-text-muted)', fontWeight: 500 }}>
                       {alt.timestamp}
                     </span>
                   </div>
                 </div>
 
                 <div>
-                  <h4 style={{ fontSize: '15px', fontWeight: 700, color: '#0F172A', marginBottom: '4px' }}>
+                  <h4 style={{ fontSize: '15px', fontWeight: 700, color: 'var(--fd-text-primary)', marginBottom: '4px' }}>
                     {alt.title}
                   </h4>
-                  <p style={{ fontSize: '13px', color: '#475569', lineHeight: 1.5 }}>
+                  <p style={{ fontSize: '13px', color: 'var(--fd-text-secondary)', lineHeight: 1.5 }}>
                     {alt.description}
                   </p>
-                  <div style={{ fontSize: '12px', color: '#94A3B8', marginTop: '6px' }}>
-                    Location: <strong style={{ color: '#64748B' }}>{alt.location}</strong>
+                  <div style={{ fontSize: '12px', color: 'var(--fd-text-muted)', marginTop: '6px' }}>
+                    Location: <strong style={{ color: 'var(--fd-text-secondary)' }}>{alt.location}</strong>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid #F1F5F9' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingTop: '12px', borderTop: '1px solid var(--fd-border-subtle)' }}>
                   <button
                     onClick={() => handleAcknowledge(alt.id)}
                     disabled={alt.status !== 'Active'}
                     style={{
                       fontSize: '12px', fontWeight: 600, padding: '6px 12px', borderRadius: '6px',
-                      border: '1px solid #E2E8F0', backgroundColor: '#FFFFFF',
-                      color: alt.status === 'Active' ? '#475569' : '#94A3B8',
+                      border: '1px solid var(--fd-border-color)', backgroundColor: 'var(--fd-bg-surface)',
+                      color: alt.status === 'Active' ? 'var(--fd-text-primary)' : 'var(--fd-text-muted)',
                       cursor: alt.status === 'Active' ? 'pointer' : 'default',
                       display: 'flex', alignItems: 'center', gap: '4px',
                     }}
                   >
-                    <CheckCircle2 size={13} color={alt.status !== 'Active' ? '#94A3B8' : '#10B981'} />
+                    <CheckCircle2 size={13} color={alt.status !== 'Active' ? 'var(--fd-text-muted)' : '#10B981'} />
                     {alt.status === 'Active' ? 'Acknowledge' : alt.status}
                   </button>
 
                   <button
                     onClick={() => setSelectedVehicleId(alt.vehicleId.startsWith('FLT-') ? alt.vehicleId : 'FLT-004')}
                     style={{
-                      fontSize: '13px', fontWeight: 700, color: '#2563EB',
+                      fontSize: '13px', fontWeight: 700, color: 'var(--fd-color-primary)',
                       backgroundColor: 'transparent', border: 'none', cursor: 'pointer',
                       display: 'flex', alignItems: 'center', gap: '4px', fontFamily: 'inherit',
                     }}

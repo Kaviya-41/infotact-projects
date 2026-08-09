@@ -142,9 +142,9 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
             style={{
               position: 'fixed', top: 0, right: 0, bottom: 0,
               width: '420px', maxWidth: '100vw',
-              backgroundColor: '#FFFFFF', boxShadow: '-10px 0 40px rgba(15, 23, 42, 0.15)',
+              backgroundColor: 'var(--fd-bg-elevated)', boxShadow: '-10px 0 40px rgba(0, 0, 0, 0.4)',
               zIndex: 100, display: 'flex', flexDirection: 'column',
-              borderLeft: '1px solid #E2E8F0',
+              borderLeft: '1px solid var(--fd-border-color)',
             }}
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
@@ -155,22 +155,22 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
           >
             {/* Drawer Header */}
             <div style={{
-              padding: '24px', borderBottom: '1px solid #E2E8F0',
+              padding: '24px', borderBottom: '1px solid var(--fd-border-subtle)',
               display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-              backgroundColor: '#F8FAFC',
+              backgroundColor: 'var(--fd-bg-surface)',
             }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{
                   width: '40px', height: '40px', borderRadius: '12px',
-                  backgroundColor: '#EFF6FF', color: '#2563EB',
+                  backgroundColor: 'var(--fd-color-primary-light)', color: 'var(--fd-color-primary)',
                   display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  border: '1px solid #DBEAFE',
+                  border: '1px solid var(--fd-border-color)',
                 }}>
                   <Truck size={20} />
                 </div>
                 <div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '18px', fontWeight: 800, color: '#0F172A' }}>{data.id}</span>
+                    <span style={{ fontSize: '18px', fontWeight: 800, color: 'var(--fd-text-primary)' }}>{data.id}</span>
                     <span style={{
                       fontSize: '11px', fontWeight: 700, padding: '2px 8px', borderRadius: '9999px',
                       backgroundColor: `${statusColor}14`, color: statusColor,
@@ -180,7 +180,7 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
                       {data.status.toUpperCase()}
                     </span>
                   </div>
-                  <div style={{ fontSize: '12px', color: '#64748B', marginTop: '2px' }}>{data.name}</div>
+                  <div style={{ fontSize: '12px', color: 'var(--fd-text-secondary)', marginTop: '2px' }}>{data.name}</div>
                 </div>
               </div>
 
@@ -188,8 +188,8 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
                 onClick={onClose}
                 style={{
                   width: '32px', height: '32px', borderRadius: '8px',
-                  border: '1px solid #E2E8F0', backgroundColor: '#FFFFFF',
-                  color: '#64748B', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: '1px solid var(--fd-border-color)', backgroundColor: 'var(--fd-bg-surface)',
+                  color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer', transition: 'all 0.15s ease',
                 }}
                 title="Close"
@@ -203,18 +203,18 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
               {/* Speed Hero Display */}
               <div style={{
                 textAlign: 'center', padding: '24px', borderRadius: '16px',
-                backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0',
+                backgroundColor: 'var(--fd-bg-card)', border: '1px solid var(--fd-border-color)',
               }}>
-                <div style={{ fontSize: '11px', fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--fd-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                   CURRENT VELOCITY
                 </div>
                 <div style={{
-                  fontSize: '56px', fontWeight: 800, color: '#2563EB',
+                  fontSize: '56px', fontWeight: 800, color: 'var(--fd-color-primary)',
                   fontFamily: 'var(--fd-font-mono)', lineHeight: 1, margin: '8px 0',
                 }}>
                   {data.speed}
                 </div>
-                <div style={{ fontSize: '12px', fontWeight: 600, color: '#64748B' }}>
+                <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--fd-text-muted)' }}>
                   Kilometers / Hour
                 </div>
               </div>
@@ -222,14 +222,14 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
               {/* Route Banner */}
               <div style={{
                 padding: '16px', borderRadius: '12px',
-                backgroundColor: '#EFF6FF', border: '1px solid #DBEAFE',
+                backgroundColor: 'var(--fd-color-primary-light)', border: '1px solid var(--fd-border-color)',
                 display: 'flex', alignItems: 'center', justifyContent: 'space-between',
               }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 700, color: '#0F172A' }}>
-                  <RouteIcon size={16} color="#2563EB" />
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '14px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>
+                  <RouteIcon size={16} color="var(--fd-color-primary)" />
                   <span>{data.route.origin} → {data.route.destination}</span>
                 </div>
-                <span style={{ fontSize: '12px', fontWeight: 700, color: '#2563EB', fontFamily: 'var(--fd-font-mono)' }}>
+                <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--fd-color-primary)', fontFamily: 'var(--fd-font-mono)' }}>
                   ETA {data.eta}
                 </span>
               </div>
@@ -237,18 +237,18 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
               {/* Grid Metrics */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
                 {/* Driver */}
-                <div style={{ padding: '14px', borderRadius: '12px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <User size={12} color="#2563EB" /> Driver
+                <div style={{ padding: '14px', borderRadius: '12px', backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <User size={12} color="var(--fd-color-primary)" /> Driver
                   </div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#0F172A', marginTop: '4px' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--fd-text-primary)', marginTop: '4px' }}>
                     {data.driver}
                   </div>
                 </div>
 
                 {/* Fuel */}
-                <div style={{ padding: '14px', borderRadius: '12px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                <div style={{ padding: '14px', borderRadius: '12px', backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Fuel size={12} color="#F59E0B" /> Fuel Level
                   </div>
                   <div style={{ fontSize: '14px', fontWeight: 700, color: data.fuel < 25 ? '#EF4444' : '#10B981', marginTop: '4px', fontFamily: 'var(--fd-font-mono)' }}>
@@ -257,9 +257,9 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
                 </div>
 
                 {/* Engine Health */}
-                <div style={{ padding: '14px', borderRadius: '12px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <Activity size={12} color="#10B981" /> Engine Health
+                <div style={{ padding: '14px', borderRadius: '12px', backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <Activity size={11} color="#10B981" /> Engine Health
                   </div>
                   <div style={{ fontSize: '14px', fontWeight: 700, color: '#10B981', marginTop: '4px', fontFamily: 'var(--fd-font-mono)' }}>
                     {data.engineHealth}%
@@ -267,55 +267,55 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
                 </div>
 
                 {/* Distance Today */}
-                <div style={{ padding: '14px', borderRadius: '12px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
-                  <div style={{ fontSize: '11px', fontWeight: 600, color: '#94A3B8', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    <MapPin size={12} color="#8B5CF6" /> Distance Today
+                <div style={{ padding: '14px', borderRadius: '12px', backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)' }}>
+                  <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <MapPin size={12} color="var(--fd-color-purple)" /> Distance Today
                   </div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: '#0F172A', marginTop: '4px', fontFamily: 'var(--fd-font-mono)' }}>
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: 'var(--fd-text-primary)', marginTop: '4px', fontFamily: 'var(--fd-font-mono)' }}>
                     {data.distanceToday} km
                   </div>
                 </div>
               </div>
 
               {/* Trip Progress Bar */}
-              <div style={{ padding: '16px', borderRadius: '12px', backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0' }}>
+              <div style={{ padding: '16px', borderRadius: '12px', backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '13px', fontWeight: 600, marginBottom: '6px' }}>
-                  <span style={{ color: '#475569' }}>Trip Progress</span>
-                  <span style={{ color: '#2563EB', fontFamily: 'var(--fd-font-mono)' }}>{data.tripProgress}%</span>
+                  <span style={{ color: 'var(--fd-text-secondary)' }}>Trip Progress</span>
+                  <span style={{ color: 'var(--fd-color-primary)', fontFamily: 'var(--fd-font-mono)' }}>{data.tripProgress}%</span>
                 </div>
-                <div style={{ height: '8px', backgroundColor: '#E2E8F0', borderRadius: '4px', overflow: 'hidden' }}>
-                  <div style={{ height: '100%', width: `${data.tripProgress}%`, backgroundColor: '#2563EB', borderRadius: '4px', transition: 'width 0.5s ease' }} />
+                <div style={{ height: '8px', backgroundColor: 'var(--fd-border-subtle)', borderRadius: '4px', overflow: 'hidden' }}>
+                  <div style={{ height: '100%', width: `${data.tripProgress}%`, backgroundColor: 'var(--fd-color-primary)', borderRadius: '4px', transition: 'width 0.5s ease' }} />
                 </div>
               </div>
 
               {/* Last Location */}
-              <div style={{ fontSize: '12px', color: '#64748B', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                <Clock size={12} color="#94A3B8" />
-                <span>Location: <strong style={{ color: '#0F172A' }}>{data.lastLocation}</strong></span>
+              <div style={{ fontSize: '12px', color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <Clock size={12} color="var(--fd-text-muted)" />
+                <span>Location: <strong style={{ color: 'var(--fd-text-primary)' }}>{data.lastLocation}</strong></span>
               </div>
             </div>
 
             {/* Drawer Footer Actions */}
             <div style={{
-              padding: '20px 24px', borderTop: '1px solid #E2E8F0',
-              display: 'flex', gap: '12px', backgroundColor: '#F8FAFC',
+              padding: '20px 24px', borderTop: '1px solid var(--fd-border-subtle)',
+              display: 'flex', gap: '12px', backgroundColor: 'var(--fd-bg-surface)',
             }}>
               <button
                 style={{
                   flex: 1, padding: '10px', borderRadius: '10px',
-                  backgroundColor: '#FFFFFF', color: '#0F172A',
-                  border: '1px solid #E2E8F0', fontSize: '13px', fontWeight: 600,
+                  backgroundColor: 'var(--fd-bg-surface)', color: 'var(--fd-text-primary)',
+                  border: '1px solid var(--fd-border-color)', fontSize: '13px', fontWeight: 600,
                   cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                 }}
                 onClick={onClose}
               >
-                <Compass size={14} color="#2563EB" /> Locate on Map
+                <Compass size={14} color="var(--fd-color-primary)" /> Locate on Map
               </button>
 
               <button
                 style={{
                   flex: 1, padding: '10px', borderRadius: '10px',
-                  backgroundColor: '#2563EB', color: '#FFFFFF',
+                  backgroundColor: 'var(--fd-color-primary)', color: '#FFFFFF',
                   border: 'none', fontSize: '13px', fontWeight: 700,
                   cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
                   boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',

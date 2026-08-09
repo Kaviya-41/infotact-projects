@@ -123,70 +123,73 @@
 /* ── Dark Theme Tokens ── */
 html.dark,
 .dark {
-  /* ── Core Dark Theme Surfaces ── */
-  --fd-bg-page:         #0B0F19; /* Deep charcoal / navy background */
-  --fd-bg-card:         #111827; /* Dark navy card background */
-  --fd-bg-surface:      #1F2937; /* Nested surface */
-  --fd-bg-elevated:     #1F2937; /* Dropdowns / modals */
-  --fd-bg-sidebar:      #0D1322; /* Sidebar background */
-  --fd-bg-header:       #0D1322; /* Header background */
-  --fd-bg-input:        #161F33; /* Dark input background */
-  --fd-bg-hover:        #1E293B; /* Hover state */
+  /* ── Core Dark Theme Surfaces (Layered Contrast) ── */
+  --fd-bg-page:         #080D18; /* Deep canvas page background */
+  --fd-bg-sidebar:      #0B1220; /* Fixed navigation sidebar */
+  --fd-bg-header:       #0D1422; /* Top global sticky header */
+  --fd-bg-card:         #111A2A; /* Primary telemetry / dashboard cards */
+  --fd-bg-surface:      #151F31; /* Secondary nested cards & containers */
+  --fd-bg-elevated:     #192438; /* Dropdowns, popovers, modals & HUD */
+  --fd-bg-input:        #0D1626; /* Dark crisp form inputs */
+  --fd-bg-hover:        #1A263A; /* Interactive hover surfaces */
 
   /* ── Typography Colors ── */
   --fd-text-primary:    #F8FAFC;
-  --fd-text-secondary:  #94A3B8;
-  --fd-text-muted:      #64748B;
+  --fd-text-secondary:  #A8B3C5;
+  --fd-text-muted:      #718096;
+  --fd-text-disabled:   #4B5A70;
   --fd-text-inverse:    #0F172A;
 
   /* ── Primary Brand ── */
   --fd-color-primary:       #3B82F6;
-  --fd-color-primary-hover:  #2563EB;
-  --fd-color-primary-light:  rgba(59, 130, 246, 0.16);
-  --fd-color-primary-glow:   rgba(59, 130, 246, 0.3);
+  --fd-color-primary-hover:  #60A5FA;
+  --fd-color-primary-light:  rgba(59, 130, 246, 0.12);
+  --fd-color-primary-glow:   rgba(59, 130, 246, 0.25);
 
   /* ── Purple Accents ── */
-  --fd-color-purple:        #A855F7;
-  --fd-color-purple-soft:   rgba(168, 85, 247, 0.16);
-  --fd-color-purple-border: rgba(168, 85, 247, 0.3);
+  --fd-color-purple:        #8B5CF6;
+  --fd-color-purple-soft:   rgba(139, 92, 246, 0.12);
+  --fd-color-purple-border: rgba(139, 92, 246, 0.25);
 
-  /* ── Status Colors ── */
+  /* ── Status & Telemetry Colors ── */
   --fd-color-success:     #10B981;
-  --fd-color-success-bg:  rgba(16, 185, 129, 0.14);
-  --fd-color-success-border: rgba(16, 185, 129, 0.3);
+  --fd-color-success-bg:  rgba(16, 185, 129, 0.08);
+  --fd-color-success-border: rgba(16, 185, 129, 0.25);
 
   --fd-color-warning:     #F59E0B;
-  --fd-color-warning-bg:  rgba(245, 158, 11, 0.14);
-  --fd-color-warning-border: rgba(245, 158, 11, 0.3);
+  --fd-color-warning-bg:  rgba(245, 158, 11, 0.08);
+  --fd-color-warning-border: rgba(245, 158, 11, 0.25);
 
   --fd-color-danger:      #EF4444;
-  --fd-color-danger-bg:   rgba(239, 68, 68, 0.14);
-  --fd-color-danger-border: rgba(239, 68, 68, 0.3);
+  --fd-color-danger-bg:   rgba(239, 68, 68, 0.08);
+  --fd-color-danger-border: rgba(239, 68, 68, 0.25);
 
-  --fd-color-maintenance: #A855F7;
-  --fd-color-maintenance-bg: rgba(168, 85, 247, 0.14);
-  --fd-color-maintenance-border: rgba(168, 85, 247, 0.3);
+  --fd-color-maintenance: #8B5CF6;
+  --fd-color-maintenance-bg: rgba(139, 92, 246, 0.08);
+  --fd-color-maintenance-border: rgba(139, 92, 246, 0.25);
 
-  --fd-color-info:        #38BDF8;
-  --fd-color-info-bg:     rgba(56, 189, 248, 0.14);
-  --fd-color-info-border: rgba(56, 189, 248, 0.3);
+  --fd-color-cyan:        #06B6D4;
+  --fd-color-electric:    #38BDF8;
+  --fd-color-info:        #06B6D4;
+  --fd-color-info-bg:     rgba(6, 182, 212, 0.08);
+  --fd-color-info-border: rgba(6, 182, 212, 0.25);
 
   /* ── Borders & Shadows ── */
-  --fd-border-color:     #1E293B;
-  --fd-border-subtle:    rgba(30, 41, 59, 0.8);
+  --fd-border-color:     #25334A;
+  --fd-border-subtle:    #1C293C;
   --fd-border-card:      1px solid var(--fd-border-color);
   --fd-border-strong:    1px solid #334155;
 
-  --fd-shadow-xs:   0 1px 2px rgba(0, 0, 0, 0.3);
-  --fd-shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.4);
-  --fd-shadow-md:   0 4px 12px rgba(0, 0, 0, 0.5);
-  --fd-shadow-lg:   0 10px 24px rgba(0, 0, 0, 0.6);
-  --fd-shadow-xl:   0 20px 40px rgba(0, 0, 0, 0.7);
+  --fd-shadow-xs:   0 1px 2px rgba(0, 0, 0, 0.15);
+  --fd-shadow-sm:   0 1px 3px rgba(0, 0, 0, 0.18), 0 1px 2px rgba(0, 0, 0, 0.12);
+  --fd-shadow-md:   0 4px 20px rgba(0, 0, 0, 0.20);
+  --fd-shadow-lg:   0 8px 30px rgba(0, 0, 0, 0.25);
+  --fd-shadow-xl:   0 12px 40px rgba(0, 0, 0, 0.35);
   --fd-shadow-glow-blue: 0 0 0 3px var(--fd-color-primary-glow);
 
   /* ── Glass / Backdrop ── */
-  --fd-glass-bg:        rgba(17, 24, 39, 0.9);
-  --fd-glass-border:     1px solid rgba(30, 41, 59, 0.8);
+  --fd-glass-bg:        rgba(25, 36, 56, 0.95);
+  --fd-glass-border:     1px solid #25334A;
 }
 
 /* ── Utility Classes ── */

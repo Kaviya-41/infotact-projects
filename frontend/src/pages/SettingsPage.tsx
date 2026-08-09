@@ -122,7 +122,7 @@ const SettingsPage: React.FC = () => {
               padding: '12px 16px', borderRadius: '10px',
               backgroundColor: 'rgba(16, 185, 129, 0.08)',
               border: '1px solid rgba(16, 185, 129, 0.25)',
-              color: '#065F46', display: 'flex', alignItems: 'center', gap: '8px',
+              color: theme === 'dark' ? '#6EE7B7' : '#065F46', display: 'flex', alignItems: 'center', gap: '8px',
               fontSize: '13px', fontWeight: 600
             }}
           >
@@ -140,7 +140,7 @@ const SettingsPage: React.FC = () => {
               padding: '12px 16px', borderRadius: '10px',
               backgroundColor: 'rgba(239, 68, 68, 0.08)',
               border: '1px solid rgba(239, 68, 68, 0.25)',
-              color: '#991B1B', display: 'flex', alignItems: 'center', gap: '8px',
+              color: theme === 'dark' ? '#FCA5A5' : '#991B1B', display: 'flex', alignItems: 'center', gap: '8px',
               fontSize: '13px', fontWeight: 600
             }}
           >
@@ -161,7 +161,7 @@ const SettingsPage: React.FC = () => {
         >
           <div className="fd-card__header">
             <h3 className="fd-card__title">
-              <span style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(37, 99, 235, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}>
+              <span style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--fd-color-primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fd-color-primary)' }}>
                 <User size={14} />
               </span>
               Profile & Account
@@ -170,7 +170,7 @@ const SettingsPage: React.FC = () => {
 
           <form onSubmit={handleSave} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>
-              <label htmlFor="settings-full-name" style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+              <label htmlFor="settings-full-name" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)', display: 'block', marginBottom: '6px' }}>
                 Full Name
               </label>
               <input
@@ -183,12 +183,13 @@ const SettingsPage: React.FC = () => {
                 }}
                 placeholder="Your full name"
                 required
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none' }}
+                className="form-input"
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
               />
             </div>
 
             <div>
-              <label htmlFor="settings-work-email" style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+              <label htmlFor="settings-work-email" style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)', display: 'block', marginBottom: '6px' }}>
                 Work Email
               </label>
               <input
@@ -201,31 +202,42 @@ const SettingsPage: React.FC = () => {
                 }}
                 placeholder="your.email@fleetdash.io"
                 required
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none' }}
+                className="form-input"
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
               />
             </div>
 
             <div>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)', display: 'block', marginBottom: '6px' }}>
                 Operational Role
               </label>
               <input
                 type="text"
                 value={user?.role || 'Fleet Dispatcher'}
                 readOnly
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', fontSize: '14px', color: '#64748B' }}
+                style={{
+                  width: '100%', padding: '10px 14px', borderRadius: '8px',
+                  border: '1px solid var(--fd-border-color)',
+                  backgroundColor: 'var(--fd-bg-surface)', fontSize: '14px',
+                  color: 'var(--fd-text-secondary)'
+                }}
               />
             </div>
 
             <div>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)', display: 'block', marginBottom: '6px' }}>
                 Organization
               </label>
               <input
                 type="text"
                 value={user?.company || 'LogiTech Logistics'}
                 readOnly
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', fontSize: '14px', color: '#64748B' }}
+                style={{
+                  width: '100%', padding: '10px 14px', borderRadius: '8px',
+                  border: '1px solid var(--fd-border-color)',
+                  backgroundColor: 'var(--fd-bg-surface)', fontSize: '14px',
+                  color: 'var(--fd-text-secondary)'
+                }}
               />
             </div>
           </form>
@@ -241,7 +253,7 @@ const SettingsPage: React.FC = () => {
         >
           <div className="fd-card__header">
             <h3 className="fd-card__title">
-              <span style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'rgba(37, 99, 235, 0.08)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#2563EB' }}>
+              <span style={{ width: '28px', height: '28px', borderRadius: '8px', background: 'var(--fd-color-primary-light)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--fd-color-primary)' }}>
                 <Sun size={14} />
               </span>
               Theme Preferences
@@ -272,7 +284,7 @@ const SettingsPage: React.FC = () => {
                   padding: '16px 20px', borderRadius: '12px',
                   backgroundColor: theme === 'light' ? 'rgba(37, 99, 235, 0.08)' : 'var(--fd-bg-surface)',
                   border: theme === 'light' ? '2px solid #2563EB' : '1px solid var(--fd-border-color)',
-                  cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'left',
+                  cursor: 'pointer', transition: 'all 0.25s ease', textAlign: 'left',
                   boxShadow: theme === 'light' ? '0 0 0 3px rgba(37, 99, 235, 0.15)' : 'none'
                 }}
               >
@@ -318,16 +330,16 @@ const SettingsPage: React.FC = () => {
                 style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '16px 20px', borderRadius: '12px',
-                  backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.16)' : 'var(--fd-bg-surface)',
+                  backgroundColor: theme === 'dark' ? 'rgba(59, 130, 246, 0.10)' : 'var(--fd-bg-surface)',
                   border: theme === 'dark' ? '2px solid #3B82F6' : '1px solid var(--fd-border-color)',
-                  cursor: 'pointer', transition: 'all 0.2s ease', textAlign: 'left',
-                  boxShadow: theme === 'dark' ? '0 0 0 3px rgba(59, 130, 246, 0.25)' : 'none'
+                  cursor: 'pointer', transition: 'all 0.25s ease', textAlign: 'left',
+                  boxShadow: theme === 'dark' ? '0 0 0 3px rgba(59, 130, 246, 0.20)' : 'none'
                 }}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
                   <div style={{
                     width: '38px', height: '38px', borderRadius: '10px',
-                    backgroundColor: theme === 'dark' ? '#1E293B' : 'var(--fd-bg-card)',
+                    backgroundColor: theme === 'dark' ? '#151F31' : 'var(--fd-bg-card)',
                     border: '1px solid var(--fd-border-color)',
                     color: '#60A5FA', display: 'flex', alignItems: 'center', justifyContent: 'center',
                     boxShadow: '0 1px 3px rgba(0, 0, 0, 0.2)'
@@ -376,44 +388,47 @@ const SettingsPage: React.FC = () => {
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '16px' }}>
             <div>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)', display: 'block', marginBottom: '6px' }}>
                 Speed Limit Warning (km/h)
               </label>
               <input
                 type="number"
                 value={speedLimit}
                 onChange={(e) => setSpeedLimit(e.target.value)}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none' }}
+                className="form-input"
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
               />
             </div>
 
             <div>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)', display: 'block', marginBottom: '6px' }}>
                 Idle Time Threshold (mins)
               </label>
               <input
                 type="number"
                 value={idleThreshold}
                 onChange={(e) => setIdleThreshold(e.target.value)}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none' }}
+                className="form-input"
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
               />
             </div>
 
             <div>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+              <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)', display: 'block', marginBottom: '6px' }}>
                 Fuel Warning Threshold (%)
               </label>
               <input
                 type="number"
                 value={fuelWarning}
                 onChange={(e) => setFuelWarning(e.target.value)}
-                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none' }}
+                className="form-input"
+                style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
               />
             </div>
           </div>
         </motion.div>
 
-        {/* Section 3: Notification & Map Preferences */}
+        {/* Section 4: Notification & Map Preferences */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
           {/* Notifications */}
           <motion.div
@@ -433,12 +448,12 @@ const SettingsPage: React.FC = () => {
 
             <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
               <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A' }}>Email Alert Digest</span>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)' }}>Email Alert Digest</span>
                 <input type="checkbox" checked={emailAlerts} onChange={(e) => setEmailAlerts(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: '#2563EB' }} />
               </label>
 
               <label style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', cursor: 'pointer' }}>
-                <span style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A' }}>Push Notifications (Browser)</span>
+                <span style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)' }}>Push Notifications (Browser)</span>
                 <input type="checkbox" checked={pushAlerts} onChange={(e) => setPushAlerts(e.target.checked)} style={{ width: '18px', height: '18px', accentColor: '#2563EB' }} />
               </label>
             </div>
@@ -462,13 +477,14 @@ const SettingsPage: React.FC = () => {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
               <div>
-                <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)', display: 'block', marginBottom: '6px' }}>
                   Default Map Mode
                 </label>
                 <select
                   value={mapTheme}
                   onChange={(e) => setMapTheme(e.target.value)}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none', backgroundColor: '#FFFFFF' }}
+                  className="form-select"
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
                 >
                   <option value="Light">Enterprise Light</option>
                   <option value="Satellite">Satellite View</option>
@@ -477,13 +493,14 @@ const SettingsPage: React.FC = () => {
               </div>
 
               <div>
-                <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+                <label style={{ fontSize: '13px', fontWeight: 600, color: 'var(--fd-text-primary)', display: 'block', marginBottom: '6px' }}>
                   Canvas FPS Rate
                 </label>
                 <select
                   value={refreshRate}
                   onChange={(e) => setRefreshRate(e.target.value)}
-                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none', backgroundColor: '#FFFFFF' }}
+                  className="form-select"
+                  style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', fontSize: '14px', outline: 'none' }}
                 >
                   <option value="60">60 FPS (Smooth)</option>
                   <option value="30">30 FPS (Power Saver)</option>

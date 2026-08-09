@@ -58,13 +58,13 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle, onClose, onOpenDrawer 
           bottom: '20px',
           right: '20px',
           zIndex: 30,
-          background: 'rgba(255, 255, 255, 0.97)',
+          background: 'var(--fd-bg-elevated)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          border: '1px solid #E2E8F0',
+          border: '1px solid var(--fd-border-color)',
           borderRadius: '14px',
           padding: '16px 20px',
-          boxShadow: '0 10px 30px rgba(15, 23, 42, 0.12), 0 1px 3px rgba(15, 23, 42, 0.04)',
+          boxShadow: '0 8px 30px rgba(0, 0, 0, 0.25)',
           width: '380px',
           maxWidth: 'calc(100% - 40px)',
         }}
@@ -72,7 +72,7 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle, onClose, onOpenDrawer 
         {/* Top Header: ID + Status + Speed + Close */}
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '16px', fontWeight: 800, color: '#0F172A', letterSpacing: '-0.3px' }}>
+            <span style={{ fontSize: '16px', fontWeight: 800, color: 'var(--fd-text-primary)', letterSpacing: '-0.3px' }}>
               {vehicle.id}
             </span>
             <span style={{
@@ -89,18 +89,18 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle, onClose, onOpenDrawer 
 
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ display: 'flex', alignItems: 'baseline', gap: '3px' }}>
-              <span style={{ fontSize: '24px', fontWeight: 800, color: '#2563EB', fontFamily: 'var(--fd-font-mono, monospace)', lineHeight: 1 }}>
+              <span style={{ fontSize: '24px', fontWeight: 800, color: 'var(--fd-color-primary)', fontFamily: 'var(--fd-font-mono, monospace)', lineHeight: 1 }}>
                 {vehicle.speed}
               </span>
-              <span style={{ fontSize: '11px', fontWeight: 600, color: '#64748B' }}>km/h</span>
+              <span style={{ fontSize: '11px', fontWeight: 600, color: 'var(--fd-text-secondary)' }}>km/h</span>
             </div>
             {onClose && (
               <button
                 onClick={onClose}
                 style={{
                   width: '24px', height: '24px', borderRadius: '6px',
-                  border: '1px solid #E2E8F0', background: '#FFFFFF',
-                  color: '#64748B', display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  border: '1px solid var(--fd-border-color)', background: 'var(--fd-bg-surface)',
+                  color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', justifyContent: 'center',
                   cursor: 'pointer', marginLeft: '4px',
                 }}
                 aria-label="Close vehicle HUD"
@@ -115,45 +115,45 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle, onClose, onOpenDrawer 
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
           padding: '7px 12px', borderRadius: '8px',
-          backgroundColor: '#F8FAFC', border: '1px solid #E2E8F0',
-          fontSize: '12px', fontWeight: 600, color: '#0F172A',
+          backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)',
+          fontSize: '12px', fontWeight: 600, color: 'var(--fd-text-primary)',
           marginBottom: '12px'
         }}>
-          <span style={{ color: '#0F172A' }}>{vehicle.route.origin}</span>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: '#2563EB' }}>
-            <span style={{ fontSize: '10.5px', color: '#64748B', fontWeight: 500 }}>Route</span>
+          <span style={{ color: 'var(--fd-text-primary)' }}>{vehicle.route.origin}</span>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '4px', color: 'var(--fd-color-primary)' }}>
+            <span style={{ fontSize: '10.5px', color: 'var(--fd-text-secondary)', fontWeight: 500 }}>Route</span>
             <ArrowRight size={13} />
           </div>
-          <span style={{ color: '#0F172A' }}>{vehicle.route.destination}</span>
+          <span style={{ color: 'var(--fd-text-primary)' }}>{vehicle.route.destination}</span>
         </div>
 
         {/* 2x2 Telemetry Metrics Grid */}
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px', marginBottom: '12px' }}>
           {/* Driver */}
-          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
-            <div style={{ fontSize: '10.5px', fontWeight: 600, color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-              <User size={11} color="#2563EB" />
+          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)' }}>
+            <div style={{ fontSize: '10.5px', fontWeight: 600, color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <User size={11} color="var(--fd-color-primary)" />
               <span>Driver</span>
             </div>
-            <div style={{ fontSize: '12.5px', fontWeight: 700, color: '#0F172A', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+            <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--fd-text-primary)', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
               {vehicle.driver}
             </div>
           </div>
 
           {/* ETA */}
-          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
-            <div style={{ fontSize: '10.5px', fontWeight: 600, color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
-              <Clock size={11} color="#2563EB" />
+          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)' }}>
+            <div style={{ fontSize: '10.5px', fontWeight: 600, color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+              <Clock size={11} color="var(--fd-color-primary)" />
               <span>Target ETA</span>
             </div>
-            <div style={{ fontSize: '12.5px', fontWeight: 700, color: '#0F172A', marginTop: '2px' }}>
+            <div style={{ fontSize: '12.5px', fontWeight: 700, color: 'var(--fd-text-primary)', marginTop: '2px' }}>
               {vehicle.eta}
             </div>
           </div>
 
           {/* Engine Status */}
-          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
-            <div style={{ fontSize: '10.5px', fontWeight: 600, color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)' }}>
+            <div style={{ fontSize: '10.5px', fontWeight: 600, color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
               <Activity size={11} color="#10B981" />
               <span>Engine</span>
             </div>
@@ -163,12 +163,12 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle, onClose, onOpenDrawer 
           </div>
 
           {/* Fuel Level */}
-          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: '#FFFFFF', border: '1px solid #E2E8F0' }}>
-            <div style={{ fontSize: '10.5px', fontWeight: 600, color: '#64748B', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+          <div style={{ padding: '8px 10px', borderRadius: '8px', backgroundColor: 'var(--fd-bg-surface)', border: '1px solid var(--fd-border-subtle)' }}>
+            <div style={{ fontSize: '10.5px', fontWeight: 600, color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
               <Fuel size={11} color="#F59E0B" />
               <span>Fuel / Battery</span>
             </div>
-            <div style={{ fontSize: '12.5px', fontWeight: 700, color: vehicle.fuel < 25 ? '#EF4444' : '#0F172A', marginTop: '2px' }}>
+            <div style={{ fontSize: '12.5px', fontWeight: 700, color: vehicle.fuel < 25 ? '#EF4444' : 'var(--fd-text-primary)', marginTop: '2px' }}>
               {vehicle.fuel}%
             </div>
           </div>
@@ -177,7 +177,7 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle, onClose, onOpenDrawer 
         {/* Live Telemetry Bar + Action */}
         <div style={{
           display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-          paddingTop: '8px', borderTop: '1px solid #E2E8F0', fontSize: '11px', color: '#64748B'
+          paddingTop: '8px', borderTop: '1px solid var(--fd-border-subtle)', fontSize: '11px', color: 'var(--fd-text-secondary)'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
             <Radio size={11} color="#10B981" />
@@ -188,7 +188,7 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle, onClose, onOpenDrawer 
             <button
               onClick={() => onOpenDrawer(vehicle.id)}
               style={{
-                fontSize: '11.5px', fontWeight: 700, color: '#2563EB',
+                fontSize: '11.5px', fontWeight: 700, color: 'var(--fd-color-primary)',
                 background: 'none', border: 'none', cursor: 'pointer',
                 display: 'flex', alignItems: 'center', gap: '3px'
               }}
@@ -197,7 +197,7 @@ const VehicleHUD: React.FC<VehicleHUDProps> = ({ vehicle, onClose, onOpenDrawer 
               <ArrowRight size={12} />
             </button>
           ) : (
-            <span style={{ fontSize: '10.5px', color: '#94A3B8' }}>
+            <span style={{ fontSize: '10.5px', color: 'var(--fd-text-muted)' }}>
               Updated: {vehicle.lastUpdate || 'Just now'}
             </span>
           )}

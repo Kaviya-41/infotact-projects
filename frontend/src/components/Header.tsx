@@ -206,13 +206,13 @@ const Header: React.FC<HeaderProps> = ({
                 <div className="popover-panel popover-panel--notifications" id="notifications-popover" role="dialog" aria-label="Fleet Alerts">
                   <div className="popover-header">
                     <div>
-                      <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#0F172A' }}>Fleet Alerts</div>
-                      <div style={{ fontSize: '11px', color: '#64748B' }}>{notifications.length} unresolved notifications</div>
+                      <div style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>Fleet Alerts</div>
+                      <div style={{ fontSize: '11px', color: 'var(--fd-text-secondary)' }}>{notifications.length} unresolved notifications</div>
                     </div>
                     {notifications.length > 0 && (
                       <button
                         onClick={() => setNotifications([])}
-                        style={{ fontSize: '11px', fontWeight: 600, color: '#2563EB', background: 'none', border: 'none', cursor: 'pointer' }}
+                        style={{ fontSize: '11px', fontWeight: 600, color: 'var(--fd-color-primary)', background: 'none', border: 'none', cursor: 'pointer' }}
                       >
                         Clear All
                       </button>
@@ -221,7 +221,7 @@ const Header: React.FC<HeaderProps> = ({
 
                   <div className="popover-body">
                     {notifications.length === 0 ? (
-                      <div style={{ padding: '24px 16px', textAlign: 'center', color: '#64748B', fontSize: '13px' }}>
+                      <div style={{ padding: '24px 16px', textAlign: 'center', color: 'var(--fd-text-muted)', fontSize: '13px' }}>
                         <CheckCircle2 size={24} color="#10B981" style={{ margin: '0 auto 8px' }} />
                         <div>All systems operating within parameters</div>
                       </div>
@@ -242,10 +242,10 @@ const Header: React.FC<HeaderProps> = ({
                                 <span style={{ fontSize: '10.5px', fontWeight: 700, color: n.color, textTransform: 'uppercase' }}>
                                   {n.severity}: {n.code}
                                 </span>
-                                <span style={{ fontSize: '10px', color: '#94A3B8' }}>{n.time}</span>
+                                <span style={{ fontSize: '10px', color: 'var(--fd-text-muted)' }}>{n.time}</span>
                               </div>
-                              <div style={{ fontSize: '12px', fontWeight: 600, color: '#0F172A' }}>{n.title}</div>
-                              <div style={{ fontSize: '11px', color: '#64748B', marginTop: '1px', lineHeight: 1.3 }}>{n.desc}</div>
+                              <div style={{ fontSize: '12px', fontWeight: 600, color: 'var(--fd-text-primary)' }}>{n.title}</div>
+                              <div style={{ fontSize: '11px', color: 'var(--fd-text-secondary)', marginTop: '1px', lineHeight: 1.3 }}>{n.desc}</div>
                             </div>
                           </div>
                         );
@@ -275,13 +275,13 @@ const Header: React.FC<HeaderProps> = ({
               {isHelpOpen && (
                 <div className="popover-panel popover-panel--help" id="help-popover" role="dialog" aria-label="FleetDash Help">
                   <div className="popover-header">
-                    <div style={{ fontSize: '13.5px', fontWeight: 700, color: '#0F172A' }}>FleetDash Help</div>
-                    <span style={{ fontSize: '11px', color: '#64748B' }}>Quick Operations Guide</span>
+                    <div style={{ fontSize: '13.5px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>FleetDash Help</div>
+                    <span style={{ fontSize: '11px', color: 'var(--fd-text-secondary)' }}>Quick Operations Guide</span>
                   </div>
 
                   <div className="popover-body" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
                     <div className="help-tip-item">
-                      <span className="help-tip-icon"><Wifi size={12} color="#2563EB" /></span>
+                      <span className="help-tip-icon"><Wifi size={12} color="var(--fd-color-primary)" /></span>
                       <div>
                         <div className="help-tip-title">Monitor vehicles from Live Map</div>
                         <div className="help-tip-desc">Click vehicle markers on the map to inspect speed, fuel, and trip progress.</div>
@@ -305,7 +305,7 @@ const Header: React.FC<HeaderProps> = ({
                     </div>
 
                     <div className="help-tip-item">
-                      <span className="help-tip-icon"><RouteIcon size={12} color="#7C3AED" /></span>
+                      <span className="help-tip-icon"><RouteIcon size={12} color="var(--fd-color-purple)" /></span>
                       <div>
                         <div className="help-tip-title">Manage vehicles and trips</div>
                         <div className="help-tip-desc">Use the "Add Vehicle" and "Create Trip" buttons in the top header.</div>
@@ -338,13 +338,13 @@ const Header: React.FC<HeaderProps> = ({
 
               {isProfileOpen && (
                 <div className="popover-panel popover-panel--profile" id="profile-dropdown" role="menu">
-                  <div style={{ padding: '12px 14px', borderBottom: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A' }}>{user?.name || 'Soundarya Lakshmi'}</div>
-                    <div style={{ fontSize: '11px', color: '#64748B', marginTop: '1px' }}>{user?.email || 'admin@fleetdash.io'}</div>
+                  <div style={{ padding: '12px 14px', borderBottom: '1px solid var(--fd-border-subtle)', backgroundColor: 'var(--fd-bg-surface)' }}>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>{user?.name || 'Soundarya Lakshmi'}</div>
+                    <div style={{ fontSize: '11px', color: 'var(--fd-text-secondary)', marginTop: '1px' }}>{user?.email || 'admin@fleetdash.io'}</div>
                     <div style={{
                       display: 'inline-block', marginTop: '6px', fontSize: '10px', fontWeight: 700,
-                      padding: '2px 7px', borderRadius: '4px', backgroundColor: '#EFF6FF', color: '#2563EB',
-                      border: '1px solid #DBEAFE'
+                      padding: '2px 7px', borderRadius: '4px', backgroundColor: 'var(--fd-color-primary-light)', color: 'var(--fd-color-primary)',
+                      border: '1px solid var(--fd-border-color)'
                     }}>
                       {user?.role || 'Fleet Dispatcher'}
                     </div>
@@ -356,7 +356,7 @@ const Header: React.FC<HeaderProps> = ({
                       className="menu-item-btn"
                       role="menuitem"
                     >
-                      <UserIcon size={13} color="#64748B" />
+                      <UserIcon size={13} color="var(--fd-text-secondary)" />
                       <span>Profile Overview</span>
                     </button>
 
@@ -365,11 +365,11 @@ const Header: React.FC<HeaderProps> = ({
                       className="menu-item-btn"
                       role="menuitem"
                     >
-                      <Settings size={13} color="#64748B" />
+                      <Settings size={13} color="var(--fd-text-secondary)" />
                       <span>Account Settings</span>
                     </button>
 
-                    <div style={{ height: '1px', backgroundColor: '#E2E8F0', margin: '3px 0' }} />
+                    <div style={{ height: '1px', backgroundColor: 'var(--fd-border-subtle)', margin: '3px 0' }} />
 
                     <button
                       onClick={handleSignOut}
@@ -408,7 +408,7 @@ const Header: React.FC<HeaderProps> = ({
               title="Create a new fleet dispatch trip"
               aria-label="Create New Trip"
             >
-              <RouteIcon size={13} color="#2563EB" />
+              <RouteIcon size={13} color="var(--fd-color-primary)" />
               <span>Create Trip</span>
             </button>
 
@@ -438,10 +438,10 @@ const Header: React.FC<HeaderProps> = ({
           >
             <div className="modal-header">
               <div>
-                <h3 id="add-vehicle-title" style={{ fontSize: '16px', fontWeight: 700, color: '#0F172A' }}>
+                <h3 id="add-vehicle-title" style={{ fontSize: '16px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>
                   Add New Vehicle
                 </h3>
-                <p style={{ fontSize: '11.5px', color: '#64748B', marginTop: '1px' }}>
+                <p style={{ fontSize: '11.5px', color: 'var(--fd-text-secondary)', marginTop: '1px' }}>
                   Register a new vehicle to telemetry monitoring
                 </p>
               </div>

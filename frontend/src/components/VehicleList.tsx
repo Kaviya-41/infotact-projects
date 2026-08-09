@@ -102,7 +102,7 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
       <div className="table-toolbar">
         <div>
           <h3 className="fleet-card__title">Vehicle Fleet Telemetry</h3>
-          <p style={{ fontSize: '12px', color: '#64748B', marginTop: '2px' }}>
+          <p style={{ fontSize: '12px', color: 'var(--fd-text-secondary)', marginTop: '2px' }}>
             Live status metrics across all connected satellite nodes
           </p>
         </div>
@@ -110,17 +110,18 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
         <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
           {/* Status Filter */}
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-            <Filter size={14} color="#64748B" />
+            <Filter size={14} color="var(--fd-text-secondary)" />
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
+              className="form-select"
               style={{
                 padding: '6px 12px',
                 borderRadius: '8px',
-                border: '1px solid #E2E8F0',
-                backgroundColor: '#FFFFFF',
+                border: '1px solid var(--fd-border-color)',
+                backgroundColor: 'var(--fd-bg-input)',
                 fontSize: '13px',
-                color: '#0F172A',
+                color: 'var(--fd-text-primary)',
                 outline: 'none',
                 cursor: 'pointer'
               }}
@@ -164,7 +165,7 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
           <tbody>
             {filteredVehicles.length === 0 ? (
               <tr>
-                <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: '#64748B' }}>
+                <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: 'var(--fd-text-secondary)' }}>
                   No vehicles matched your search filter criteria.
                 </td>
               </tr>
@@ -177,19 +178,19 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
                     onClick={() => onSelectVehicle && onSelectVehicle(v)}
                     style={{
                       cursor: 'pointer',
-                      backgroundColor: isSelected ? '#EFF6FF' : undefined
+                      backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.12)' : undefined
                     }}
                   >
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Truck size={16} color="#2563EB" />
+                        <Truck size={16} color="var(--fd-color-primary)" />
                         <div>
-                          <div style={{ fontWeight: 700, color: '#0F172A' }}>{v.id}</div>
-                          <div style={{ fontSize: '11px', color: '#64748B' }}>{v.name}</div>
+                          <div style={{ fontWeight: 700, color: 'var(--fd-text-primary)' }}>{v.id}</div>
+                          <div style={{ fontSize: '11px', color: 'var(--fd-text-secondary)' }}>{v.name}</div>
                         </div>
                       </div>
                     </td>
-                    <td style={{ fontWeight: 600, color: '#334155' }}>{v.driver}</td>
+                    <td style={{ fontWeight: 600, color: 'var(--fd-text-secondary)' }}>{v.driver}</td>
                     <td>
                       <span className={`status-badge status-badge--${v.status.toLowerCase()}`}>
                         <span className="status-badge__dot" />
@@ -201,12 +202,12 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
                     </td>
                     <td>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '60px', height: '6px', backgroundColor: '#E2E8F0', borderRadius: '3px', overflow: 'hidden' }}>
+                        <div style={{ width: '60px', height: '6px', backgroundColor: 'var(--fd-border-subtle)', borderRadius: '3px', overflow: 'hidden' }}>
                           <div
                             style={{
                               height: '100%',
                               width: `${v.telemetry.fuelLevel}%`,
-                              backgroundColor: v.telemetry.fuelLevel > 25 ? '#16A34A' : '#DC2626'
+                              backgroundColor: v.telemetry.fuelLevel > 25 ? '#10B981' : '#EF4444'
                             }}
                           />
                         </div>
@@ -214,12 +215,12 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
                       </div>
                     </td>
                     <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: v.telemetry.gpsConnected ? '#16A34A' : '#DC2626' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: v.telemetry.gpsConnected ? '#10B981' : '#EF4444' }}>
                         <Wifi size={14} /> {v.telemetry.gpsConnected ? 'Online' : 'Lost'}
                       </div>
                     </td>
-                    <td style={{ color: '#475569', fontSize: '12px' }}>{v.location}</td>
-                    <td className="tabular-nums" style={{ color: '#94A3B8', fontSize: '12px' }}>{v.telemetry.lastUpdate}</td>
+                    <td style={{ color: 'var(--fd-text-secondary)', fontSize: '12px' }}>{v.location}</td>
+                    <td className="tabular-nums" style={{ color: 'var(--fd-text-muted)', fontSize: '12px' }}>{v.telemetry.lastUpdate}</td>
                   </tr>
                 );
               })
@@ -234,18 +235,18 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '12px 16px',
-        backgroundColor: '#F8FAFC',
-        borderTop: '1px solid #E2E8F0',
+        backgroundColor: 'var(--fd-bg-surface)',
+        borderTop: '1px solid var(--fd-border-subtle)',
         fontSize: '12px',
-        color: '#64748B'
+        color: 'var(--fd-text-secondary)'
       }}>
         <div>Showing 1-{filteredVehicles.length} of {SAMPLE_VEHICLES.length} vehicles</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <button style={{ padding: '4px 8px', border: '1px solid #E2E8F0', borderRadius: '6px', background: '#FFFFFF', cursor: 'pointer' }} disabled>
+          <button style={{ padding: '4px 8px', border: '1px solid var(--fd-border-color)', borderRadius: '6px', background: 'var(--fd-bg-card)', color: 'var(--fd-text-secondary)', cursor: 'pointer' }} disabled>
             <ChevronLeft size={14} />
           </button>
-          <span style={{ fontWeight: 600, color: '#0F172A' }}>Page 1 of 1</span>
-          <button style={{ padding: '4px 8px', border: '1px solid #E2E8F0', borderRadius: '6px', background: '#FFFFFF', cursor: 'pointer' }} disabled>
+          <span style={{ fontWeight: 600, color: 'var(--fd-text-primary)' }}>Page 1 of 1</span>
+          <button style={{ padding: '4px 8px', border: '1px solid var(--fd-border-color)', borderRadius: '6px', background: 'var(--fd-bg-card)', color: 'var(--fd-text-secondary)', cursor: 'pointer' }} disabled>
             <ChevronRight size={14} />
           </button>
         </div>

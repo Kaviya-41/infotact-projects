@@ -72,10 +72,10 @@ export const VehicleAlertBanner: React.FC<VehicleAlertBannerProps> = ({
               <AlertCircle size={16} />
             </div>
             <div>
-              <div style={{ fontSize: '11px', fontWeight: 700, color: '#64748B', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+              <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--fd-text-secondary)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
                 Operational Alerts
               </div>
-              <div style={{ fontSize: '15px', fontWeight: 800, color: '#0F172A' }}>
+              <div style={{ fontSize: '15px', fontWeight: 800, color: 'var(--fd-text-primary)' }}>
                 Live Map Alerts
               </div>
             </div>
@@ -85,7 +85,7 @@ export const VehicleAlertBanner: React.FC<VehicleAlertBannerProps> = ({
             <span style={{
               padding: '3px 10px', borderRadius: '20px', fontSize: '11px', fontWeight: 700,
               backgroundColor: 'rgba(239, 68, 68, 0.08)', color: '#EF4444',
-              border: '1px solid rgba(239, 68, 68, 0.2)'
+              border: '1px solid rgba(239, 68, 68, 0.25)'
             }}>
               {alerts.length} Active
             </span>
@@ -99,7 +99,7 @@ export const VehicleAlertBanner: React.FC<VehicleAlertBannerProps> = ({
               const isCritical = alt.severity === 'Critical';
               const badgeBg = isCritical ? 'rgba(239, 68, 68, 0.08)' : 'rgba(245, 158, 11, 0.08)';
               const badgeColor = isCritical ? '#EF4444' : '#F59E0B';
-              const badgeBorder = isCritical ? 'rgba(239, 68, 68, 0.2)' : 'rgba(245, 158, 11, 0.2)';
+              const badgeBorder = isCritical ? 'rgba(239, 68, 68, 0.25)' : 'rgba(245, 158, 11, 0.25)';
 
               return (
                 <motion.div
@@ -111,8 +111,8 @@ export const VehicleAlertBanner: React.FC<VehicleAlertBannerProps> = ({
                   style={{
                     padding: '10px 12px',
                     borderRadius: '8px',
-                    backgroundColor: '#F8FAFC',
-                    border: '1px solid #E2E8F0',
+                    backgroundColor: 'var(--fd-bg-surface)',
+                    border: '1px solid var(--fd-border-subtle)',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
@@ -135,7 +135,7 @@ export const VehicleAlertBanner: React.FC<VehicleAlertBannerProps> = ({
 
                     <div style={{ minWidth: 0 }}>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                        <span style={{ fontSize: '12px', fontWeight: 700, color: '#0F172A' }}>
+                        <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--fd-text-primary)' }}>
                           {alt.title}
                         </span>
                         <span style={{
@@ -146,17 +146,17 @@ export const VehicleAlertBanner: React.FC<VehicleAlertBannerProps> = ({
                           {alt.severity}
                         </span>
                       </div>
-                      <div style={{ fontSize: '11px', color: '#64748B', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: '1px' }}>
+                      <div style={{ fontSize: '11px', color: 'var(--fd-text-secondary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', marginTop: '1px' }}>
                         {alt.message}
                       </div>
                     </div>
                   </div>
 
                   <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flexShrink: 0 }}>
-                    <span style={{ fontSize: '10.5px', color: '#94A3B8', fontWeight: 600, fontFamily: 'var(--fd-font-mono, monospace)' }}>
+                    <span style={{ fontSize: '10.5px', color: 'var(--fd-text-muted)', fontWeight: 600, fontFamily: 'var(--fd-font-mono, monospace)' }}>
                       {alt.timestamp}
                     </span>
-                    {onSelectVehicle && <ChevronRight size={13} color="#94A3B8" />}
+                    {onSelectVehicle && <ChevronRight size={13} color="var(--fd-text-muted)" />}
                   </div>
                 </motion.div>
               );
