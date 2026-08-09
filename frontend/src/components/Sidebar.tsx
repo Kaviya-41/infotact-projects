@@ -91,10 +91,10 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         <div className="sidebar__footer">
           <div className="sidebar__user">
             <div className="sidebar__avatar">
-              {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2) : 'AD'}
+              {user?.name ? user.name.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'SL'}
             </div>
             <div style={{ overflow: 'hidden', flex: 1 }}>
-              <div className="sidebar__user-name">{user?.name || 'Admin'}</div>
+              <div className="sidebar__user-name">{user?.name || 'Soundarya Lakshmi'}</div>
               <div className="sidebar__user-role">{user?.company || 'LogiTech Logistics'}</div>
             </div>
           </div>

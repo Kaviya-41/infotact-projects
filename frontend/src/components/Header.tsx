@@ -329,17 +329,17 @@ const Header: React.FC<HeaderProps> = ({
                 aria-label="User Profile Menu"
               >
                 <div className="header__profile-avatar">
-                  {user?.name ? user.name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'AD'}
+                  {user?.name ? user.name.split(' ').filter(Boolean).map(n => n[0]).join('').slice(0, 2).toUpperCase() : 'SL'}
                 </div>
                 <span className="header__profile-name">
-                  {user?.name ? user.name.split(' ')[0] : 'Admin'}
+                  {user?.name || 'Soundarya Lakshmi'}
                 </span>
               </button>
 
               {isProfileOpen && (
                 <div className="popover-panel popover-panel--profile" id="profile-dropdown" role="menu">
                   <div style={{ padding: '12px 14px', borderBottom: '1px solid #E2E8F0', backgroundColor: '#F8FAFC' }}>
-                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A' }}>{user?.name || 'Fleet Administrator'}</div>
+                    <div style={{ fontSize: '13px', fontWeight: 700, color: '#0F172A' }}>{user?.name || 'Soundarya Lakshmi'}</div>
                     <div style={{ fontSize: '11px', color: '#64748B', marginTop: '1px' }}>{user?.email || 'admin@fleetdash.io'}</div>
                     <div style={{
                       display: 'inline-block', marginTop: '6px', fontSize: '10px', fontWeight: 700,

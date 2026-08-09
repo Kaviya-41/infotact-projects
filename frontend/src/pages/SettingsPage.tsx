@@ -3,17 +3,23 @@
  * Manage FleetDash preferences, notification thresholds, map modes, and system sync.
  */
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { User, Bell, Sliders, Map, Save, Check } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { User, Bell, Sliders, Map, Save, Check, AlertCircle, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import '../styles/dashboard.css';
 
 const SettingsPage: React.FC = () => {
-  const { user } = useAuth();
+  const { user, updateProfile } = useAuth();
   const [saved, setSaved] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
-  // Form states
+  // Profile Form States
+  const [fullName, setFullName] = useState(user?.name || 'Soundarya Lakshmi');
+  const [email, setEmail] = useState(user?.email || 'dispatcher@fleetdash.io');
+
+  // Preferences States
   const [speedLimit, setSpeedLimit] = useState('80');
   const [idleThreshold, setIdleThreshold] = useState('15');
   const [fuelWarning, setFuelWarning] = useState('20');
@@ -22,16 +28,46 @@ const SettingsPage: React.FC = () => {
   const [emailAlerts, setEmailAlerts] = useState(true);
   const [pushAlerts, setPushAlerts] = useState(true);
 
-  const handleSave = (e: React.FormEvent) => {
+  // Synchronize with AuthContext user when user loads/changes
+  useEffect(() => {
+    if (user?.name) setFullName(user.name);
+    if (user?.email) setEmail(user.email);
+  }, [user?.name, user?.email]);
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
-    setSaved(true);
-    setTimeout(() => setSaved(false), 3000);
+    setErrorMessage('');
+
+    const cleanName = fullName.trim();
+    if (!cleanName) {
+      setErrorMessage('Full Name cannot be empty.');
+      return;
+    }
+
+    setIsSaving(true);
+    try {
+      const res = await updateProfile({
+        name: cleanName,
+        email: email.trim() || user?.email || 'dispatcher@fleetdash.io',
+      });
+
+      if (res.success) {
+        setSaved(true);
+        setTimeout(() => setSaved(false), 3500);
+      } else {
+        setErrorMessage(res.error || 'Unable to update profile. Please try again.');
+      }
+    } catch {
+      setErrorMessage('Unable to update profile. Please try again.');
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
-    <div className="dashboard">
+    <div className="dashboard" id="settings-page">
       {/* Page Header */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
         <div>
           <h2 className="dashboard__hero-title">Settings</h2>
           <p className="dashboard__hero-subtitle">
@@ -41,19 +77,76 @@ const SettingsPage: React.FC = () => {
 
         <button
           onClick={handleSave}
+          disabled={isSaving}
+          id="btn-save-settings"
           style={{
             display: 'flex', alignItems: 'center', gap: '6px',
             padding: '10px 20px', borderRadius: '10px',
             backgroundColor: saved ? '#10B981' : '#2563EB', color: '#FFFFFF',
             border: 'none', fontSize: '13px', fontWeight: 700,
-            cursor: 'pointer', transition: 'all 0.2s ease',
+            cursor: isSaving ? 'not-allowed' : 'pointer',
+            opacity: isSaving ? 0.75 : 1,
+            transition: 'all 0.2s ease',
             boxShadow: '0 4px 12px rgba(37, 99, 235, 0.25)',
           }}
         >
-          {saved ? <Check size={16} /> : <Save size={16} />}
-          <span>{saved ? 'Preferences Saved!' : 'Save Changes'}</span>
+          {isSaving ? (
+            <>
+              <Loader2 size={16} className="animate-spin" />
+              <span>Saving...</span>
+            </>
+          ) : saved ? (
+            <>
+              <Check size={16} />
+              <span>Profile Updated Successfully!</span>
+            </>
+          ) : (
+            <>
+              <Save size={16} />
+              <span>Save Changes</span>
+            </>
+          )}
         </button>
       </div>
+
+      {/* Toast / Error Feedback Banners */}
+      <AnimatePresence>
+        {saved && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            style={{
+              padding: '12px 16px', borderRadius: '10px',
+              backgroundColor: 'rgba(16, 185, 129, 0.08)',
+              border: '1px solid rgba(16, 185, 129, 0.25)',
+              color: '#065F46', display: 'flex', alignItems: 'center', gap: '8px',
+              fontSize: '13px', fontWeight: 600
+            }}
+          >
+            <Check size={16} color="#10B981" />
+            <span>✓ Profile updated successfully. Your new name is saved and active across FleetDash.</span>
+          </motion.div>
+        )}
+
+        {errorMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            style={{
+              padding: '12px 16px', borderRadius: '10px',
+              backgroundColor: 'rgba(239, 68, 68, 0.08)',
+              border: '1px solid rgba(239, 68, 68, 0.25)',
+              color: '#991B1B', display: 'flex', alignItems: 'center', gap: '8px',
+              fontSize: '13px', fontWeight: 600
+            }}
+          >
+            <AlertCircle size={16} color="#EF4444" />
+            <span>{errorMessage}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Settings Sections Grid */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
@@ -73,25 +166,39 @@ const SettingsPage: React.FC = () => {
             </h3>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <form onSubmit={handleSave} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+              <label htmlFor="settings-full-name" style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
                 Full Name
               </label>
               <input
+                id="settings-full-name"
                 type="text"
-                defaultValue={user?.name || 'Admin'}
+                value={fullName}
+                onChange={(e) => {
+                  setFullName(e.target.value);
+                  if (errorMessage) setErrorMessage('');
+                }}
+                placeholder="Your full name"
+                required
                 style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none' }}
               />
             </div>
 
             <div>
-              <label style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
+              <label htmlFor="settings-work-email" style={{ fontSize: '13px', fontWeight: 600, color: '#0F172A', display: 'block', marginBottom: '6px' }}>
                 Work Email
               </label>
               <input
+                id="settings-work-email"
                 type="email"
-                defaultValue={user?.email || 'dispatcher@fleetdash.io'}
+                value={email}
+                onChange={(e) => {
+                  setEmail(e.target.value);
+                  if (errorMessage) setErrorMessage('');
+                }}
+                placeholder="your.email@fleetdash.io"
+                required
                 style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', fontSize: '14px', outline: 'none' }}
               />
             </div>
@@ -102,7 +209,7 @@ const SettingsPage: React.FC = () => {
               </label>
               <input
                 type="text"
-                defaultValue={user?.role || 'Fleet Dispatcher'}
+                value={user?.role || 'Fleet Dispatcher'}
                 readOnly
                 style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', fontSize: '14px', color: '#64748B' }}
               />
@@ -114,12 +221,12 @@ const SettingsPage: React.FC = () => {
               </label>
               <input
                 type="text"
-                defaultValue={user?.company || 'LogiTech Logistics'}
+                value={user?.company || 'LogiTech Logistics'}
                 readOnly
                 style={{ width: '100%', padding: '10px 14px', borderRadius: '8px', border: '1px solid #E2E8F0', backgroundColor: '#F8FAFC', fontSize: '14px', color: '#64748B' }}
               />
             </div>
-          </div>
+          </form>
         </motion.div>
 
         {/* Section 2: Fleet Telemetry Thresholds */}
