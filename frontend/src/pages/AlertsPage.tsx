@@ -93,7 +93,7 @@ const ALL_ALERTS: DetailedAlert[] = [
 const AlertsPage: React.FC = () => {
   const [filter, setFilter] = useState<'All' | 'Critical' | 'Warning' | 'Info' | 'Resolved'>('All');
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(null);
-  const [alertsList, setAlertsList] = useState<DetailedAlert[]>(ALL_ALERTS);
+  const [alertsList, setAlertsList] = useState<DetailedAlert[]>([]);
 
   const filteredAlerts = useMemo(() => {
     if (filter === 'All') return alertsList;
@@ -137,21 +137,76 @@ const AlertsPage: React.FC = () => {
           ))}
         </div>
 
-        <span style={{ fontSize: '12px', color: 'var(--fd-text-muted)', fontWeight: 500 }}>
-          Showing {filteredAlerts.length} of {alertsList.length} alerts
-        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+          <span style={{ fontSize: '12px', color: 'var(--fd-text-muted)', fontWeight: 500 }}>
+            Showing {filteredAlerts.length} of {alertsList.length} alerts
+          </span>
+          {alertsList.length > 0 && (
+            <button
+              onClick={() => setAlertsList([])}
+              style={{
+                padding: '4px 10px',
+                borderRadius: '6px',
+                fontSize: '11.5px',
+                fontWeight: 600,
+                color: '#EF4444',
+                background: 'rgba(239, 68, 68, 0.08)',
+                border: '1px solid rgba(239, 68, 68, 0.25)',
+                cursor: 'pointer'
+              }}
+            >
+              Clear All
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Alerts Stream Grid */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <AnimatePresence>
-          {filteredAlerts.map((alt) => {
-            const isCritical = alt.severity === 'Critical';
-            const isWarning = alt.severity === 'Warning';
-            const borderColor = isCritical ? 'rgba(239, 68, 68, 0.25)' : isWarning ? 'rgba(245, 158, 11, 0.25)' : 'rgba(6, 182, 212, 0.25)';
-            const badgeBg = isCritical ? 'rgba(239, 68, 68, 0.08)' : isWarning ? 'rgba(245, 158, 11, 0.08)' : 'rgba(6, 182, 212, 0.08)';
-            const badgeColor = isCritical ? '#EF4444' : isWarning ? '#F59E0B' : '#06B6D4';
-            const badgeBorder = isCritical ? 'rgba(239, 68, 68, 0.25)' : isWarning ? 'rgba(245, 158, 11, 0.25)' : 'rgba(6, 182, 212, 0.25)';
+          {filteredAlerts.length === 0 ? (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="fd-card"
+              style={{
+                padding: '48px 24px',
+                textAlign: 'center',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '12px',
+              }}
+            >
+              <div style={{
+                width: '56px',
+                height: '56px',
+                borderRadius: '50%',
+                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                color: '#10B981',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                border: '1px solid rgba(16, 185, 129, 0.25)'
+              }}>
+                <CheckCircle2 size={28} />
+              </div>
+              <h3 style={{ fontSize: '18px', fontWeight: 800, color: 'var(--fd-text-primary)', margin: 0 }}>
+                0 Active Alerts
+              </h3>
+              <p style={{ fontSize: '13.5px', color: 'var(--fd-text-secondary)', maxWidth: '440px', margin: 0, lineHeight: 1.5 }}>
+                All fleet systems and vehicle telemetry units are operating within nominal thresholds. No active warnings or unresolved alerts.
+              </p>
+            </motion.div>
+          ) : (
+            filteredAlerts.map((alt) => {
+              const isCritical = alt.severity === 'Critical';
+              const isWarning = alt.severity === 'Warning';
+              const borderColor = isCritical ? 'rgba(239, 68, 68, 0.25)' : isWarning ? 'rgba(245, 158, 11, 0.25)' : 'rgba(6, 182, 212, 0.25)';
+              const badgeBg = isCritical ? 'rgba(239, 68, 68, 0.08)' : isWarning ? 'rgba(245, 158, 11, 0.08)' : 'rgba(6, 182, 212, 0.08)';
+              const badgeColor = isCritical ? '#EF4444' : isWarning ? '#F59E0B' : '#06B6D4';
+              const badgeBorder = isCritical ? 'rgba(239, 68, 68, 0.25)' : isWarning ? 'rgba(245, 158, 11, 0.25)' : 'rgba(6, 182, 212, 0.25)';
 
             return (
               <motion.div

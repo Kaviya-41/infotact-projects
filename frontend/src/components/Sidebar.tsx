@@ -24,7 +24,7 @@ const PRIMARY_NAV: NavItem[] = [
   { id: 'live-map',  label: 'Live Map',  icon: <Map size={20} strokeWidth={2} />, path: '/live-map' },
   { id: 'vehicles',  label: 'Vehicles',  icon: <Truck size={20} strokeWidth={2} />, path: '/vehicles' },
   { id: 'analytics', label: 'Analytics', icon: <BarChart3 size={20} strokeWidth={2} />, path: '/analytics' },
-  { id: 'alerts',    label: 'Alerts',    icon: <Bell size={20} strokeWidth={2} />, path: '/alerts', badge: 3 },
+  { id: 'alerts',    label: 'Alerts',    icon: <Bell size={20} strokeWidth={2} />, path: '/alerts' },
 ];
 
 const SECONDARY_NAV: NavItem[] = [
@@ -52,7 +52,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
         {item.icon}
       </span>
       <span>{item.label}</span>
-      {item.badge !== undefined && (
+      {item.badge !== undefined && item.badge > 0 && (
         <span className="sidebar__badge">{item.badge}</span>
       )}
     </NavLink>

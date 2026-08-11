@@ -64,12 +64,12 @@ const KPI_DATA: KPIData[] = [
   {
     id: 'active-alerts',
     label: 'ACTIVE ALERTS',
-    value: 3,
+    value: 0,
     icon: <AlertTriangle size={17} />,
-    iconVariant: 'amber',
-    trend: { direction: 'down', value: '1 Critical' },
-    subtitle: 'Requires dispatcher review',
-    valueColor: '#EF4444',
+    iconVariant: 'green',
+    trend: { direction: 'down', value: '0 Critical' },
+    subtitle: 'All systems operational',
+    valueColor: '#10B981',
   },
 ];
 

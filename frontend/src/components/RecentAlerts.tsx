@@ -84,7 +84,7 @@ const cardVariants: Variants = {
 };
 
 export const RecentAlerts: React.FC<RecentAlertsProps> = ({ onSelectVehicle }) => {
-  const [alerts, setAlerts] = useState<FleetAlert[]>(MOCK_ALERTS);
+  const [alerts, setAlerts] = useState<FleetAlert[]>([]);
 
   return (
     <motion.div
@@ -97,13 +97,13 @@ export const RecentAlerts: React.FC<RecentAlertsProps> = ({ onSelectVehicle }) =
       <div className="fd-card__header">
         <div>
           <h3 className="fd-card__title">
-            <span className="icon-badge-danger">
-              <AlertCircle size={14} />
+            <span className={alerts.length > 0 ? "icon-badge-danger" : "icon-badge-success"}>
+              {alerts.length > 0 ? <AlertCircle size={14} /> : <ShieldCheck size={14} color="#10B981" />}
             </span>
             <span>Live Alerts</span>
           </h3>
           <p className="fd-card__subtitle">
-            Issues requiring immediate attention
+            {alerts.length === 0 ? "0 active alerts · All systems operational" : "Issues requiring immediate attention"}
           </p>
         </div>
 

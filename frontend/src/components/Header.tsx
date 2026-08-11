@@ -126,41 +126,7 @@ const Header: React.FC<HeaderProps> = ({
   const [tripTime, setTripTime] = useState('Today, 03:30 PM');
 
   // Notification items state
-  const [notifications, setNotifications] = useState([
-    {
-      id: 'notif-1',
-      severity: 'Critical',
-      code: 'FLT-003',
-      title: 'High Engine Temperature',
-      desc: 'Coolant temperature reached 112°C at Lonavala Hub.',
-      time: '2 minutes ago',
-      icon: AlertCircle,
-      color: '#EF4444',
-      bg: 'rgba(239, 68, 68, 0.08)',
-    },
-    {
-      id: 'notif-2',
-      severity: 'Warning',
-      code: 'FLT-010',
-      title: 'Vehicle Offline',
-      desc: 'GPS telemetry disconnected at Vadodara Bypass.',
-      time: '5 minutes ago',
-      icon: AlertTriangle,
-      color: '#F59E0B',
-      bg: 'rgba(245, 158, 11, 0.08)',
-    },
-    {
-      id: 'notif-3',
-      severity: 'Warning',
-      code: 'FLT-007',
-      title: 'Low Fuel',
-      desc: 'Fuel level dropped below 18% reserve limit.',
-      time: '12 minutes ago',
-      icon: Fuel,
-      color: '#F59E0B',
-      bg: 'rgba(245, 158, 11, 0.08)',
-    },
-  ]);
+  const [notifications, setNotifications] = useState<any[]>([]);
 
   // Click outside listener for dropdowns & search
   useEffect(() => {

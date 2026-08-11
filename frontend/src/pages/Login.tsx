@@ -409,7 +409,7 @@ const Login: React.FC = () => {
               >
                 <span style={{ color: '#10B981', fontWeight: 700 }}>35 Online</span>
                 <span style={{ color: '#94A3B8' }}>·</span>
-                <span style={{ color: '#EF4444', fontWeight: 700 }}>3 Active Alerts</span>
+                <span style={{ color: '#10B981', fontWeight: 700 }}>0 Active Alerts</span>
               </motion.div>
 
               {/* Floating Glassmorphism Data Card: Bottom Right */}
