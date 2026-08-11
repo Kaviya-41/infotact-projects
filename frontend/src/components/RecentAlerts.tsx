@@ -14,38 +14,7 @@ interface RecentAlertsProps {
   onSelectVehicle?: (vehicleId: string) => void;
 }
 
-const MOCK_ALERTS: FleetAlert[] = [
-  {
-    id: 'alt-101',
-    vehicleId: 'FLT-003',
-    vehicleName: 'Kenworth T680 #03',
-    severity: 'Critical',
-    title: 'High Engine Temperature',
-    message: 'Coolant temperature exceeded 112°C threshold at Lonavala Hub.',
-    timestamp: '2 minutes ago',
-    location: 'Lonavala Service Hub',
-  },
-  {
-    id: 'alt-102',
-    vehicleId: 'FLT-010',
-    vehicleName: 'Isuzu Giga #10',
-    severity: 'Warning',
-    title: 'Vehicle Offline',
-    message: 'GPS telemetry disconnected on Route 9 Corridor.',
-    timestamp: '5 minutes ago',
-    location: 'Vadodara Bypass',
-  },
-  {
-    id: 'alt-103',
-    vehicleId: 'FLT-007',
-    vehicleName: 'Scania R500 #07',
-    severity: 'Warning',
-    title: 'Low Fuel',
-    message: 'Fuel level dropped below 18% reserve limit.',
-    timestamp: '12 minutes ago',
-    location: 'Gurugram Expressway',
-  },
-];
+
 
 const severityConfig = {
   Critical: {

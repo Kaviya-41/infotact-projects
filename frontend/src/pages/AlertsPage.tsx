@@ -21,74 +21,7 @@ interface DetailedAlert {
   location: string;
 }
 
-const ALL_ALERTS: DetailedAlert[] = [
-  {
-    id: 'alt-201',
-    vehicleId: 'Truck #4021',
-    vehicleName: 'Tata Prima #4021',
-    severity: 'Critical',
-    title: 'Geofence Entry Alert',
-    description: 'Truck #4021 entered Mumbai Zone B restricted delivery sector.',
-    timestamp: 'Just now',
-    status: 'Active',
-    location: 'Mumbai Zone B',
-  },
-  {
-    id: 'alt-202',
-    vehicleId: 'Truck #1042',
-    vehicleName: 'Volvo FH16 #1042',
-    severity: 'Warning',
-    title: 'Speed Limit Breach',
-    description: 'Truck #1042 operating at 88 km/h in 65 km/h zone.',
-    timestamp: '2s ago',
-    status: 'Active',
-    location: 'I-95 Highway MP 108',
-  },
-  {
-    id: 'alt-203',
-    vehicleId: 'FLT-003',
-    vehicleName: 'Kenworth T680 #03',
-    severity: 'Critical',
-    title: 'High Engine Temperature',
-    description: 'Engine temperature exceeded recommended operating range (112°C).',
-    timestamp: '2 minutes ago',
-    status: 'Active',
-    location: 'Lonavala Service Hub',
-  },
-  {
-    id: 'alt-204',
-    vehicleId: 'FLT-010',
-    vehicleName: 'Isuzu Giga #10',
-    severity: 'Warning',
-    title: 'Vehicle Offline',
-    description: 'GPS telemetry signal disconnected on Route 9 Corridor.',
-    timestamp: '5 minutes ago',
-    status: 'Active',
-    location: 'Vadodara Bypass',
-  },
-  {
-    id: 'alt-205',
-    vehicleId: 'FLT-007',
-    vehicleName: 'Scania R500 #07',
-    severity: 'Warning',
-    title: 'Low Fuel Reserve',
-    description: 'Fuel level dropped below 20% reserve threshold.',
-    timestamp: '12 minutes ago',
-    status: 'Active',
-    location: 'Gurugram Expressway',
-  },
-  {
-    id: 'alt-206',
-    vehicleId: 'FLT-012',
-    vehicleName: 'Mercedes Sprinter #12',
-    severity: 'Info',
-    title: 'Route Completed On Schedule',
-    description: 'Delivery milestone completed 15 minutes ahead of schedule.',
-    timestamp: '25 minutes ago',
-    status: 'Resolved',
-    location: 'Highland Logistics Center',
-  },
-];
+
 
 const AlertsPage: React.FC = () => {
   const [filter, setFilter] = useState<'All' | 'Critical' | 'Warning' | 'Info' | 'Resolved'>('All');
@@ -293,7 +226,7 @@ const AlertsPage: React.FC = () => {
                 </div>
               </motion.div>
             );
-          })}
+          }))}
         </AnimatePresence>
       </div>
 

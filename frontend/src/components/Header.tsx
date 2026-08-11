@@ -10,7 +10,7 @@ import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import {
   Search, Bell, Plus, Route as RouteIcon, Wifi, Server, Radio,
-  HelpCircle, X, AlertTriangle, AlertCircle, Fuel, Menu,
+  HelpCircle, X, AlertCircle, Menu,
   User as UserIcon, Settings, LogOut, Shield, CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
