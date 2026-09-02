@@ -65,7 +65,7 @@ const register = async (req, res, next) => {
       name,
       email,
       passwordHash: password, // pre-save hook hashes this
-      role: role || 'dispatcher',
+      role: role || 'fleet_dispatcher',
       organization: organization || '',
     });
 

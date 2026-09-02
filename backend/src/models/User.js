@@ -32,8 +32,8 @@ const userSchema = new mongoose.Schema(
     },
     role: {
       type: String,
-      enum: ['dispatcher', 'admin', 'viewer'],
-      default: 'dispatcher',
+      enum: ['fleet_dispatcher', 'dispatcher', 'admin', 'viewer'],
+      default: 'fleet_dispatcher',
     },
     organization: {
       type: String,
