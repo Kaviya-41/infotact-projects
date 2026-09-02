@@ -1,7 +1,7 @@
 /**
  * Vehicle Model
  *
- * Represents a fleet vehicle with telemetry data (location, speed, fuel, status).
+ * Represents a fleet vehicle with telemetry data (location, speed, fuel, status, mileage, maintenance).
  */
 
 const mongoose = require('mongoose');
@@ -23,8 +23,8 @@ const vehicleSchema = new mongoose.Schema(
     },
     make: {
       type: String,
-      required: [true, 'Make is required'],
       trim: true,
+      default: 'Generic',
     },
     model: {
       type: String,
@@ -40,6 +40,7 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       enum: ['truck', 'van', 'car', 'bus', 'motorcycle', 'other'],
       default: 'truck',
+      lowercase: true,
     },
     driverName: {
       type: String,
@@ -55,6 +56,7 @@ const vehicleSchema = new mongoose.Schema(
       type: String,
       enum: ['online', 'offline', 'maintenance'],
       default: 'offline',
+      lowercase: true,
     },
     fuelLevel: {
       type: Number,
@@ -66,6 +68,16 @@ const vehicleSchema = new mongoose.Schema(
       type: Number,
       min: 0,
       default: 0,
+    },
+    mileage: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+    maintenanceNotes: {
+      type: String,
+      trim: true,
+      default: '',
     },
     location: {
       latitude: {
@@ -88,21 +100,41 @@ const vehicleSchema = new mongoose.Schema(
   },
   {
     timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
   }
 );
+
+// ---------------------------------------------------------------------------
+// Virtuals for flat access matching frontend BackendVehicle structure
+// ---------------------------------------------------------------------------
+vehicleSchema.virtual('speed').get(function () {
+  return this.currentSpeed;
+});
+
+vehicleSchema.virtual('latitude').get(function () {
+  return this.location ? this.location.latitude : 0;
+});
+
+vehicleSchema.virtual('longitude').get(function () {
+  return this.location ? this.location.longitude : 0;
+});
 
 // ---------------------------------------------------------------------------
 // Indexes
 // ---------------------------------------------------------------------------
 vehicleSchema.index({ status: 1 });
+vehicleSchema.index({ type: 1 });
 // vehicleId and registrationNumber indexes created automatically by unique: true
 
 // ---------------------------------------------------------------------------
 // toJSON transform
 // ---------------------------------------------------------------------------
 vehicleSchema.set('toJSON', {
+  virtuals: true,
   transform: (_doc, ret) => {
     delete ret.__v;
+    delete ret.id;
     return ret;
   },
 });

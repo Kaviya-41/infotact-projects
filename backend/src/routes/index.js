@@ -8,6 +8,7 @@
 const { Router } = require('express');
 const healthRoutes = require('./healthRoutes');
 const authRoutes = require('./authRoutes');
+const vehicleRoutes = require('./vehicleRoutes');
 
 const router = Router();
 
@@ -17,8 +18,10 @@ router.use('/', healthRoutes);
 // --- Auth -------------------------------------------------------------------
 router.use('/auth', authRoutes);
 
-// --- Future routes (Phase 5+) -----------------------------------------------
-// router.use('/vehicles', vehicleRoutes);
+// --- Vehicles ---------------------------------------------------------------
+router.use('/vehicles', vehicleRoutes);
+
+// --- Future routes (Phase 6+) -----------------------------------------------
 // router.use('/trips',    tripRoutes);
 // router.use('/alerts',   alertRoutes);
 // router.use('/dashboard', dashboardRoutes);
