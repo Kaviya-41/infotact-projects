@@ -11,6 +11,7 @@ const authRoutes = require('./authRoutes');
 const vehicleRoutes = require('./vehicleRoutes');
 
 const tripRoutes = require('./tripRoutes');
+const alertRoutes = require('./alertRoutes');
 
 const router = Router();
 
@@ -26,8 +27,8 @@ router.use('/vehicles', vehicleRoutes);
 // --- Trips ------------------------------------------------------------------
 router.use('/trips', tripRoutes);
 
-// --- Future routes (Phase 7+) -----------------------------------------------
-// router.use('/alerts',   alertRoutes);
+// --- Alerts -----------------------------------------------------------------
+router.use('/alerts', alertRoutes);
 // router.use('/dashboard', dashboardRoutes);
 
 module.exports = router;
