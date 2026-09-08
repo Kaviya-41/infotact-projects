@@ -12,6 +12,7 @@ const vehicleRoutes = require('./vehicleRoutes');
 
 const tripRoutes = require('./tripRoutes');
 const alertRoutes = require('./alertRoutes');
+const dashboardRoutes = require('./dashboardRoutes');
 
 const router = Router();
 
@@ -29,7 +30,9 @@ router.use('/trips', tripRoutes);
 
 // --- Alerts -----------------------------------------------------------------
 router.use('/alerts', alertRoutes);
-// router.use('/dashboard', dashboardRoutes);
+
+// --- Dashboard --------------------------------------------------------------
+router.use('/dashboard', dashboardRoutes);
 
 module.exports = router;
 
