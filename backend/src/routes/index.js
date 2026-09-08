@@ -10,6 +10,8 @@ const healthRoutes = require('./healthRoutes');
 const authRoutes = require('./authRoutes');
 const vehicleRoutes = require('./vehicleRoutes');
 
+const tripRoutes = require('./tripRoutes');
+
 const router = Router();
 
 // --- Health -----------------------------------------------------------------
@@ -21,8 +23,10 @@ router.use('/auth', authRoutes);
 // --- Vehicles ---------------------------------------------------------------
 router.use('/vehicles', vehicleRoutes);
 
-// --- Future routes (Phase 6+) -----------------------------------------------
-// router.use('/trips',    tripRoutes);
+// --- Trips ------------------------------------------------------------------
+router.use('/trips', tripRoutes);
+
+// --- Future routes (Phase 7+) -----------------------------------------------
 // router.use('/alerts',   alertRoutes);
 // router.use('/dashboard', dashboardRoutes);
 
