@@ -1,5 +1,9 @@
 /**
  * VehicleList.tsx – Enterprise Fleet Vehicle Telemetry Table
+ *
+ * Phase 9: Accepts vehicles as props from parent (real API data).
+ * Removed SAMPLE_VEHICLES hardcoded array.
+ * Preserves all existing table design, filters, pagination UI.
  */
 
 import React, { useState, useMemo } from 'react';
@@ -7,83 +11,26 @@ import { Search, Filter, ChevronLeft, ChevronRight, Truck, Wifi } from 'lucide-r
 import type { Vehicle } from '../types/fleet';
 import '../styles/dashboard.css';
 
-const SAMPLE_VEHICLES: Vehicle[] = [
-  {
-    id: 'FLT-024',
-    name: 'Freightliner Cascadia #24',
-    type: 'Heavy Truck',
-    driver: 'Arjun Kumar',
-    status: 'Moving',
-    location: 'I-95 North, Mile Marker 142',
-    telemetry: { speed: 68, fuelLevel: 72, engineHealth: 'Healthy', gpsConnected: true, tripDistance: 142, lastUpdate: '2 sec ago', latitude: 38.89, longitude: -77.03 }
-  },
-  {
-    id: 'FLT-012',
-    name: 'Mercedes Sprinter #12',
-    type: 'Delivery Van',
-    driver: 'Sarah Chen',
-    status: 'Moving',
-    location: 'Downtown Commerce Way',
-    telemetry: { speed: 54, fuelLevel: 88, engineHealth: 'Healthy', gpsConnected: true, tripDistance: 88, lastUpdate: '4 sec ago', latitude: 38.90, longitude: -77.04 }
-  },
-  {
-    id: 'FLT-007',
-    name: 'Volvo FH16 #07',
-    type: 'Heavy Truck',
-    driver: 'Marcus Vance',
-    status: 'Moving',
-    location: 'Highland Logistics Parkway',
-    telemetry: { speed: 72, fuelLevel: 45, engineHealth: 'Healthy', gpsConnected: true, tripDistance: 310, lastUpdate: '1 sec ago', latitude: 38.91, longitude: -77.01 }
-  },
-  {
-    id: 'FLT-031',
-    name: 'Ford Transit #31',
-    type: 'Delivery Van',
-    driver: 'Elena Rostova',
-    status: 'Stopped',
-    location: 'Sector 4 Distribution Depot',
-    telemetry: { speed: 0, fuelLevel: 64, engineHealth: 'Healthy', gpsConnected: true, tripDistance: 52, lastUpdate: '12 sec ago', latitude: 38.88, longitude: -77.02 }
-  },
-  {
-    id: 'FLT-018',
-    name: 'Kenworth T680 #18',
-    type: 'Heavy Truck',
-    driver: 'David Miller',
-    status: 'Offline',
-    location: 'Route 9 Service Terminal',
-    telemetry: { speed: 0, fuelLevel: 30, engineHealth: 'Warning', gpsConnected: false, tripDistance: 195, lastUpdate: '2 min ago', latitude: 38.85, longitude: -77.05 }
-  },
-  {
-    id: 'FLT-005',
-    name: 'Isuzu NPR #05',
-    type: 'Cargo Vessel',
-    driver: 'Kenji Sato',
-    status: 'Moving',
-    location: 'East Coast Corridor B',
-    telemetry: { speed: 48, fuelLevel: 92, engineHealth: 'Healthy', gpsConnected: true, tripDistance: 110, lastUpdate: '3 sec ago', latitude: 38.92, longitude: -77.06 }
-  },
-  {
-    id: 'FLT-044',
-    name: 'Peterbilt 579 #44',
-    type: 'Heavy Truck',
-    driver: 'Robert Hayes',
-    status: 'Stopped',
-    location: 'Rest Stop Area 12',
-    telemetry: { speed: 0, fuelLevel: 58, engineHealth: 'Healthy', gpsConnected: true, tripDistance: 275, lastUpdate: '45 sec ago', latitude: 38.87, longitude: -77.07 }
-  },
-];
-
 interface VehicleListProps {
+  vehicles?: Vehicle[];
+  loading?: boolean;
+  error?: string | null;
   onSelectVehicle?: (vehicle: Vehicle) => void;
   selectedVehicleId?: string;
 }
 
-const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehicleId }) => {
+const VehicleList: React.FC<VehicleListProps> = ({
+  vehicles = [],
+  loading = false,
+  error = null,
+  onSelectVehicle,
+  selectedVehicleId,
+}) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('ALL');
 
   const filteredVehicles = useMemo(() => {
-    return SAMPLE_VEHICLES.filter((v) => {
+    return vehicles.filter((v) => {
       const matchesSearch =
         v.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
         v.driver.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -94,7 +41,7 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
 
       return matchesSearch && matchesStatus;
     });
-  }, [searchTerm, statusFilter]);
+  }, [vehicles, searchTerm, statusFilter]);
 
   return (
     <div className="table-card" id="vehicle-fleet-table">
@@ -126,10 +73,11 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
                 cursor: 'pointer'
               }}
             >
-              <option value="ALL">All Statuses ({SAMPLE_VEHICLES.length})</option>
+              <option value="ALL">All Statuses ({vehicles.length})</option>
               <option value="MOVING">Moving</option>
               <option value="STOPPED">Stopped</option>
               <option value="OFFLINE">Offline</option>
+              <option value="MAINTENANCE">Maintenance</option>
             </select>
           </div>
 
@@ -149,84 +97,96 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
 
       {/* Table Content */}
       <div className="fleet-table-wrapper">
-        <table className="fleet-table">
-          <thead>
-            <tr>
-              <th>Vehicle ID</th>
-              <th>Driver Name</th>
-              <th>Status</th>
-              <th>Velocity</th>
-              <th>Fuel Level</th>
-              <th>GPS Signal</th>
-              <th>Current Location</th>
-              <th>Last Update</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredVehicles.length === 0 ? (
+        {loading ? (
+          <div style={{ padding: '48px 24px', textAlign: 'center', color: 'var(--fd-text-secondary)', fontSize: '13px' }}>
+            Loading fleet vehicles...
+          </div>
+        ) : error ? (
+          <div style={{ padding: '48px 24px', textAlign: 'center', color: '#EF4444', fontSize: '13px' }}>
+            {error}
+          </div>
+        ) : (
+          <table className="fleet-table">
+            <thead>
               <tr>
-                <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: 'var(--fd-text-secondary)' }}>
-                  No vehicles matched your search filter criteria.
-                </td>
+                <th>Vehicle ID</th>
+                <th>Driver Name</th>
+                <th>Status</th>
+                <th>Velocity</th>
+                <th>Fuel Level</th>
+                <th>GPS Signal</th>
+                <th>Current Location</th>
+                <th>Last Update</th>
               </tr>
-            ) : (
-              filteredVehicles.map((v) => {
-                const isSelected = selectedVehicleId === v.id;
-                return (
-                  <tr
-                    key={v.id}
-                    onClick={() => onSelectVehicle && onSelectVehicle(v)}
-                    style={{
-                      cursor: 'pointer',
-                      backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.12)' : undefined
-                    }}
-                  >
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <Truck size={16} color="var(--fd-color-primary)" />
-                        <div>
-                          <div style={{ fontWeight: 700, color: 'var(--fd-text-primary)' }}>{v.id}</div>
-                          <div style={{ fontSize: '11px', color: 'var(--fd-text-secondary)' }}>{v.name}</div>
+            </thead>
+            <tbody>
+              {filteredVehicles.length === 0 ? (
+                <tr>
+                  <td colSpan={8} style={{ textAlign: 'center', padding: '32px', color: 'var(--fd-text-secondary)' }}>
+                    {vehicles.length === 0
+                      ? 'No vehicles found. Add vehicles to your fleet to see them here.'
+                      : 'No vehicles matched your search filter criteria.'}
+                  </td>
+                </tr>
+              ) : (
+                filteredVehicles.map((v) => {
+                  const isSelected = selectedVehicleId === v.id;
+                  return (
+                    <tr
+                      key={v.id}
+                      onClick={() => onSelectVehicle && onSelectVehicle(v)}
+                      style={{
+                        cursor: 'pointer',
+                        backgroundColor: isSelected ? 'rgba(59, 130, 246, 0.12)' : undefined
+                      }}
+                    >
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <Truck size={16} color="var(--fd-color-primary)" />
+                          <div>
+                            <div style={{ fontWeight: 700, color: 'var(--fd-text-primary)' }}>{v.id}</div>
+                            <div style={{ fontSize: '11px', color: 'var(--fd-text-secondary)' }}>{v.name}</div>
+                          </div>
                         </div>
-                      </div>
-                    </td>
-                    <td style={{ fontWeight: 600, color: 'var(--fd-text-secondary)' }}>{v.driver}</td>
-                    <td>
-                      <span className={`status-badge status-badge--${v.status.toLowerCase()}`}>
-                        <span className="status-badge__dot" />
-                        {v.status}
-                      </span>
-                    </td>
-                    <td className="tabular-nums" style={{ fontWeight: 700 }}>
-                      {v.telemetry.speed > 0 ? `${v.telemetry.speed} km/h` : '0 km/h'}
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                        <div style={{ width: '60px', height: '6px', backgroundColor: 'var(--fd-border-subtle)', borderRadius: '3px', overflow: 'hidden' }}>
-                          <div
-                            style={{
-                              height: '100%',
-                              width: `${v.telemetry.fuelLevel}%`,
-                              backgroundColor: v.telemetry.fuelLevel > 25 ? '#10B981' : '#EF4444'
-                            }}
-                          />
+                      </td>
+                      <td style={{ fontWeight: 600, color: 'var(--fd-text-secondary)' }}>{v.driver}</td>
+                      <td>
+                        <span className={`status-badge status-badge--${v.status.toLowerCase()}`}>
+                          <span className="status-badge__dot" />
+                          {v.status}
+                        </span>
+                      </td>
+                      <td className="tabular-nums" style={{ fontWeight: 700 }}>
+                        {v.telemetry.speed > 0 ? `${v.telemetry.speed} km/h` : '0 km/h'}
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <div style={{ width: '60px', height: '6px', backgroundColor: 'var(--fd-border-subtle)', borderRadius: '3px', overflow: 'hidden' }}>
+                            <div
+                              style={{
+                                height: '100%',
+                                width: `${v.telemetry.fuelLevel}%`,
+                                backgroundColor: v.telemetry.fuelLevel > 25 ? '#10B981' : '#EF4444'
+                              }}
+                            />
+                          </div>
+                          <span className="tabular-nums" style={{ fontSize: '12px', fontWeight: 600 }}>{v.telemetry.fuelLevel}%</span>
                         </div>
-                        <span className="tabular-nums" style={{ fontSize: '12px', fontWeight: 600 }}>{v.telemetry.fuelLevel}%</span>
-                      </div>
-                    </td>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: v.telemetry.gpsConnected ? '#10B981' : '#EF4444' }}>
-                        <Wifi size={14} /> {v.telemetry.gpsConnected ? 'Online' : 'Lost'}
-                      </div>
-                    </td>
-                    <td style={{ color: 'var(--fd-text-secondary)', fontSize: '12px' }}>{v.location}</td>
-                    <td className="tabular-nums" style={{ color: 'var(--fd-text-muted)', fontSize: '12px' }}>{v.telemetry.lastUpdate}</td>
-                  </tr>
-                );
-              })
-            )}
-          </tbody>
-        </table>
+                      </td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: v.telemetry.gpsConnected ? '#10B981' : '#EF4444' }}>
+                          <Wifi size={14} /> {v.telemetry.gpsConnected ? 'Online' : 'Lost'}
+                        </div>
+                      </td>
+                      <td style={{ color: 'var(--fd-text-secondary)', fontSize: '12px' }}>{v.location}</td>
+                      <td className="tabular-nums" style={{ color: 'var(--fd-text-muted)', fontSize: '12px' }}>{v.telemetry.lastUpdate}</td>
+                    </tr>
+                  );
+                })
+              )}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Pagination Bar */}
@@ -240,7 +200,7 @@ const VehicleList: React.FC<VehicleListProps> = ({ onSelectVehicle, selectedVehi
         fontSize: '12px',
         color: 'var(--fd-text-secondary)'
       }}>
-        <div>Showing 1-{filteredVehicles.length} of {SAMPLE_VEHICLES.length} vehicles</div>
+        <div>Showing 1-{filteredVehicles.length} of {vehicles.length} vehicles</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button style={{ padding: '4px 8px', border: '1px solid var(--fd-border-color)', borderRadius: '6px', background: 'var(--fd-bg-card)', color: 'var(--fd-text-secondary)', cursor: 'pointer' }} disabled>
             <ChevronLeft size={14} />

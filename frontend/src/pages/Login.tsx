@@ -273,7 +273,7 @@ const Login: React.FC = () => {
   }, []);
 
   // Form Submission Handler
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -291,9 +291,8 @@ const Login: React.FC = () => {
 
     setIsLoading(true);
 
-    // Simulate authentic micro-delay for smooth UX feedback
-    setTimeout(() => {
-      const res = login(cleanEmail, password);
+    try {
+      const res = await login(cleanEmail, password);
       setIsLoading(false);
 
       if (res.success) {
@@ -301,7 +300,10 @@ const Login: React.FC = () => {
       } else {
         setError(res.error || 'Invalid credentials. Please verify your email and password.');
       }
-    }, 450);
+    } catch {
+      setIsLoading(false);
+      setError('Unable to connect to the server. Please try again.');
+    }
   };
 
   // Forgot Password Submit

@@ -275,21 +275,24 @@ const Signup: React.FC = () => {
     return Object.keys(errs).length === 0;
   };
 
-  /* ── Existing Submit Handler (preserved) ─────────────────── */
-  const handleSubmit = (e: React.FormEvent) => {
+  /* ── Existing Submit Handler (connected to backend) ──────── */
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) return;
 
     setIsLoading(true);
-    setTimeout(() => {
-      const res = signup(fullName, email, password, company);
+    try {
+      const res = await signup(fullName, email, password, company);
       setIsLoading(false);
       if (res.success) {
         navigate('/dashboard', { replace: true });
       } else {
         setErrors({ form: res.error || 'Unable to create account. Please check your information and try again.' });
       }
-    }, 450);
+    } catch {
+      setIsLoading(false);
+      setErrors({ form: 'Unable to connect to the server. Please try again.' });
+    }
   };
 
   /* Helper to clear field error on type */

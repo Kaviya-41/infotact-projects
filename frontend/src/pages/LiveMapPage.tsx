@@ -18,6 +18,8 @@ import ActiveRouteCard from '../components/widgets/ActiveRouteCard';
 import FleetStatusSummaryCard from '../components/widgets/FleetStatusSummaryCard';
 import VehicleAlertBanner from '../components/widgets/VehicleAlertBanner';
 import RecentActivityCard from '../components/dashboard/RecentActivityCard';
+import { fetchDashboardSummary } from '../api/dashboardApi';
+import type { DashboardSummary } from '../types/api';
 import '../styles/dashboard.css';
 
 const fadeInVariants: Variants = {
@@ -35,12 +37,27 @@ const LiveMapPage: React.FC = () => {
 
   const [selectedVehicleId, setSelectedVehicleId] = useState<string | null>(stateVehicleId || 'FLT-004');
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
 
   useEffect(() => {
     if (stateVehicleId) {
       setSelectedVehicleId(stateVehicleId);
     }
   }, [stateVehicleId]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const data = await fetchDashboardSummary();
+        if (!cancelled) setSummary(data);
+      } catch {
+        // Failed to load — keep default display
+      }
+    };
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   const handleSelectVehicle = useCallback((id: string) => {
     setSelectedVehicleId(id);
@@ -87,7 +104,7 @@ const LiveMapPage: React.FC = () => {
               animation: 'header-pulse 2s ease-in-out infinite'
             }} />
             <Truck size={13} color="var(--fd-color-primary)" />
-            <span>42 Vehicles Tracked</span>
+            <span>{summary?.totalVehicles ?? 0} Vehicles Tracked</span>
           </div>
 
           <div style={{

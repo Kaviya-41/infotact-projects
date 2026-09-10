@@ -2,19 +2,61 @@
  * RecentAlerts.tsx – Live Fleet Alert Stream
  * Displays critical & warning operational alerts with severity pills,
  * timestamps, and clickable 'View Vehicle →' triggers.
+ *
+ * Phase 9: Connected to GET /api/dashboard/recent-alerts for real data.
  */
 
-import React, { useState, memo } from 'react';
+import React, { useState, useEffect, memo } from 'react';
 import { motion, AnimatePresence, type Variants } from 'framer-motion';
 import { AlertCircle, AlertTriangle, ShieldCheck, ChevronRight } from 'lucide-react';
 import type { FleetAlert } from '../types/fleet';
+import type { BackendAlert, BackendVehicleFull } from '../types/api';
+import { fetchRecentAlerts } from '../api/dashboardApi';
 import '../styles/dashboard.css';
 
 interface RecentAlertsProps {
   onSelectVehicle?: (vehicleId: string) => void;
 }
 
+/**
+ * Map backend alert to the existing FleetAlert type used by the component.
+ */
+function mapBackendAlert(alert: BackendAlert): FleetAlert {
+  const vehicle = typeof alert.vehicle === 'object' ? (alert.vehicle as BackendVehicleFull) : null;
+  const vehicleId = vehicle?.vehicleId || (typeof alert.vehicle === 'string' ? alert.vehicle : 'Unknown');
+  const vehicleName = vehicle ? `${vehicle.make} ${vehicle.model}` : '';
 
+  // Format timestamp
+  const createdAt = new Date(alert.createdAt);
+  const now = new Date();
+  const diffMs = now.getTime() - createdAt.getTime();
+  const diffMin = Math.floor(diffMs / 60000);
+  let timestamp: string;
+  if (diffMin < 1) timestamp = 'Just now';
+  else if (diffMin < 60) timestamp = `${diffMin}m ago`;
+  else if (diffMin < 1440) timestamp = `${Math.floor(diffMin / 60)}h ago`;
+  else timestamp = createdAt.toLocaleDateString();
+
+  // Map severity to title case
+  const severityMap: Record<string, 'Critical' | 'Warning' | 'Info'> = {
+    critical: 'Critical',
+    warning: 'Warning',
+    info: 'Info',
+  };
+
+  return {
+    id: alert._id,
+    vehicleId,
+    vehicleName,
+    severity: severityMap[alert.severity] || 'Info',
+    title: alert.type,
+    message: alert.message,
+    timestamp,
+    location: alert.location
+      ? `${alert.location.latitude.toFixed(4)}, ${alert.location.longitude.toFixed(4)}`
+      : 'Unknown',
+  };
+}
 
 const severityConfig = {
   Critical: {
@@ -54,6 +96,22 @@ const cardVariants: Variants = {
 
 export const RecentAlerts: React.FC<RecentAlertsProps> = ({ onSelectVehicle }) => {
   const [alerts, setAlerts] = useState<FleetAlert[]>([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const data = await fetchRecentAlerts(5);
+        if (!cancelled) {
+          setAlerts(data.map(mapBackendAlert));
+        }
+      } catch {
+        // Failed to load — show empty state
+      }
+    };
+    load();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <motion.div

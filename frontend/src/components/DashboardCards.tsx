@@ -1,15 +1,19 @@
 /**
  * DashboardCards.tsx – Compact Light KPI Statistics Cards
  * 4 concise cards (120-130px height) with sparklines:
- * 1. Total Vehicles: 42 (+8.4% from last month)
- * 2. Online Vehicles: 35 (83.3% operational)
- * 3. Active Trips: 18 (+12% today)
- * 4. Active Alerts: 3 (1 Critical)
+ * 1. Total Vehicles
+ * 2. Online Vehicles
+ * 3. Active Trips
+ * 4. Active Alerts
+ *
+ * Phase 9: Connected to GET /api/dashboard/summary for real data.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { Truck, Navigation, Route, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
+import { fetchDashboardSummary } from '../api/dashboardApi';
+import type { DashboardSummary } from '../types/api';
 import '../styles/dashboard.css';
 
 interface KPIData {
@@ -25,53 +29,68 @@ interface KPIData {
   sparklineColor?: string;
 }
 
-const KPI_DATA: KPIData[] = [
-  {
-    id: 'total-vehicles',
-    label: 'TOTAL VEHICLES',
-    value: 42,
-    icon: <Truck size={17} />,
-    iconVariant: 'blue',
-    trend: { direction: 'up', value: '+8.4% from last month' },
-    subtitle: 'Registered fleet units',
-    sparklinePoints: '0,25 20,20 40,22 60,14 80,18 100,8 120,12',
-    sparklineColor: '#2563EB',
-  },
-  {
-    id: 'online-vehicles',
-    label: 'ONLINE VEHICLES',
-    value: 35,
-    icon: <Navigation size={17} />,
-    iconVariant: 'green',
-    trend: { direction: 'up', value: '83.3% operational' },
-    subtitle: 'Actively transmitting',
-    valueColor: '#10B981',
-    sparklinePoints: '0,28 20,24 40,18 60,20 80,12 100,10 120,6',
-    sparklineColor: '#10B981',
-  },
-  {
-    id: 'active-trips',
-    label: 'ACTIVE TRIPS',
-    value: 18,
-    icon: <Route size={17} />,
-    iconVariant: 'purple',
-    trend: { direction: 'up', value: '+12% today' },
-    subtitle: 'Dispatches in progress',
-    valueColor: '#7C3AED',
-    sparklinePoints: '0,30 20,28 40,22 60,24 80,16 100,14 120,10',
-    sparklineColor: '#7C3AED',
-  },
-  {
-    id: 'active-alerts',
-    label: 'ACTIVE ALERTS',
-    value: 0,
-    icon: <AlertTriangle size={17} />,
-    iconVariant: 'green',
-    trend: { direction: 'down', value: '0 Critical' },
-    subtitle: 'All systems operational',
-    valueColor: '#10B981',
-  },
-];
+/**
+ * Build KPI card data from real dashboard summary.
+ */
+function buildKPIData(summary: DashboardSummary | null): KPIData[] {
+  const totalVehicles = summary?.totalVehicles ?? 0;
+  const onlineVehicles = summary?.onlineVehicles ?? 0;
+  const activeTrips = summary?.activeTrips ?? 0;
+  const activeAlerts = summary?.activeAlerts ?? 0;
+  const criticalAlerts = summary?.criticalAlerts ?? 0;
+  const onlinePct = totalVehicles > 0 ? ((onlineVehicles / totalVehicles) * 100).toFixed(1) : '0';
+
+  return [
+    {
+      id: 'total-vehicles',
+      label: 'TOTAL VEHICLES',
+      value: totalVehicles,
+      icon: <Truck size={17} />,
+      iconVariant: 'blue',
+      trend: { direction: 'up', value: `${totalVehicles} registered` },
+      subtitle: 'Registered fleet units',
+      sparklinePoints: '0,25 20,20 40,22 60,14 80,18 100,8 120,12',
+      sparklineColor: '#2563EB',
+    },
+    {
+      id: 'online-vehicles',
+      label: 'ONLINE VEHICLES',
+      value: onlineVehicles,
+      icon: <Navigation size={17} />,
+      iconVariant: 'green',
+      trend: { direction: 'up', value: `${onlinePct}% operational` },
+      subtitle: 'Actively transmitting',
+      valueColor: '#10B981',
+      sparklinePoints: '0,28 20,24 40,18 60,20 80,12 100,10 120,6',
+      sparklineColor: '#10B981',
+    },
+    {
+      id: 'active-trips',
+      label: 'ACTIVE TRIPS',
+      value: activeTrips,
+      icon: <Route size={17} />,
+      iconVariant: 'purple',
+      trend: { direction: activeTrips > 0 ? 'up' : 'down', value: `${summary?.totalTrips ?? 0} total trips` },
+      subtitle: 'Dispatches in progress',
+      valueColor: '#7C3AED',
+      sparklinePoints: '0,30 20,28 40,22 60,24 80,16 100,14 120,10',
+      sparklineColor: '#7C3AED',
+    },
+    {
+      id: 'active-alerts',
+      label: 'ACTIVE ALERTS',
+      value: activeAlerts,
+      icon: <AlertTriangle size={17} />,
+      iconVariant: activeAlerts > 0 ? (criticalAlerts > 0 ? 'red' : 'amber') : 'green',
+      trend: {
+        direction: activeAlerts > 0 ? 'up' : 'down',
+        value: criticalAlerts > 0 ? `${criticalAlerts} Critical` : '0 Critical',
+      },
+      subtitle: activeAlerts === 0 ? 'All systems operational' : 'Requires attention',
+      valueColor: activeAlerts > 0 ? (criticalAlerts > 0 ? '#EF4444' : '#F59E0B') : '#10B981',
+    },
+  ];
+}
 
 const cardVariants: Variants = {
   hidden: { opacity: 0, y: 10 },
@@ -86,9 +105,30 @@ const cardVariants: Variants = {
 };
 
 export const DashboardCards: React.FC = () => {
+  const [summary, setSummary] = useState<DashboardSummary | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      try {
+        const data = await fetchDashboardSummary();
+        if (!cancelled) setSummary(data);
+      } catch {
+        // Failed to load — cards will show 0 values
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+    load();
+    return () => { cancelled = true; };
+  }, []);
+
+  const kpiData = buildKPIData(summary);
+
   return (
     <div className="stats-grid" id="kpi-overview-row">
-      {KPI_DATA.map((kpi) => (
+      {kpiData.map((kpi) => (
         <motion.div
           key={kpi.id}
           className="stat-card"
@@ -112,7 +152,7 @@ export const DashboardCards: React.FC = () => {
             className="stat-card__value tabular-nums"
             style={kpi.valueColor ? { color: kpi.valueColor } : undefined}
           >
-            {kpi.value}
+            {loading ? '—' : kpi.value}
           </div>
 
           {/* Bottom Row: Label & Sparkline */}

@@ -7,9 +7,11 @@ export type VehicleStatus = 'Moving' | 'Stopped' | 'Offline' | 'Idle' | 'Mainten
 export type AlertSeverity = 'Critical' | 'Warning' | 'Info';
 
 export interface User {
+  id?: string;
   name: string;
   email: string;
   company?: string;
+  organization?: string;
   role: string;
 }
 
