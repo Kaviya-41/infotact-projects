@@ -14,7 +14,9 @@ import {
   User as UserIcon, Settings, LogOut, Shield, CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { createVehicle } from '../api/vehicleApi';
 import { SAMPLE_MARKERS, type VehicleMarker } from './MapPlaceholder';
+import { useSocketTelemetry } from '../hooks/useSocketTelemetry';
 import '../styles/dashboard.css';
 
 interface HeaderProps {
@@ -33,6 +35,7 @@ const Header: React.FC<HeaderProps> = ({
   onToggleMobileSidebar,
 }) => {
   const { user, logout } = useAuth();
+  const { isConnected } = useSocketTelemetry();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -181,10 +184,24 @@ const Header: React.FC<HeaderProps> = ({
     setTimeout(() => setToastMessage(null), 3500);
   };
 
-  const handleAddVehicleSubmit = (e: React.FormEvent) => {
+  const handleAddVehicleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setIsAddVehicleOpen(false);
-    triggerToast(`Vehicle ${vehicleId} successfully registered to fleet.`);
+    try {
+      await createVehicle({
+        vehicleId,
+        make: 'Unknown',
+        model: vehicleType,
+        type: vehicleType.split(' ')[0].toLowerCase(),
+        driverName: vehicleDriver,
+        registrationNumber: regNumber,
+        status: vehicleStatus.toLowerCase(),
+      });
+      setIsAddVehicleOpen(false);
+      triggerToast(`Vehicle ${vehicleId} successfully registered to fleet.`);
+      window.dispatchEvent(new Event('vehicleAdded'));
+    } catch (err: any) {
+      triggerToast(`Error: ${err.message || 'Failed to add vehicle'}`);
+    }
   };
 
   const handleCreateTripSubmit = (e: React.FormEvent) => {
@@ -240,10 +257,10 @@ const Header: React.FC<HeaderProps> = ({
                 <span>Server Healthy</span>
               </div>
 
-              <div className="header__status-badge header__status-badge--online" aria-label="Socket Status: Live Connected">
-                <span className="header__status-dot header__status-dot--green" aria-hidden="true" />
+              <div className={`header__status-badge ${isConnected ? 'header__status-badge--online' : 'header__status-badge--offline'}`} aria-label={`Socket Status: ${isConnected ? 'Live Connected' : 'Connecting'}`}>
+                <span className={`header__status-dot ${isConnected ? 'header__status-dot--green' : 'header__status-dot--amber'}`} aria-hidden="true" />
                 <Radio size={12} />
-                <span>Live Connected</span>
+                <span>{isConnected ? 'Live Connected' : 'Connecting...'}</span>
               </div>
             </div>
 

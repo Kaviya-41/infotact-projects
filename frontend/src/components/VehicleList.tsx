@@ -174,8 +174,8 @@ const VehicleList: React.FC<VehicleListProps> = ({
                         </div>
                       </td>
                       <td>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: v.telemetry.gpsConnected ? '#10B981' : '#EF4444' }}>
-                          <Wifi size={14} /> {v.telemetry.gpsConnected ? 'Online' : 'Lost'}
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '4px', fontSize: '12px', color: v.telemetry.gpsConnected === null ? 'var(--fd-text-secondary)' : v.telemetry.gpsConnected ? '#10B981' : '#EF4444' }}>
+                          <Wifi size={14} /> {v.telemetry.gpsConnected === null ? '—' : v.telemetry.gpsConnected ? 'Online' : 'Lost'}
                         </div>
                       </td>
                       <td style={{ color: 'var(--fd-text-secondary)', fontSize: '12px' }}>{v.location}</td>
@@ -200,7 +200,7 @@ const VehicleList: React.FC<VehicleListProps> = ({
         fontSize: '12px',
         color: 'var(--fd-text-secondary)'
       }}>
-        <div>Showing 1-{filteredVehicles.length} of {vehicles.length} vehicles</div>
+        <div>Showing {filteredVehicles.length > 0 ? 1 : 0}-{filteredVehicles.length} of {vehicles.length} vehicles</div>
         <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
           <button style={{ padding: '4px 8px', border: '1px solid var(--fd-border-color)', borderRadius: '6px', background: 'var(--fd-bg-card)', color: 'var(--fd-text-secondary)', cursor: 'pointer' }} disabled>
             <ChevronLeft size={14} />

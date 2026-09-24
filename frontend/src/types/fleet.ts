@@ -18,8 +18,8 @@ export interface User {
 export interface VehicleTelemetry {
   speed: number;           // km/h
   fuelLevel: number;       // percentage 0-100
-  engineHealth: 'Healthy' | 'Warning' | 'Critical';
-  gpsConnected: boolean;
+  engineHealth: 'Healthy' | 'Warning' | 'Critical' | 'N/A';
+  gpsConnected: boolean | null;
   tripDistance: number;    // km
   lastUpdate: string;      // human readable string e.g. "2 sec ago"
   latitude: number;

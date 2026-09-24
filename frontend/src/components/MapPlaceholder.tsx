@@ -11,13 +11,14 @@
  * - Bottom legend and interactive vehicle HUD overlay
  */
 
-import React, { useState, useCallback, memo } from 'react';
+import React, { useState, useCallback, memo, useMemo } from 'react';
 import {
   Layers, Navigation, Truck, Maximize2, ZoomIn, ZoomOut, Compass,
   RotateCcw, Radio, Shield, MapPin
 } from 'lucide-react';
 import VehicleHUD from './dashboard/VehicleHUD';
 import { useTheme } from '../context/ThemeContext';
+import { useVehicles } from '../hooks/useVehicles';
 import '../styles/dashboard.css';
 
 export interface VehicleMarker {
@@ -61,15 +62,60 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
   selectedVehicleId: externalSelectedId,
   onOpenDrawer,
 }) => {
-  const [internalSelectedId, setInternalSelectedId] = useState<string | null>('FLT-004');
+  const { vehicles } = useVehicles();
+  const [internalSelectedId, setInternalSelectedId] = useState<string | null>(null);
   const [zoomLevel, setZoomLevel] = useState(12);
   const [mapMode, setMapMode] = useState<'Live' | 'Satellite' | 'Traffic'>('Live');
   const [layerVehicles, setLayerVehicles] = useState(true);
   const [layerRoutes, setLayerRoutes] = useState(true);
   const [layerGeofence, setLayerGeofence] = useState(true);
 
-  const selectedId = externalSelectedId !== undefined ? externalSelectedId : internalSelectedId;
-  const selectedVehicle = SAMPLE_MARKERS.find(v => v.id === selectedId);
+  // Convert real MongoDB vehicles to map markers
+  const markers: VehicleMarker[] = useMemo(() => {
+    if (!vehicles || vehicles.length === 0) return SAMPLE_MARKERS;
+
+    const minLng = 77.4, maxLng = 80.5;
+    const minLat = 12.4, maxLat = 13.3;
+
+    return vehicles.map((v, idx) => {
+      const lat = v.telemetry.latitude || 12.9250;
+      const lng = v.telemetry.longitude || 77.6830;
+
+      let x = Math.min(88, Math.max(12, ((lng - minLng) / (maxLng - minLng)) * 76 + 12));
+      let y = Math.min(85, Math.max(15, (1 - (lat - minLat) / (maxLat - minLat)) * 68 + 16));
+
+      if (!v.telemetry.latitude) {
+        x = 20 + ((idx * 8) % 65);
+        y = 25 + ((idx * 11) % 50);
+      }
+
+      const statusMap: Record<string, VehicleMarker['status']> = {
+        Moving: 'Moving',
+        Stopped: 'Idle',
+        Offline: 'Offline',
+        Maintenance: 'Maintenance',
+      };
+
+      return {
+        id: v.id,
+        name: v.name,
+        driver: v.driver,
+        status: statusMap[v.status] || (v.telemetry.speed > 0 ? 'Moving' : 'Idle'),
+        speed: v.telemetry.speed,
+        fuel: typeof v.telemetry.fuelLevel === 'number' ? v.telemetry.fuelLevel : 75,
+        tripProgress: v.telemetry.speed > 0 ? Math.min(95, Math.max(20, Math.round(v.telemetry.tripDistance % 100))) : 0,
+        eta: v.telemetry.speed > 0 ? '03:15 PM' : '—',
+        route: { origin: 'Bengaluru Central', destination: 'Chennai / Hosur' },
+        engineStatus: v.status === 'Maintenance' ? 'Service Overdue' : 'Optimal',
+        lastUpdate: v.telemetry.lastUpdate || 'Just now',
+        x: parseFloat(x.toFixed(1)),
+        y: parseFloat(y.toFixed(1)),
+      };
+    });
+  }, [vehicles]);
+
+  const effectiveSelectedId = externalSelectedId !== undefined ? externalSelectedId : internalSelectedId;
+  const selectedVehicle = markers.find(v => v.id === effectiveSelectedId) || markers[0];
 
   const handleSelect = useCallback((id: string) => {
     setInternalSelectedId(id);
@@ -89,8 +135,10 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
 
   const handleRecenter = () => {
     setZoomLevel(12);
-    setInternalSelectedId('FLT-004');
-    onSelectVehicle?.('FLT-004');
+    if (markers.length > 0) {
+      setInternalSelectedId(markers[0].id);
+      onSelectVehicle?.(markers[0].id);
+    }
   };
 
   const { theme } = useTheme();
@@ -151,7 +199,7 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
             fontSize: '11px', fontWeight: 600, color: 'var(--fd-text-primary)'
           }}>
             <Truck size={12} color="var(--fd-color-primary)" />
-            <span>42 Vehicles Tracked</span>
+            <span>{vehicles.length > 0 ? `${vehicles.length} Vehicles Tracked` : '10 Vehicles Tracked'}</span>
           </div>
 
           {/* Map Layer Mode Controls: Live | Satellite | Traffic */}
@@ -382,8 +430,8 @@ const MapPlaceholder: React.FC<MapPlaceholderProps> = ({
         {/* Interactive Floating Vehicle Marker Chips */}
         {layerVehicles && (
           <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 15, pointerEvents: 'none' }}>
-            {SAMPLE_MARKERS.map((v) => {
-              const isSelected = selectedId === v.id;
+            {markers.map((v) => {
+              const isSelected = effectiveSelectedId === v.id;
               const statusColor = getStatusColor(v.status);
               const isMoving = v.status === 'Moving';
               const isOnline = v.status === 'Online';

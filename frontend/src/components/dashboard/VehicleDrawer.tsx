@@ -3,9 +3,12 @@
  * Appears from the right edge when a vehicle marker or alert is clicked.
  */
 
-import React, { memo } from 'react';
+import React, { memo, useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Truck, User, Fuel, Activity, Navigation as RouteIcon, MapPin, Clock, ExternalLink, Compass } from 'lucide-react';
+import { fetchVehicleById } from '../../api/vehicleApi';
+import { socket } from '../../services/socket';
+import type { LiveTelemetryPayload } from '../../hooks/useSocketTelemetry';
 import '../../styles/dashboard.css';
 
 interface VehicleDrawerProps {
@@ -19,8 +22,8 @@ interface DrawerVehicleData {
   driver: string;
   status: 'Moving' | 'Stopped' | 'Offline';
   speed: number;
-  fuel: number;
-  engineHealth: number;
+  fuel: number | string;
+  engineHealth: number | string;
   tripProgress: number;
   distanceToday: number;
   eta: string;
@@ -28,96 +31,66 @@ interface DrawerVehicleData {
   lastLocation: string;
 }
 
-const MOCK_VEHICLE_DATA: Record<string, DrawerVehicleData> = {
-  'FLT-004': {
-    id: 'FLT-004',
-    name: 'Freightliner Cascadia #04',
-    driver: 'Arun Kumar',
-    status: 'Moving',
-    speed: 68,
-    fuel: 72,
-    engineHealth: 96,
-    tripProgress: 68,
-    distanceToday: 184,
-    eta: '01:42 PM',
-    route: { origin: 'Bengaluru', destination: 'Hosur' },
-    lastLocation: 'NH 44, Hosur Road Exit 14',
-  },
-  'FLT-001': {
-    id: 'FLT-001',
-    name: 'Volvo FH16 #01',
-    driver: 'Arjun Kumar',
-    status: 'Moving',
-    speed: 68,
-    fuel: 72,
-    engineHealth: 98,
-    tripProgress: 72,
-    distanceToday: 240,
-    eta: '02:45 PM',
-    route: { origin: 'Bengaluru', destination: 'Hosur' },
-    lastLocation: 'Electronic City Flyover, KM 18',
-  },
-  'FLT-003': {
-    id: 'FLT-003',
-    name: 'Kenworth T680 #03',
-    driver: 'Rajesh Verma',
-    status: 'Stopped',
-    speed: 0,
-    fuel: 34,
-    engineHealth: 74,
-    tripProgress: 90,
-    distanceToday: 310,
-    eta: '04:15 PM',
-    route: { origin: 'Mumbai', destination: 'Pune' },
-    lastLocation: 'Lonavala Service Hub',
-  },
-  'FLT-007': {
-    id: 'FLT-007',
-    name: 'Scania R500 #07',
-    driver: 'Marcus Vance',
-    status: 'Moving',
-    speed: 64,
-    fuel: 18,
-    engineHealth: 92,
-    tripProgress: 88,
-    distanceToday: 420,
-    eta: '12:30 PM',
-    route: { origin: 'Delhi', destination: 'Jaipur' },
-    lastLocation: 'Gurugram Expressway',
-  },
-  'FLT-010': {
-    id: 'FLT-010',
-    name: 'Isuzu Giga #10',
-    driver: 'Suresh Patel',
-    status: 'Offline',
-    speed: 0,
-    fuel: 40,
-    engineHealth: 68,
-    tripProgress: 15,
-    distanceToday: 65,
-    eta: '—',
-    route: { origin: 'Ahmedabad', destination: 'Surat' },
-    lastLocation: 'Signal lost at Vadodara Bypass',
-  },
-};
 
 export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose }) => {
-  if (!vehicleId) return null;
+  const [data, setData] = useState<DrawerVehicleData | null>(null);
 
-  const data: DrawerVehicleData = MOCK_VEHICLE_DATA[vehicleId] || {
-    id: vehicleId,
-    name: `Vehicle ${vehicleId}`,
-    driver: 'Arun Kumar',
-    status: 'Moving',
-    speed: 68,
-    fuel: 72,
-    engineHealth: 96,
-    tripProgress: 68,
-    distanceToday: 184,
-    eta: '01:42 PM',
-    route: { origin: 'Bengaluru', destination: 'Hosur' },
-    lastLocation: 'NH 44, Exit 14',
-  };
+  useEffect(() => {
+    if (!vehicleId) {
+      setData(null);
+      return;
+    }
+    let isMounted = true;
+    fetchVehicleById(vehicleId).then(v => {
+      if (!isMounted) return;
+      const statusMap: Record<string, any> = { online: 'Moving', offline: 'Offline', maintenance: 'Stopped' };
+      const speed = v.speed ?? v.currentSpeed ?? 0;
+      const lat = v.latitude ?? v.location?.latitude ?? 0;
+      const lng = v.longitude ?? v.location?.longitude ?? 0;
+      
+      const mapped: DrawerVehicleData = {
+        id: v.vehicleId,
+        name: `${v.make} ${v.model}`,
+        driver: v.driverName || 'Unassigned',
+        status: statusMap[v.status] || (speed > 0 ? 'Moving' : 'Stopped'),
+        speed,
+        fuel: v.fuelLevel !== undefined ? v.fuelLevel : '—',
+        engineHealth: 'N/A',
+        tripProgress: 0,
+        distanceToday: v.mileage ?? 0,
+        eta: '—',
+        route: { origin: 'Unknown', destination: 'Unknown' },
+        lastLocation: `${lat.toFixed(4)}, ${lng.toFixed(4)}`,
+      };
+      setData(mapped);
+    }).catch(err => {
+      console.error(err);
+    });
+
+    const handleTelemetry = (payload: LiveTelemetryPayload) => {
+      if (!isMounted || payload.vehicleId !== vehicleId) return;
+      setData(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          speed: payload.speed,
+          fuel: payload.fuelLevel,
+          distanceToday: payload.mileage,
+          status: payload.speed > 0 ? 'Moving' : 'Stopped',
+          lastLocation: `${payload.latitude.toFixed(4)}, ${payload.longitude.toFixed(4)}`,
+        };
+      });
+    };
+
+    socket.on('vehicleTelemetry', handleTelemetry);
+
+    return () => {
+      isMounted = false;
+      socket.off('vehicleTelemetry', handleTelemetry);
+    };
+  }, [vehicleId]);
+
+  if (!vehicleId || !data) return null;
 
   const statusColor = data.status === 'Moving' ? '#10B981' : data.status === 'Stopped' ? '#F59E0B' : '#EF4444';
 
@@ -251,8 +224,8 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
                   <div style={{ fontSize: '11px', fontWeight: 600, color: 'var(--fd-text-secondary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                     <Fuel size={12} color="#F59E0B" /> Fuel Level
                   </div>
-                  <div style={{ fontSize: '14px', fontWeight: 700, color: data.fuel < 25 ? '#EF4444' : '#10B981', marginTop: '4px', fontFamily: 'var(--fd-font-mono)' }}>
-                    {data.fuel}%
+                  <div style={{ fontSize: '14px', fontWeight: 700, color: typeof data.fuel === 'number' && data.fuel < 25 ? '#EF4444' : '#10B981', marginTop: '4px', fontFamily: 'var(--fd-font-mono)' }}>
+                    {data.fuel}{typeof data.fuel === 'number' ? '%' : ''}
                   </div>
                 </div>
 
@@ -262,7 +235,7 @@ export const VehicleDrawer: React.FC<VehicleDrawerProps> = ({ vehicleId, onClose
                     <Activity size={11} color="#10B981" /> Engine Health
                   </div>
                   <div style={{ fontSize: '14px', fontWeight: 700, color: '#10B981', marginTop: '4px', fontFamily: 'var(--fd-font-mono)' }}>
-                    {data.engineHealth}%
+                    {data.engineHealth}{typeof data.engineHealth === 'number' ? '%' : ''}
                   </div>
                 </div>
 

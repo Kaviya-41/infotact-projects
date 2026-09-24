@@ -10,6 +10,7 @@ import { motion, type Variants } from 'framer-motion';
 import { Route as RouteIcon, ArrowRight, ChevronRight, User, Clock, MapPin } from 'lucide-react';
 import type { BackendTrip, BackendVehicleFull } from '../../types/api';
 import { fetchRecentTrips } from '../../api/dashboardApi';
+import { socket } from '../../services/socket';
 import '../../styles/dashboard.css';
 
 interface TripItem {
@@ -91,7 +92,17 @@ export const ActiveTripsCard: React.FC = () => {
       }
     };
     load();
-    return () => { cancelled = true; };
+
+    const handleUpdate = () => {
+      load();
+    };
+
+    socket.on('dashboardUpdate', handleUpdate);
+
+    return () => {
+      cancelled = true;
+      socket.off('dashboardUpdate', handleUpdate);
+    };
   }, []);
 
   return (

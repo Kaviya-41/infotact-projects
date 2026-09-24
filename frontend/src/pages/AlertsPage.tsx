@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { AlertTriangle, Info, CheckCircle2, Filter, ChevronRight, Siren } from 'lucide-react';
 import VehicleDrawer from '../components/dashboard/VehicleDrawer';
 import { fetchAlerts } from '../api/alertApi';
+import { socket } from '../services/socket';
 import type { BackendAlert, BackendVehicleFull } from '../types/api';
 import '../styles/dashboard.css';
 
@@ -98,7 +99,17 @@ const AlertsPage: React.FC = () => {
       }
     };
     load();
-    return () => { cancelled = true; };
+
+    const handleNewAlert = () => {
+      load();
+    };
+
+    socket.on('alertGenerated', handleNewAlert);
+
+    return () => {
+      cancelled = true;
+      socket.off('alertGenerated', handleNewAlert);
+    };
   }, []);
 
   const filteredAlerts = useMemo(() => {

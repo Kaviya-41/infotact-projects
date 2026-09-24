@@ -12,6 +12,7 @@ import { AlertCircle, AlertTriangle, ShieldCheck, ChevronRight } from 'lucide-re
 import type { FleetAlert } from '../types/fleet';
 import type { BackendAlert, BackendVehicleFull } from '../types/api';
 import { fetchRecentAlerts } from '../api/dashboardApi';
+import { socket } from '../services/socket';
 import '../styles/dashboard.css';
 
 interface RecentAlertsProps {
@@ -110,7 +111,23 @@ export const RecentAlerts: React.FC<RecentAlertsProps> = ({ onSelectVehicle }) =
       }
     };
     load();
-    return () => { cancelled = true; };
+
+    const handleNewAlert = (newAlert: BackendAlert) => {
+      if (newAlert) {
+        setAlerts((prev) => [mapBackendAlert(newAlert), ...prev.slice(0, 4)]);
+      } else {
+        load();
+      }
+    };
+
+    socket.on('alertGenerated', handleNewAlert);
+    socket.on('dashboardUpdate', load);
+
+    return () => {
+      cancelled = true;
+      socket.off('alertGenerated', handleNewAlert);
+      socket.off('dashboardUpdate', load);
+    };
   }, []);
 
   return (

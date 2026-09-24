@@ -13,6 +13,7 @@ import React, { memo, useState, useEffect } from 'react';
 import { motion, type Variants } from 'framer-motion';
 import { Truck, Navigation, Route, AlertTriangle, TrendingUp, TrendingDown } from 'lucide-react';
 import { fetchDashboardSummary } from '../api/dashboardApi';
+import { socket } from '../services/socket';
 import type { DashboardSummary } from '../types/api';
 import '../styles/dashboard.css';
 
@@ -120,8 +121,25 @@ export const DashboardCards: React.FC = () => {
         if (!cancelled) setLoading(false);
       }
     };
+
     load();
-    return () => { cancelled = true; };
+
+    const handleUpdate = () => {
+      load();
+    };
+
+    socket.on('dashboardUpdate', handleUpdate);
+    socket.on('alertGenerated', handleUpdate);
+
+    // Also poll every 10 seconds as fallback
+    const interval = setInterval(load, 10000);
+
+    return () => {
+      cancelled = true;
+      clearInterval(interval);
+      socket.off('dashboardUpdate', handleUpdate);
+      socket.off('alertGenerated', handleUpdate);
+    };
   }, []);
 
   const kpiData = buildKPIData(summary);

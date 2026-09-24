@@ -5,9 +5,16 @@
   "main": "src/server.js",
   "scripts": {
     "dev": "node --watch src/server.js",
-    "start": "node src/server.js"
+    "start": "node src/server.js",
+    "seed": "node src/scripts/seedFleetData.js",
+    "seed:fleet": "node src/scripts/seedFleetData.js"
   },
-  "keywords": ["fleet", "dashboard", "telemetry", "api"],
+  "keywords": [
+    "fleet",
+    "dashboard",
+    "telemetry",
+    "api"
+  ],
   "license": "ISC",
   "dependencies": {
     "bcryptjs": "^2.4.3",
@@ -15,6 +22,7 @@
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongoose": "^8.9.5"
+    "mongoose": "^8.9.5",
+    "socket.io": "^4.8.3"
   }
 }
