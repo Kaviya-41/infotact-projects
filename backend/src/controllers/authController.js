@@ -32,9 +32,9 @@ const safeUser = (user) => ({
 // ---------------------------------------------------------------------------
 // POST /api/auth/register
 // ---------------------------------------------------------------------------
-const register = async (req, res, next) => {
+const register = async (req, res) => {
   try {
-    const { name, email, password, role, organization } = req.body;
+    const { name, email, password, role, organization } = req.body || {};
 
     // --- Validation --------------------------------------------------------
     if (!name || !email || !password) {
@@ -44,7 +44,7 @@ const register = async (req, res, next) => {
       });
     }
 
-    if (password.length < 6) {
+    if (typeof password !== 'string' || password.length < 6) {
       return res.status(400).json({
         success: false,
         message: 'Password must be at least 6 characters',
@@ -52,7 +52,7 @@ const register = async (req, res, next) => {
     }
 
     // --- Check for existing user -------------------------------------------
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
+    const existingUser = await User.findOne({ email: email.toLowerCase().trim() });
     if (existingUser) {
       return res.status(409).json({
         success: false,
@@ -62,33 +62,66 @@ const register = async (req, res, next) => {
 
     // --- Create user (password hashed by pre-save hook) --------------------
     const user = await User.create({
-      name,
-      email,
+      name: name.trim(),
+      email: email.toLowerCase().trim(),
       passwordHash: password, // pre-save hook hashes this
       role: role || 'fleet_dispatcher',
-      organization: organization || '',
+      organization: (organization || '').trim(),
     });
 
     // --- Generate token & respond ------------------------------------------
-    const token = signToken(user._id);
+    let token;
+    try {
+      token = signToken(user._id);
+    } catch (jwtErr) {
+      console.error('[FleetDash] JWT signing failed:', jwtErr.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Registration failed',
+      });
+    }
 
-    res.status(201).json({
+    return res.status(201).json({
       success: true,
       message: 'Registration successful',
       token,
       user: safeUser(user),
     });
   } catch (err) {
-    next(err);
+    console.error('[FleetDash] Registration error:', err.message);
+
+    // Mongoose duplicate key error (code 11000)
+    if (err.code === 11000) {
+      return res.status(409).json({
+        success: false,
+        message: 'A user with this email already exists',
+      });
+    }
+
+    // Mongoose validation error
+    if (err.name === 'ValidationError') {
+      const message = Object.values(err.errors || {})
+        .map((e) => e.message)
+        .join(', ');
+      return res.status(400).json({
+        success: false,
+        message: message || 'Validation failed',
+      });
+    }
+
+    return res.status(500).json({
+      success: false,
+      message: 'Registration failed',
+    });
   }
 };
 
 // ---------------------------------------------------------------------------
 // POST /api/auth/login
 // ---------------------------------------------------------------------------
-const login = async (req, res, next) => {
+const login = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password } = req.body || {};
 
     // --- Validation --------------------------------------------------------
     if (!email || !password) {
@@ -99,7 +132,7 @@ const login = async (req, res, next) => {
     }
 
     // --- Find user (explicitly select passwordHash) ------------------------
-    const user = await User.findOne({ email: email.toLowerCase() }).select(
+    const user = await User.findOne({ email: email.toLowerCase().trim() }).select(
       '+passwordHash'
     );
 
@@ -120,23 +153,36 @@ const login = async (req, res, next) => {
     }
 
     // --- Generate token & respond ------------------------------------------
-    const token = signToken(user._id);
+    let token;
+    try {
+      token = signToken(user._id);
+    } catch (jwtErr) {
+      console.error('[FleetDash] JWT signing failed:', jwtErr.message);
+      return res.status(500).json({
+        success: false,
+        message: 'Login failed',
+      });
+    }
 
-    res.json({
+    return res.json({
       success: true,
       message: 'Login successful',
       token,
       user: safeUser(user),
     });
   } catch (err) {
-    next(err);
+    console.error('[FleetDash] Login error:', err.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Login failed',
+    });
   }
 };
 
 // ---------------------------------------------------------------------------
 // GET /api/auth/me  (requires auth middleware)
 // ---------------------------------------------------------------------------
-const getMe = async (req, res, next) => {
+const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
     if (!user) {
@@ -146,12 +192,16 @@ const getMe = async (req, res, next) => {
       });
     }
 
-    res.json({
+    return res.json({
       success: true,
       user: safeUser(user),
     });
   } catch (err) {
-    next(err);
+    console.error('[FleetDash] getMe error:', err.message);
+    return res.status(500).json({
+      success: false,
+      message: 'Failed to retrieve user profile',
+    });
   }
 };
 

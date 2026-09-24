@@ -15,8 +15,12 @@ const config = {
   redisUrl: process.env.REDIS_URL || '',
   nodeEnv: process.env.NODE_ENV || 'development',
 
-  // Frontend origin for CORS — default matches Vite dev server
-  corsOrigin: process.env.CORS_ORIGIN || 'http://localhost:5173',
+  // Frontend origin for CORS — default matches Vite dev server (5173 / 5174)
+  corsOrigin: process.env.CORS_ORIGIN
+    ? (process.env.CORS_ORIGIN.includes(',')
+        ? process.env.CORS_ORIGIN.split(',').map((s) => s.trim())
+        : process.env.CORS_ORIGIN)
+    : ['http://localhost:5173', 'http://localhost:5174'],
 };
 
 module.exports = config;
